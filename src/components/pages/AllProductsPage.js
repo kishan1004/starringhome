@@ -3,16 +3,9 @@ import Product2img from "../../images/imgproduct2.jpeg";
 import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
-import Blacklogo from "../../images/starringblack.png";
 import { Link } from "react-router-dom";
 
 const AllProductsPage = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
 
