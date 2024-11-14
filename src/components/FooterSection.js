@@ -21,7 +21,8 @@ const FooterSection = () => {
           src={Blacklogo}
           alt="logo"
           className="w-[350px] mx-auto md:my-10"
-          data-aos="flip-up"
+          data-aos="fade-up"
+          data-aos-duration="1000"
         />
         <h2 className="text-2xl font-bold mb-4">Newsletter</h2>
         <div className="flex items-center justify-between border-b border-gray-300 max-w-lg mx-auto py-2">
@@ -60,6 +61,7 @@ const FooterSection = () => {
             href="/"
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
+            data-aos-duration="1000"
           >
             <svg
               width="40"
@@ -81,6 +83,7 @@ const FooterSection = () => {
             href="/"
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
+            data-aos-duration="1000"
           >
             <svg
               width="40"
@@ -102,6 +105,7 @@ const FooterSection = () => {
             href="/"
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
+            data-aos-duration="1000"
           >
             <svg
               width="40"
