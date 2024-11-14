@@ -26,7 +26,7 @@ const ProductPage = () => {
   // ];
   // const availableColors = ["#D9D9D9", "black", "#A6D6CA"]; // Example available colors
   const description =
-    "A 100% cotton tee with an embroidered tiger and screen-printed forest in bold orange and red. Luxurious, tactile, perfect for commanding attention with fierce elegance";
+    "A 100% cotton tee with an embroidered tiger and screen-printed forest in bold orange and red. Luxurious, tactile, perfect for commanding attention with fierce elegance.";
 
   const sizes = ["XS", "S", "M", "L", "XL", "2X"];
   const availableSizes = ["S", "M", "L", "XL"];
@@ -219,7 +219,7 @@ const ProductPage = () => {
             <p>
               {description.length <= 30
                 ? description
-                : `${description.split(" ").slice(0, 30).join(" ")}...`}
+                : `${description.split(" ").slice(0, 30).join(" ")}`}
             </p>
           </div>
 

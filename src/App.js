@@ -18,7 +18,12 @@ import CheckoutPage from "./components/pages/CheckoutPage";
 
 function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true, // Opt-in for state update transition
+        v7_relativeSplatPath: true, // Handle splat routes behavior change
+      }}
+    >
       <ScrollToTop />
       <div className="App bg-[#FAFAFA]">
         <Routes>
