@@ -133,7 +133,7 @@ const FooterSection = () => {
         </div>
       </div>
       <div className="bg-[#CFD8DC] max-w-screen h-10 flex justify-center items-center">
-        <p>@ Luxi Theme 2019</p>
+        <a href="https://callsharks.in/">© callsharks.in</a>
       </div>
     </>
   );

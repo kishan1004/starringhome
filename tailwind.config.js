@@ -9,6 +9,9 @@ module.exports = {
       animation: {
         "spin-slow": "spin 4s linear infinite",
       },
+      fontFamily: {
+        beatrice: ['"Beatrice Deck"', "sans-serif"],
+      },
     },
   },
   plugins: [],

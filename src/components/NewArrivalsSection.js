@@ -1,10 +1,11 @@
 import React from "react";
 import Product1 from "../images/product1.jpeg";
-import Product2 from "../images/imgproduct2.jpeg";
+import Product2 from "../images/product2.jpeg";
 import Product3 from "../images/product3.jpeg";
 import "aos/dist/aos.css";
 import Aos from "aos";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 // Component for Star Ratings
 const StarRating = () => {
@@ -30,19 +31,23 @@ const StarRating = () => {
 const ProductCard = ({ image, title, price }) => {
   return (
     <div className="flex flex-col items-start p-4" data-aos="flip-right">
-      <div className="relative">
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-52 md:h-64 object-cover mb-2"
-        />
-        <span className="absolute top-2 left-2 bg-[#263238] text-white text-xs font-semibold px-2 py-1">
-          SALE
-        </span>
-      </div>
+      <Link to="/all-products">
+        <div className="relative">
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-52 md:h-64 object-cover mb-2"
+          />
+          <span className="absolute top-2 left-2 bg-[#263238] text-white text-xs font-semibold px-2 py-1">
+            SALE
+          </span>
+        </div>
+      </Link>
       <StarRating />
-      <p className="mt-2">{title}</p>
-      <p className="font-bold">{price}</p>
+      <Link to="/all-products">
+        <p className="mt-2">{title}</p>
+        <p className="font-bold">{price}</p>
+      </Link>
     </div>
   );
 };
@@ -61,7 +66,7 @@ const NewArrivalsSection = () => {
   ];
 
   return (
-    <section className="md:flex gap-8 lg:p-8 mt-72 md:mx-10">
+    <section className="md:flex gap-8 lg:p-8 lg:mt-72 mt-96 md:mx-10">
       {/* Left Text Section */}
       <div className="w-full md:w-1/3 p-4 text-center md:text-start">
         <h2 className="text-4xl font-bold text-gray-800" data-aos="fade-right">

@@ -1,8 +1,8 @@
 import React from "react";
 import Product1 from "../images/product1.jpeg";
-import Product2 from "../images/imgproduct2.jpeg";
+import Product2 from "../images/product2.jpeg";
 import Centerimage from "../images/centerimage.jpg";
-import BackgroundVideoSrc from "../videos/starringvideo.mp4";
+import BackgroundVideoSrc2 from "../videos/starringvideo.mp4";
 import "aos/dist/aos.css";
 import Aos from "aos";
 import { useEffect } from "react";
@@ -61,7 +61,7 @@ const TrendingSection = () => {
         </div>
       </div>
 
-      <div className="relative h-[600px] w-screen bg-cover max-sm:bg-center">
+      <div className="relative h-[500px] w-screen bg-cover max-sm:bg-center">
         {/* Video Background */}
         <video
           autoPlay
@@ -70,13 +70,13 @@ const TrendingSection = () => {
           playsInline
           className="absolute inset-0 h-full w-full object-cover"
         >
-          <source src={BackgroundVideoSrc} type="video/mp4" />
+          <source src={BackgroundVideoSrc2} type="video/mp4" />
           {/* Add more <source> tags if you have different video formats for compatibility */}
           Your browser does not support the video tag.
         </video>
 
         {/* Overlay content */}
-        <div className="relative flex flex-col items-center justify-end h-full text-center text-white pb-10">
+        <div className="relative flex flex-col items-center justify-center h-full text-center text-white pb-10">
           <h4 className="md:text-xl text-lg font-normal uppercase mb-4">
             Vivamus sit amet interdum elit
           </h4>
