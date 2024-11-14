@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import Blacklogo from "../images/starringblack.png";
+import "aos/dist/aos.css";
+import Aos from "aos";
+import { useEffect } from "react";
 
 const FooterSection = () => {
+  useEffect(() => {
+    Aos.init({ duration: 1000 });
+  }, []);
   const [activeItem, setActiveItem] = useState("Home");
 
   const handleNavClick = (item) => {
@@ -15,6 +21,7 @@ const FooterSection = () => {
           src={Blacklogo}
           alt="logo"
           className="w-[350px] mx-auto md:my-10"
+          data-aos="flip-up"
         />
         <h2 className="text-2xl font-bold mb-4">Newsletter</h2>
         <div className="flex items-center justify-between border-b border-gray-300 max-w-lg mx-auto py-2">
@@ -49,7 +56,11 @@ const FooterSection = () => {
           ))}
         </nav>
         <div className="flex justify-center space-x-14 mb-8">
-          <a href="/" className="text-gray-400 hover:text-gray-600">
+          <a
+            href="/"
+            className="text-gray-400 hover:text-gray-600"
+            data-aos="flip-left"
+          >
             <svg
               width="40"
               height="40"
@@ -66,7 +77,11 @@ const FooterSection = () => {
               />
             </svg>
           </a>
-          <a href="/" className="text-gray-400 hover:text-gray-600">
+          <a
+            href="/"
+            className="text-gray-400 hover:text-gray-600"
+            data-aos="flip-left"
+          >
             <svg
               width="40"
               height="40"
@@ -83,7 +98,11 @@ const FooterSection = () => {
               />
             </svg>
           </a>
-          <a href="/" className="text-gray-400 hover:text-gray-600">
+          <a
+            href="/"
+            className="text-gray-400 hover:text-gray-600"
+            data-aos="flip-left"
+          >
             <svg
               width="40"
               height="40"
