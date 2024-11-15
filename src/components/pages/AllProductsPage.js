@@ -308,7 +308,7 @@ const AllProductsPage = () => {
   return (
     <section className="bg-gray-100 font-beatrice">
       <div className="w-screen  px-4 pb-5">
-        <Link to="/home">
+        <Link to="/">
           <svg
             width="62"
             height="14"

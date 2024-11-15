@@ -28,7 +28,7 @@ function App() {
       <div className="App bg-[#FAFAFA]">
         <Routes>
           <Route
-            path="/home"
+            path="/"
             element={
               <>
                 <HeroSection />
