@@ -21,7 +21,7 @@ import SizeChart from "./components/pages/SizeChart";
 import Topbar from "./components/pages/Topbar";
 import ShoppingCart from "./components/pages/ShoppingCart";
 import CheckoutPage from "./components/pages/CheckoutPage";
-import NotFoundPage from "./components/pages/NotFoundPage";
+// import NotFoundPage from "./components/pages/NotFoundPage";
 import ContactUsPage from "./components/pages/ContactUsPage";
 import AboutUsPage from "./components/pages/AboutUsPage";
 import ShippingInfoPage from "./components/pages/ShippingInfoPage";
