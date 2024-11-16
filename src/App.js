@@ -43,6 +43,7 @@ import Settings from "./components/adminpanel/Settings";
 import Adminbar from "./components/adminpanel/Adminbar";
 import AdminSidebar from "./components/adminpanel/AdminSidebar";
 import Login from "./components/adminpanel/Login"; // Admin Login
+import PaymentConfirmation from "./components/pages/PaymentConfirmation";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -122,11 +123,11 @@ function App() {
             }
           />
           <Route
-            path="/shopping-cart"
+            path="/payment-confirmation"
             element={
               <>
                 <Topbar />
-                <ShoppingCart />
+                <PaymentConfirmation />
               </>
             }
           />
@@ -141,6 +142,7 @@ function App() {
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/otp-login" element={<OTPLogin />} />
           <Route path="/user-account" element={<UserAccountPage />} />
+          <Route path="/shopping-cart" element={<ShoppingCart />} />
 
           {/* Admin Routes */}
           <Route

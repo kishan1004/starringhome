@@ -120,7 +120,7 @@ const CheckoutPage = () => {
                 className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
               />
             </div>
-            <Link to="/shopping-cart">
+            <Link to="/payment-confirmation">
               <div className="md:grid grid-cols-1 justify-items-end gap-4 hidden">
                 <button className="w-1/2 flex justify-between bg-[#D9D9D9] hover:bg-gray-500 py-3 lg:px-5 px-2 items-center font-semibold text-base font-beatrice mt-4">
                   Shipping
@@ -201,7 +201,7 @@ const CheckoutPage = () => {
               </div>
             </div>
           </div>
-          <Link to="/shopping-cart">
+          <Link to="/payment-confirmation">
             <div className="grid grid-cols-1 justify-items-end gap-4 md:hidden pb-20">
               <button className="w-1/2 flex justify-between bg-[#D9D9D9] hover:bg-gray-600 py-3 lg:px-5 px-2 items-center font-semibold text-base font-beatrice mt-4">
                 Shipping

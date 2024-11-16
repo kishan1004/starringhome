@@ -3,7 +3,7 @@ import Product1 from "../../images/product1.jpeg";
 import Product2 from "../../images/product2.jpeg";
 import { Link } from "react-router-dom";
 
-const ShoppingCart = () => {
+const PaymentConfirmation = () => {
   const [quantity1, setQuantity1] = useState(1);
   const [quantity2, setQuantity2] = useState(1);
 
@@ -21,7 +21,7 @@ const ShoppingCart = () => {
 
   return (
     <section className="bg-gray-100 font-beatrice">
-      <div className="w-screen md:px-10  px-4 py-5">
+      <div className="w-screen md:px-10  px-4">
         <Link to="/all-products">
           <svg
             width="62"
@@ -281,18 +281,49 @@ const ShoppingCart = () => {
             </div>
 
             <div className="border-t border-dotted border-gray-500 my-6 lg:hidden"></div>
+
+            <div className="lg:w-1/3">
+              <div className="md:pt-14 md:px-10 md:pb-10 p-4 border">
+                <h2 className="text-lg font-medium mb-4">ORDER SUMMARY</h2>
+                <div className="flex justify-between mb-2">
+                  <p className="text-sm">Subtotal</p>
+                  <p>$ {subtotal}</p>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <p className="text-sm">Shipping</p>
+                  <p>$ {shipping}</p>
+                </div>
+                <div className="border-t border-dotted border-gray-500 w-full my-6"></div>
+                <div className="flex justify-between font-bold mb-12">
+                  <p>
+                    TOTAL{" "}
+                    <span className="text-gray-500 text-xs font-sans">
+                      (TAX INCL.)
+                    </span>
+                  </p>
+                  <p>$ {total}</p>
+                </div>
+                <div className="mb-4">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2 h-7 w-7 rounded-none text-xz font-extralight"
+                    />
+                    I agree to the Terms and Conditions
+                  </label>
+                </div>
+                <button className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold">
+                  CONTINUE
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="border-t border-dotted border-gray-500 md:w-2/3 my-6 hidden lg:block"></div>
-          <Link to="/checkout">
-            <button className="px-2 py-4 text-white bg-black rounded">
-              Checkout
-            </button>
-          </Link>
         </div>
       </div>
     </section>
   );
 };
 
-export default ShoppingCart;
+export default PaymentConfirmation;

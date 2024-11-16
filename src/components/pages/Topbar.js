@@ -58,7 +58,7 @@ const Topbar = ({ cartCount }) => {
       </div>
 
       <div className="flex space-x-4 md:space-x-8 items-center">
-        <Link to="/Favourites">
+        <Link to="/favourites">
           <svg
             width="50"
             height="50"
