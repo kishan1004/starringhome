@@ -8,16 +8,12 @@ const ShoppingCart = () => {
   const [quantity2, setQuantity2] = useState(1);
 
   const productPrice = 99;
-  const shipping = 10;
 
   const increaseQuantity1 = () => setQuantity1(quantity1 + 1);
   const decreaseQuantity1 = () => quantity1 > 1 && setQuantity1(quantity1 - 1);
 
   const increaseQuantity2 = () => setQuantity2(quantity2 + 1);
   const decreaseQuantity2 = () => quantity2 > 1 && setQuantity2(quantity2 - 1);
-
-  const subtotal = quantity1 * productPrice + quantity2 * productPrice;
-  const total = subtotal + shipping;
 
   return (
     <section className="bg-gray-100 font-beatrice">
