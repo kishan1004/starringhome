@@ -21,7 +21,7 @@ import SizeChart from "./components/pages/SizeChart";
 import Topbar from "./components/pages/Topbar";
 import ShoppingCart from "./components/pages/ShoppingCart";
 import CheckoutPage from "./components/pages/CheckoutPage";
-// import NotFoundPage from "./components/pages/NotFoundPage";
+import NotFoundPage from "./components/pages/NotFoundPage";
 import ContactUsPage from "./components/pages/ContactUsPage";
 import AboutUsPage from "./components/pages/AboutUsPage";
 import ShippingInfoPage from "./components/pages/ShippingInfoPage";
@@ -144,14 +144,14 @@ function App() {
 
           {/* Admin Routes */}
           <Route
-            path="/admin-auth/login"
+            path="/admin/login"
             element={<Login onLogin={handleLogin} />}
           />
-          <Route path="/admin-login" element={<div>Login Page</div>} />
+
           <Route
             path="/admin/*"
             element={
-              isAuthenticated || true ? (
+              isAuthenticated ? (
                 <>
                   <Adminbar
                     toggleSidebar={toggleSidebar}
@@ -189,7 +189,7 @@ function App() {
             }
           />
           {/* Redirect 404 */}
-          {/* <Route path="*" element={<NotFoundPage />} /> */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </Router>
