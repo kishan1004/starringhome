@@ -150,7 +150,7 @@ function App() {
           <Route
             path="/admin/*"
             element={
-              true ? (
+              isAuthenticated || true ? (
                 <>
                   <Adminbar
                     toggleSidebar={toggleSidebar}
