@@ -189,7 +189,7 @@ function App() {
             }
           />
           {/* Redirect 404 */}
-          <Route path="*" element={<NotFoundPage />} />
+          {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
       </div>
     </Router>

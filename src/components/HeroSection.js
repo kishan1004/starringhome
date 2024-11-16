@@ -86,7 +86,7 @@ const HeroSection = () => {
                   />
                 )}
               </div>
-              <Link to="/otp-login">
+              <Link to="/admin-auth/login">
                 <FaRegUserCircle className="text-white" />
               </Link>
             </div>
