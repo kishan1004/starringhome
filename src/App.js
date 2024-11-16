@@ -147,7 +147,7 @@ function App() {
             path="/admin-auth/login"
             element={<Login onLogin={handleLogin} />}
           />
-          <Route path="/admin/login" element={<div>Login Page</div>} />
+          <Route path="/admin-login" element={<div>Login Page</div>} />
           <Route
             path="/admin/*"
             element={
