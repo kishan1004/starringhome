@@ -58,11 +58,20 @@ const Favourites = () => {
     },
   ]);
 
+  // useEffect(async () => {
+  //   const response = await axios.get("/backend/?search=shirt&category=all");
+  //   setSimilarProducts(response);
+  // }, []);
+
   const handleDelete = (id) => {
     setSimilarProducts((prevProducts) =>
       prevProducts.filter((product) => product.id !== id)
     );
   };
+
+  // if (loading) {
+  //   return <div>Loading</div>;
+  // }
 
   return (
     <div className="min-h-screen md:px-10 bg-gray-100 font-beatrice">

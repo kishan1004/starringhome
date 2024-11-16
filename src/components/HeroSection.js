@@ -4,12 +4,16 @@ import WhiteLogo from "../images/starringwhite.png";
 import SaleImage from "../images/homepagesalephoto.png";
 import { IoArrowBack } from "react-icons/io5";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
 import "aos/dist/aos.css";
 import Aos from "aos";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   const [activeItem, setActiveItem] = useState("Home");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchActive, setSearchActive] = useState(false);
 
   // Create a ref for the menu to detect outside clicks
   const menuRef = useRef(null);
@@ -55,21 +59,44 @@ const HeroSection = () => {
 
         {/* Mobile Navigation Button (Hamburger Icon) */}
         <div className="relative">
-          <div className="lg:hidden flex items-center justify-between p-4 bg-transparent absolute z-10">
-            <img src={WhiteLogo} alt="Logo" className="w-[150px]" />
+          <div className="flex items-center justify-between p-4 bg-transparent absolute z-10 w-full">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-white text-2xl"
             >
               {menuOpen ? <FaTimes /> : <FaBars />}
             </button>
+
+            <img src={WhiteLogo} alt="Logo" className="w-[150px] mx-auto" />
+
+            <div className="flex space-x-5 relative">
+              <div className="relative">
+                {searchActive ? (
+                  <input
+                    type="text"
+                    className="absolute max-md:top-10 right-0 p-2 border border-gray-300 rounded-md focus:outline-none bg-white"
+                    placeholder="Search..."
+                    autoFocus
+                    onBlur={() => setSearchActive(false)} // Close input when it loses focus
+                  />
+                ) : (
+                  <FaSearch
+                    className="text-white cursor-pointer"
+                    onClick={() => setSearchActive(true)}
+                  />
+                )}
+              </div>
+              <Link to="/otp-login">
+                <FaRegUserCircle className="text-white" />
+              </Link>
+            </div>
           </div>
 
           {/* Mobile Menu */}
           {menuOpen && (
             <nav
-              ref={menuRef} // Attach the ref to the menu element
-              className="absolute top-0 left-0 w-full bg-[#263238] text-white p-4 z-20 flex flex-col"
+              ref={menuRef}
+              className="absolute top-14 left-0 w-full bg-[#263238] text-white p-4 z-20 flex flex-col"
             >
               {[
                 "Home",
@@ -92,40 +119,16 @@ const HeroSection = () => {
               ))}
             </nav>
           )}
-
-          {/* Desktop Navigation */}
-          <div className="absolute lg:top-3 lg:left-10 top-2 left-2 hidden lg:flex space-x-10 items-center z-10">
-            <img src={WhiteLogo} alt="Logo" className="w-[200px]" />
-            <nav className="lg:flex justify-center lg:space-x-16 md:space-x-5">
-              {[
-                "Home",
-                "All New",
-                "Categories",
-                "Featured",
-                "Testimonials",
-                "Footer",
-              ].map((item, index) => (
-                <a
-                  key={index}
-                  href={`#${item.toLowerCase()}`}
-                  onClick={() => handleNavClick(item)}
-                  className={`transition-colors ${
-                    activeItem === item ? "text-green-200" : "text-white"
-                  } hover:text-gray-800`}
-                >
-                  {item}
-                </a>
-              ))}
-            </nav>
-          </div>
         </div>
 
         {/* Centered content */}
         <div className="relative flex flex-col items-center justify-center h-full text-center text-white pb-10">
           <h4 className="md:text-xl text-lg font-normal uppercase mb-4">
-            Vivamus sit amet interdum elit
+            Clothing that lives with you
           </h4>
-          <h1 className="md:text-6xl text-5xl font-bold mb-6">#LoremIpsum</h1>
+          <h1 className="md:text-6xl text-5xl font-bold mb-6 max-sm:mx-2">
+            Step into style, step into confidence.
+          </h1>
 
           {/* SVG Icon */}
           <div className="relative">
@@ -195,12 +198,14 @@ const HeroSection = () => {
               >
                 Proin erat ac velit tempus auctor.
               </p>
-              <button
-                className="mt-10 px-6 py-3 border border-white text-white text-sm font-semibold flex items-center hover:bg-white hover:text-[#37474F] transition"
-                data-aos="fade-up"
-              >
-                SEE DETAIL <span className="ml-2">&rarr;</span>
-              </button>
+              <Link to="/all-products">
+                <button
+                  className="mt-10 px-6 py-3 border border-white text-white text-sm font-semibold flex items-center hover:bg-white hover:text-[#37474F] transition"
+                  data-aos="fade-up"
+                >
+                  SEE DETAIL <span className="ml-2">&rarr;</span>
+                </button>
+              </Link>
             </div>
 
             {/* Image on the right */}

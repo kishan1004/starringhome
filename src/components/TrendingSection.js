@@ -78,9 +78,11 @@ const TrendingSection = () => {
         {/* Overlay content */}
         <div className="relative flex flex-col items-center justify-center h-full text-center text-white pb-10">
           <h4 className="md:text-xl text-lg font-normal uppercase mb-4">
-            Vivamus sit amet interdum elit
+            Wear your story, every day
           </h4>
-          <h1 className="md:text-6xl text-5xl font-bold mb-6">#LoremIpsum</h1>
+          <h1 className="md:text-6xl text-4xl font-bold mb-6 ">
+            Where style meets comfort
+          </h1>
 
           {/* SVG Icon */}
           <div className="relative">

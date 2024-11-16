@@ -76,8 +76,9 @@ const NewArrivalsSection = () => {
           </span>
         </h2>
         <p className="mt-10 text-gray-600" data-aos="fade-up">
-          Cras convallis lacus orci, tristique tincidunt magna consequat in. In
-          vel pulvinar est, at euismod libero.
+          Step into the season with our new arrivals, designed to keep you
+          trendy and confident. Don’t miss out on the styles that everyone’s
+          talking about!
         </p>
       </div>
 
