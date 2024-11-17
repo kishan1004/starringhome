@@ -55,7 +55,7 @@ const UserLogin = () => {
             <div className="flex items-center justify-between mb-6">
               <a
                 className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800"
-                href="#"
+                href="/"
               >
                 Forgot Password?
               </a>

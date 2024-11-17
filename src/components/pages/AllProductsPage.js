@@ -264,13 +264,6 @@ const AllProductsPage = () => {
     },
   ];
 
-  const updatedItems = items.map((item) => ({
-    ...item,
-    offerPercentage: Math.round(
-      ((item.price - item.offerPrice) / item.price) * 100
-    ),
-  }));
-
   const filters = [
     "ALL",
     "NEW",
