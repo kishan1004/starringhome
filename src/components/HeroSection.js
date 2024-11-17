@@ -45,7 +45,7 @@ const HeroSection = () => {
 
   return (
     <>
-      <div className="relative h-screen w-screen bg-cover bg-center">
+      <div className="relative h-screen max-w-[1440px] w-full mx-auto bg-cover bg-center">
         <video
           autoPlay
           loop
@@ -59,12 +59,12 @@ const HeroSection = () => {
 
         {/* Mobile Navigation Button (Hamburger Icon) */}
         <div className="relative">
-          <div className="flex items-center justify-between p-4 bg-transparent absolute z-10 w-full">
+          <div className="flex items-center justify-between px-4 pt-5 bg-transparent absolute z-10 w-full">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-white text-2xl"
             >
-              {menuOpen ? <FaTimes /> : <FaBars />}
+              {menuOpen ? <FaTimes size={32} /> : <FaBars size={32} />}
             </button>
 
             <img src={WhiteLogo} alt="Logo" className="w-[150px] mx-auto" />
@@ -82,12 +82,13 @@ const HeroSection = () => {
                 ) : (
                   <FaSearch
                     className="text-white cursor-pointer"
+                    size={32}
                     onClick={() => setSearchActive(true)}
                   />
                 )}
               </div>
-              <Link to="/otp-login">
-                <FaRegUserCircle className="text-white" />
+              <Link to="/user-login">
+                <FaRegUserCircle className="text-white" size={32} />
               </Link>
             </div>
           </div>
@@ -213,7 +214,7 @@ const HeroSection = () => {
               <img
                 src={SaleImage}
                 alt="Sale"
-                className="h-full w-full object-cover hidden md:block"
+                className="h-full w-full  object-cover hidden md:block"
               />
             </div>
           </div>

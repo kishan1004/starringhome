@@ -80,7 +80,7 @@ function AdminSidebar({ toggleSidebar }) {
           <FaCog className="mr-3" /> Settings
         </NavLink>
       </nav>
-      <NavLink
+      {/* <NavLink
         to="report"
         className={({ isActive }) =>
           `flex items-center px-3 py-2 rounded ${
@@ -90,7 +90,7 @@ function AdminSidebar({ toggleSidebar }) {
         onClick={toggleSidebar} // Close sidebar on link click
       >
         <FaBox className="mr-3" /> Report
-      </NavLink>
+      </NavLink> */}
       <NavLink
         to="inventory"
         className={({ isActive }) =>

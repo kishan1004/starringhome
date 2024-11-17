@@ -190,7 +190,7 @@ const ProductList = () => {
                     <span>{product.name}</span>
                   )}
                 </td>
-                <td className="py-3 px-4 border">
+                <td className="border">
                   {isEditing === product.id ? (
                     <input
                       type="text"
@@ -203,7 +203,7 @@ const ProductList = () => {
                     product.category
                   )}
                 </td>
-                <td className="py-3 px-4 border">
+                <td className="border">
                   {isEditing === product.id ? (
                     <input
                       type="text"
@@ -216,7 +216,7 @@ const ProductList = () => {
                     product.brand
                   )}
                 </td>
-                <td className="py-3 px-4 border">
+                <td className="border">
                   {isEditing === product.id ? (
                     <input
                       type="number"
@@ -229,7 +229,7 @@ const ProductList = () => {
                     `Rs.${product.price}`
                   )}
                 </td>
-                <td className="py-3 px-4 border">
+                <td className=" border">
                   {isEditing === product.id ? (
                     <input
                       type="number"
@@ -242,7 +242,7 @@ const ProductList = () => {
                     product.rating
                   )}
                 </td>
-                <td className="py-3 px-4 border">
+                <td className=" border">
                   {isEditing === product.id ? (
                     <input
                       type="number"
@@ -255,7 +255,7 @@ const ProductList = () => {
                     product.stock
                   )}
                 </td>
-                <td className="py-3 px-4 border">
+                <td className="border">
                   {isEditing === product.id ? (
                     <input
                       type="date"

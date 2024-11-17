@@ -171,6 +171,11 @@ const Orders = () => {
             className="px-3 py-2 border rounded w-full md:w-auto"
           />
         </div>
+        <div>
+          <button className="bg-black text-white px-2 py-2 rounded">
+            Export in Excel
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto shadow-lg">
@@ -185,6 +190,8 @@ const Orders = () => {
               <th className="py-3 px-4 border">Total Price</th>
               <th className="py-3 px-4 border">Payment Status</th>
               <th className="py-3 px-4 border">Order Status</th>
+              <th className="py-3 px-4 border">Action</th>{" "}
+              {/* Added Action column */}
             </tr>
           </thead>
           <tbody>
@@ -216,6 +223,11 @@ const Orders = () => {
                   )}`}
                 >
                   {order.orderStatus}
+                </td>
+                <td className="py-3 px-4 border">
+                  <button title="Download">
+                    📄 {/* Unicode for a document/download icon */}
+                  </button>
                 </td>
               </tr>
             ))}

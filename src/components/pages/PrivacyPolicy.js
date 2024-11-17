@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const PrivacyPolicy = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col font-beatrice">
-      <div className="w-screen md:px-10  px-4 pb-4">
+      <div className="w-full md:px-10  px-4 pb-4">
         <Link to="/">
           <svg
             width="62"

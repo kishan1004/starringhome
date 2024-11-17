@@ -22,7 +22,7 @@ const OrderConfirmation = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
-      <div className="w-screen md:px-10  px-4 pb-4 pt-10">
+      <div className="max-w-full md:px-10  px-4 pb-4 pt-10">
         <Link to="/">
           <svg
             width="62"

@@ -28,7 +28,7 @@ const UserAccountPage = () => {
         <h1 className="text-4xl font-bold">Your Account</h1>
         <p className="text-lg">Manage your profile and orders</p>
       </header>
-      <div className="w-screen md:px-10  px-4 py-4">
+      <div className="w-full md:px-10  px-4 py-4">
         <Link to="/">
           <svg
             width="62"

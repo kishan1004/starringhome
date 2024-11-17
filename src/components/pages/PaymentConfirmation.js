@@ -2,26 +2,70 @@ import React, { useState } from "react";
 import Product1 from "../../images/product1.jpeg";
 import Product2 from "../../images/product2.jpeg";
 import { Link } from "react-router-dom";
+import { RiArrowDropDownLine } from "react-icons/ri";
+
+const SavedAddress = ({ savedAddress }) => {
+  const [isAddressVisible, setIsAddressVisible] = useState(false);
+
+  const toggleAddressVisibility = () => {
+    setIsAddressVisible((prevState) => !prevState);
+  };
+
+  return (
+    <div className="space-y-6 pb-4">
+      <h3
+        className="text-sm font-semibold cursor-pointer flex items-center"
+        onClick={toggleAddressVisibility}
+      >
+        Deliver to: <RiArrowDropDownLine />
+      </h3>
+      {isAddressVisible && (
+        <div className="space-y-4">
+          <div className="p-3 border border-gray-300 bg-gray-50">
+            <p className="text-sm font-medium">
+              {savedAddress.firstName} {savedAddress.lastName}
+            </p>
+            <p className="text-sm">{savedAddress.address}</p>
+            <p className="text-sm">
+              {savedAddress.city}, {savedAddress.state}{" "}
+              {savedAddress.postalCode}
+            </p>
+            <p className="text-sm">{savedAddress.country}</p>
+            <p className="text-sm">{savedAddress.phone}</p>
+            <p className="text-sm">{savedAddress.email}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const PaymentConfirmation = () => {
-  const [quantity1, setQuantity1] = useState(1);
-  const [quantity2, setQuantity2] = useState(1);
+  const quantity1 = 1;
+  const quantity2 = 2;
+  const size = "L";
 
   const productPrice = 99;
   const shipping = 10;
 
-  const increaseQuantity1 = () => setQuantity1(quantity1 + 1);
-  const decreaseQuantity1 = () => quantity1 > 1 && setQuantity1(quantity1 - 1);
-
-  const increaseQuantity2 = () => setQuantity2(quantity2 + 1);
-  const decreaseQuantity2 = () => quantity2 > 1 && setQuantity2(quantity2 - 1);
-
   const subtotal = quantity1 * productPrice + quantity2 * productPrice;
   const total = subtotal + shipping;
 
+  const savedAddress = {
+    firstName: "John",
+    lastName: "Doe",
+    email: "johndoe@example.com",
+    phone: "123-456-7890",
+    country: "United States",
+    state: "California",
+    address: "123 Main Street",
+    city: "Los Angeles",
+    postalCode: "90001",
+  };
+
   return (
-    <section className="bg-gray-100 font-beatrice">
-      <div className="w-screen md:px-10  px-4">
+    <section className="bg-gray-100 font-beatrice w-full max-[1440px] mx-auto ">
+      <div className="max-w-full md:px-10  px-4">
         <Link to="/all-products">
           <svg
             width="62"
@@ -114,67 +158,13 @@ const PaymentConfirmation = () => {
                   </div>
 
                   <div className="mt-4">
-                    <h2 className="text-xs font-medium">Cotton T Shirt</h2>
+                    <h2 className="text-xs font-medium">
+                      Cotton T Shirt ({quantity1}) ({size})
+                    </h2>
                     <div className="flex justify-between mt-2">
                       <p className="text-sm">Full Sleeve Zipper</p>
-                      <p className="text-sm">$ {productPrice}</p>
+                      <p className="text-sm">Rs. {productPrice}</p>
                     </div>
-                  </div>
-                </div>
-                <div className="flex flex-col items-center mx-2">
-                  <button className="mb-14">
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M11 1.00004L1 11M0.999958 1L10.9999 11"
-                        stroke="#5E5E5E"
-                        stroke-linecap="round"
-                      />
-                    </svg>
-                  </button>
-                  <div className="flex flex-col items-center space-y-3">
-                    <h1>L</h1>
-                    <div className="h-7 w-7 bg-black"></div>
-                    <div className="flex flex-col items-center">
-                      <button
-                        onClick={increaseQuantity1}
-                        className="h-6 w-6 bg-gray-300"
-                      >
-                        +
-                      </button>
-                      <span className="h-6 w-6 bg-white flex items-center justify-center">
-                        {quantity1}
-                      </span>
-                      <button
-                        onClick={decreaseQuantity1}
-                        className="h-6 w-6 bg-gray-300"
-                      >
-                        -
-                      </button>
-                    </div>
-                    <button>
-                      <svg
-                        width="19"
-                        height="16"
-                        viewBox="0 0 19 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.95155 7.55864H2.20155V7.55864L2.95155 7.55864ZM2.95155 8.87037L2.39007 9.3676C2.52536 9.52037 2.71705 9.61142 2.92094 9.61975C3.12483 9.62807 3.32331 9.55296 3.4706 9.41174L2.95155 8.87037ZM5.76905 7.20804C6.06805 6.92137 6.07804 6.4466 5.79137 6.14761C5.50471 5.84862 5.02994 5.83863 4.73095 6.1253L5.76905 7.20804ZM1.56148 6.16943C1.28686 5.85934 0.812863 5.83057 0.502767 6.10519C0.19267 6.3798 0.163906 6.8538 0.438521 7.1639L1.56148 6.16943ZM13.8826 3.6343C14.1639 3.93837 14.6384 3.95683 14.9425 3.67555C15.2465 3.39427 15.265 2.91976 14.9837 2.6157L13.8826 3.6343ZM9.56192 0.25C5.50246 0.25 2.20155 3.51665 2.20155 7.55864H3.70155C3.70155 4.35616 6.31976 1.75 9.56192 1.75V0.25ZM2.20155 7.55864L2.20155 8.87037L3.70155 8.87037L3.70155 7.55864L2.20155 7.55864ZM3.4706 9.41174L5.76905 7.20804L4.73095 6.1253L2.4325 8.329L3.4706 9.41174ZM3.51303 8.37314L1.56148 6.16943L0.438521 7.1639L2.39007 9.3676L3.51303 8.37314ZM14.9837 2.6157C13.6387 1.16173 11.7064 0.25 9.56192 0.25V1.75C11.2731 1.75 12.811 2.47586 13.8826 3.6343L14.9837 2.6157Z"
-                          fill="#8A8A8A"
-                        />
-                        <path
-                          d="M16.0436 7.29688L16.6043 6.79875C16.4688 6.64627 16.2771 6.55554 16.0733 6.54746C15.8695 6.53939 15.6712 6.61466 15.5241 6.75594L16.0436 7.29688ZM13.2308 8.95842C12.9321 9.24534 12.9225 9.72012 13.2094 10.0189C13.4963 10.3176 13.9711 10.3272 14.2698 10.0403L13.2308 8.95842ZM17.4396 9.99748C17.7147 10.3071 18.1888 10.3351 18.4985 10.06C18.8081 9.78493 18.8361 9.31088 18.561 9.00122L17.4396 9.99748ZM5.08887 12.5546C4.80541 12.2526 4.33078 12.2375 4.02875 12.521C3.72671 12.8044 3.71165 13.2791 3.99511 13.5811L5.08887 12.5546ZM9.40795 15.9172C13.4787 15.9172 16.7936 12.6533 16.7936 8.6086H15.2936C15.2936 11.8084 12.6668 14.4172 9.40795 14.4172V15.9172ZM16.7936 8.6086V7.29688H15.2936V8.6086H16.7936ZM15.5241 6.75594L13.2308 8.95842L14.2698 10.0403L16.5631 7.83781L15.5241 6.75594ZM15.4829 7.795L17.4396 9.99748L18.561 9.00122L16.6043 6.79875L15.4829 7.795ZM3.99511 13.5811C5.34385 15.0182 7.2712 15.9172 9.40795 15.9172V14.4172C7.69966 14.4172 6.16389 13.7001 5.08887 12.5546L3.99511 13.5811Z"
-                          fill="#8A8A8A"
-                        />
-                      </svg>
-                    </button>
                   </div>
                 </div>
               </div>
@@ -214,67 +204,13 @@ const PaymentConfirmation = () => {
                   </div>
 
                   <div className="mt-4">
-                    <h2 className="text-xs font-medium">Cotton T Shirt</h2>
+                    <h2 className="text-xs font-medium">
+                      Cotton T Shirt ({quantity2}) ({size})
+                    </h2>
                     <div className="flex justify-between mt-2">
                       <p className="text-sm">Full Sleeve Zipper</p>
-                      <p className="text-sm">$ {productPrice}</p>
+                      <p className="text-sm">Rs. {productPrice}</p>
                     </div>
-                  </div>
-                </div>
-                <div className="flex flex-col items-center mx-2">
-                  <button className="mb-14">
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M11 1.00004L1 11M0.999958 1L10.9999 11"
-                        stroke="#5E5E5E"
-                        stroke-linecap="round"
-                      />
-                    </svg>
-                  </button>
-                  <div className="flex flex-col items-center space-y-3">
-                    <h1>L</h1>
-                    <div className="h-7 w-7 bg-black"></div>
-                    <div className="flex flex-col items-center">
-                      <button
-                        onClick={increaseQuantity2}
-                        className="h-6 w-6 bg-gray-300"
-                      >
-                        +
-                      </button>
-                      <span className="h-6 w-6 bg-white flex items-center justify-center">
-                        {quantity2}
-                      </span>
-                      <button
-                        onClick={decreaseQuantity2}
-                        className="h-6 w-6 bg-gray-300"
-                      >
-                        -
-                      </button>
-                    </div>
-                    <button>
-                      <svg
-                        width="19"
-                        height="16"
-                        viewBox="0 0 19 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.95155 7.55864H2.20155V7.55864L2.95155 7.55864ZM2.95155 8.87037L2.39007 9.3676C2.52536 9.52037 2.71705 9.61142 2.92094 9.61975C3.12483 9.62807 3.32331 9.55296 3.4706 9.41174L2.95155 8.87037ZM5.76905 7.20804C6.06805 6.92137 6.07804 6.4466 5.79137 6.14761C5.50471 5.84862 5.02994 5.83863 4.73095 6.1253L5.76905 7.20804ZM1.56148 6.16943C1.28686 5.85934 0.812863 5.83057 0.502767 6.10519C0.19267 6.3798 0.163906 6.8538 0.438521 7.1639L1.56148 6.16943ZM13.8826 3.6343C14.1639 3.93837 14.6384 3.95683 14.9425 3.67555C15.2465 3.39427 15.265 2.91976 14.9837 2.6157L13.8826 3.6343ZM9.56192 0.25C5.50246 0.25 2.20155 3.51665 2.20155 7.55864H3.70155C3.70155 4.35616 6.31976 1.75 9.56192 1.75V0.25ZM2.20155 7.55864L2.20155 8.87037L3.70155 8.87037L3.70155 7.55864L2.20155 7.55864ZM3.4706 9.41174L5.76905 7.20804L4.73095 6.1253L2.4325 8.329L3.4706 9.41174ZM3.51303 8.37314L1.56148 6.16943L0.438521 7.1639L2.39007 9.3676L3.51303 8.37314ZM14.9837 2.6157C13.6387 1.16173 11.7064 0.25 9.56192 0.25V1.75C11.2731 1.75 12.811 2.47586 13.8826 3.6343L14.9837 2.6157Z"
-                          fill="#8A8A8A"
-                        />
-                        <path
-                          d="M16.0436 7.29688L16.6043 6.79875C16.4688 6.64627 16.2771 6.55554 16.0733 6.54746C15.8695 6.53939 15.6712 6.61466 15.5241 6.75594L16.0436 7.29688ZM13.2308 8.95842C12.9321 9.24534 12.9225 9.72012 13.2094 10.0189C13.4963 10.3176 13.9711 10.3272 14.2698 10.0403L13.2308 8.95842ZM17.4396 9.99748C17.7147 10.3071 18.1888 10.3351 18.4985 10.06C18.8081 9.78493 18.8361 9.31088 18.561 9.00122L17.4396 9.99748ZM5.08887 12.5546C4.80541 12.2526 4.33078 12.2375 4.02875 12.521C3.72671 12.8044 3.71165 13.2791 3.99511 13.5811L5.08887 12.5546ZM9.40795 15.9172C13.4787 15.9172 16.7936 12.6533 16.7936 8.6086H15.2936C15.2936 11.8084 12.6668 14.4172 9.40795 14.4172V15.9172ZM16.7936 8.6086V7.29688H15.2936V8.6086H16.7936ZM15.5241 6.75594L13.2308 8.95842L14.2698 10.0403L16.5631 7.83781L15.5241 6.75594ZM15.4829 7.795L17.4396 9.99748L18.561 9.00122L16.6043 6.79875L15.4829 7.795ZM3.99511 13.5811C5.34385 15.0182 7.2712 15.9172 9.40795 15.9172V14.4172C7.69966 14.4172 6.16389 13.7001 5.08887 12.5546L3.99511 13.5811Z"
-                          fill="#8A8A8A"
-                        />
-                      </svg>
-                    </button>
                   </div>
                 </div>
               </div>
@@ -283,15 +219,18 @@ const PaymentConfirmation = () => {
             <div className="border-t border-dotted border-gray-500 my-6 lg:hidden"></div>
 
             <div className="lg:w-1/3">
+              <div className="md:hidden">
+                <SavedAddress savedAddress={savedAddress} />
+              </div>
               <div className="md:pt-14 md:px-10 md:pb-10 p-4 border">
                 <h2 className="text-lg font-medium mb-4">ORDER SUMMARY</h2>
                 <div className="flex justify-between mb-2">
                   <p className="text-sm">Subtotal</p>
-                  <p>$ {subtotal}</p>
+                  <p>Rs. {subtotal}</p>
                 </div>
                 <div className="flex justify-between mb-2">
                   <p className="text-sm">Shipping</p>
-                  <p>$ {shipping}</p>
+                  <p>Rs. {shipping}</p>
                 </div>
                 <div className="border-t border-dotted border-gray-500 w-full my-6"></div>
                 <div className="flex justify-between font-bold mb-12">
@@ -301,7 +240,7 @@ const PaymentConfirmation = () => {
                       (TAX INCL.)
                     </span>
                   </p>
-                  <p>$ {total}</p>
+                  <p>Rs. {total}</p>
                 </div>
                 <div className="mb-4">
                   <label className="flex items-center">
@@ -320,6 +259,9 @@ const PaymentConfirmation = () => {
           </div>
 
           <div className="border-t border-dotted border-gray-500 md:w-2/3 my-6 hidden lg:block"></div>
+          <div className="max-sm:hidden">
+            <SavedAddress savedAddress={savedAddress} />
+          </div>
         </div>
       </div>
     </section>

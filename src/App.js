@@ -28,7 +28,7 @@ import ShippingInfoPage from "./components/pages/ShippingInfoPage";
 import ReturnRefundPolicyPage from "./components/pages/ReturnRefundPolicyPage";
 import PrivacyPolicy from "./components/pages/PrivacyPolicy";
 import OrderConfirmation from "./components/pages/OrderConfirmation";
-import OTPLogin from "./components/pages/OTPLogin";
+import UserLogin from "./components/pages/UserLogin";
 import UserAccountPage from "./components/pages/UserAccountPage";
 import Dashboard from "./components/adminpanel/Dashboard";
 import ProductList from "./components/adminpanel/ProductList";
@@ -37,18 +37,21 @@ import Orders from "./components/adminpanel/Orders";
 import OrderDetail from "./components/adminpanel/OrderDetail";
 import Inventory from "./components/adminpanel/Inventory";
 import Testimonials from "./components/adminpanel/Testimonials";
-import OrderReport from "./components/adminpanel/OrderReport";
+// import OrderReport from "./components/adminpanel/OrderReport";
 import UserManagement from "./components/adminpanel/UserManagement";
 import Settings from "./components/adminpanel/Settings";
 import Adminbar from "./components/adminpanel/Adminbar";
 import AdminSidebar from "./components/adminpanel/AdminSidebar";
 import Login from "./components/adminpanel/Login"; // Admin Login
 import PaymentConfirmation from "./components/pages/PaymentConfirmation";
+import OTPLogin from "./components/pages/OTPLogin";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const queryClient = new QueryClient();
 
   const toggleSidebar = () => {
     if (!isLargeScreen) {
@@ -56,20 +59,11 @@ function App() {
     }
   };
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    localStorage.setItem("isAuthenticated", "true"); // Store auth state in localStorage
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("isAuthenticated"); // Remove auth state from localStorage
-  };
-
   useEffect(() => {
     // Check if the user is authenticated when the app loads
-    const storedAuthState = localStorage.getItem("isAuthenticated");
-    if (storedAuthState === "true") {
+    const storedAuthState = localStorage.getItem("authToken");
+    console.log(storedAuthState, !!storedAuthState);
+    if (storedAuthState) {
       setIsAuthenticated(true); // Set state based on stored value
     }
 
@@ -85,116 +79,121 @@ function App() {
     };
   }, []);
 
+  const handleLogout = () => {};
+
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="App bg-[#FAFAFA]">
-        <Routes>
-          {/* Public Routes */}
-          <Route
-            path="/"
-            element={
-              <>
-                <HeroSection />
-                <NewArrivalsSection />
-                <TrendingSection />
-                <BannerSection />
-                <FeatureSection />
-                <FooterSection />
-              </>
-            }
-          />
-          <Route
-            path="/all-products"
-            element={
-              <>
-                <Topbar />
-                <AllProductsPage />
-              </>
-            }
-          />
-          <Route
-            path="/one-product"
-            element={
-              <>
-                <Topbar />
-                <ProductPage />
-              </>
-            }
-          />
-          <Route
-            path="/payment-confirmation"
-            element={
-              <>
-                <Topbar />
-                <PaymentConfirmation />
-              </>
-            }
-          />
-          <Route path="/favourites" element={<Favourites />} />
-          <Route path="/size-chart" element={<SizeChart />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/contact-us" element={<ContactUsPage />} />
-          <Route path="/about-us" element={<AboutUsPage />} />
-          <Route path="/shipping-info" element={<ShippingInfoPage />} />
-          <Route path="/return-policy" element={<ReturnRefundPolicyPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/order-confirmation" element={<OrderConfirmation />} />
-          <Route path="/otp-login" element={<OTPLogin />} />
-          <Route path="/user-account" element={<UserAccountPage />} />
-          <Route path="/shopping-cart" element={<ShoppingCart />} />
-
-          {/* Admin Routes */}
-          <Route
-            path="/admin/login"
-            element={<Login onLogin={handleLogin} />}
-          />
-
-          <Route
-            path="/admin/*"
-            element={
-              isAuthenticated ? (
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <ScrollToTop />
+        <div className="App bg-[#FAFAFA] ">
+          <Routes>
+            {/* Public Routes */}
+            <Route
+              path="/"
+              element={
                 <>
-                  <Adminbar
-                    toggleSidebar={toggleSidebar}
-                    onLogout={handleLogout}
-                  />
-                  <div className="flex flex-col lg:flex-row">
-                    {isSidebarOpen && (
-                      <AdminSidebar toggleSidebar={toggleSidebar} />
-                    )}
-                    <div className="flex-grow">
-                      <Routes>
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="products" element={<ProductList />} />
-                        <Route path="upload" element={<ProductUpload />} />
-                        <Route path="orders" element={<Orders />} />
-                        <Route
-                          path="orders/:orderId"
-                          element={<OrderDetail />}
-                        />
-                        <Route path="testimonials" element={<Testimonials />} />
-                        <Route path="settings" element={<Settings />} />
-                        <Route
-                          path="user-management"
-                          element={<UserManagement />}
-                        />
-                        <Route path="report" element={<OrderReport />} />
-                        <Route path="inventory" element={<Inventory />} />
-                      </Routes>
-                    </div>
-                  </div>
+                  <HeroSection />
+                  <NewArrivalsSection />
+                  <TrendingSection />
+                  <BannerSection />
+                  <FeatureSection />
+                  <FooterSection />
                 </>
-              ) : (
-                <Navigate to="/admin/login" /> // Redirect unauthenticated users to admin login page
-              )
-            }
-          />
-          {/* Redirect 404 */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </div>
-    </Router>
+              }
+            />
+            <Route
+              path="/all-products"
+              element={
+                <>
+                  <Topbar />
+                  <AllProductsPage />
+                </>
+              }
+            />
+            <Route
+              path="/one-product"
+              element={
+                <>
+                  <Topbar />
+                  <ProductPage />
+                </>
+              }
+            />
+            <Route
+              path="/payment-confirmation"
+              element={
+                <>
+                  <Topbar />
+                  <PaymentConfirmation />
+                </>
+              }
+            />
+            <Route path="/favourites" element={<Favourites />} />
+            <Route path="/size-chart" element={<SizeChart />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/contact-us" element={<ContactUsPage />} />
+            <Route path="/about-us" element={<AboutUsPage />} />
+            <Route path="/shipping-info" element={<ShippingInfoPage />} />
+            <Route path="/return-policy" element={<ReturnRefundPolicyPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/user-login" element={<UserLogin />} />
+            <Route path="/user-account" element={<UserAccountPage />} />
+            <Route path="/shopping-cart" element={<ShoppingCart />} />
+            <Route path="/otp-login" element={<OTPLogin />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<Login />} />
+
+            <Route
+              path="/admin/*"
+              element={
+                isAuthenticated ? (
+                  <>
+                    <Adminbar
+                      toggleSidebar={toggleSidebar}
+                      onLogout={handleLogout}
+                    />
+                    <div className="flex flex-col lg:flex-row">
+                      {isSidebarOpen && (
+                        <AdminSidebar toggleSidebar={toggleSidebar} />
+                      )}
+                      <div className="flex-grow">
+                        <Routes>
+                          <Route path="dashboard" element={<Dashboard />} />
+                          <Route path="products" element={<ProductList />} />
+                          <Route path="upload" element={<ProductUpload />} />
+                          <Route path="orders" element={<Orders />} />
+                          <Route
+                            path="orders/:orderId"
+                            element={<OrderDetail />}
+                          />
+                          <Route
+                            path="testimonials"
+                            element={<Testimonials />}
+                          />
+                          <Route path="settings" element={<Settings />} />
+                          <Route
+                            path="user-management"
+                            element={<UserManagement />}
+                          />
+                          {/* <Route path="report" element={<OrderReport />} /> */}
+                          <Route path="inventory" element={<Inventory />} />
+                        </Routes>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <Navigate to="/admin/login" /> // Redirect unauthenticated users to admin login page
+                )
+              }
+            />
+            {/* Redirect 404 */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </div>
+      </Router>
+    </QueryClientProvider>
   );
 }
 

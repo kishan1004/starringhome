@@ -110,8 +110,8 @@ const ProductPage = () => {
   };
 
   return (
-    <section className="bg-gray-100 font-beatrice">
-      <div className="w-screen md:px-10  px-4">
+    <section className="bg-gray-100 font-beatrice max-w-[1440px] mx-auto w-full">
+      <div className="w-full md:px-10  px-4">
         <Link to="/all-products">
           <svg
             width="62"
@@ -251,7 +251,7 @@ const ProductPage = () => {
             </div>
           </div>
           <p className="text-xs text-gray-500 pb-3 underline">
-            <Link to="/SizeChart">FIND YOUR SIZE | MEASUREMENT GUIDE</Link>
+            <Link to="/size-chart">FIND YOUR SIZE | MEASUREMENT GUIDE</Link>
           </p>
           <button className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white">
             ADD

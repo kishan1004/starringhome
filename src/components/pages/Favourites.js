@@ -75,7 +75,7 @@ const Favourites = () => {
 
   return (
     <div className="min-h-screen md:px-10 bg-gray-100 font-beatrice">
-      <section className="max-w-screen md:px-10 px-4 pt-14 py-10">
+      <section className="max-w-full md:px-10 px-4 pt-14 py-10">
         <Link to="/all-products">
           <svg
             width="62"

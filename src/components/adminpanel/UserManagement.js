@@ -7,59 +7,52 @@ const UserManagement = () => {
   const [users, setUsers] = useState([
     {
       id: 1,
-      name: "Alice",
+      firstName: "Alice",
+      lastName: "Smith",
       email: "alice@example.com",
-      username: "alice123",
       phone: "123-456-7890",
+      username: "alice.smith",
     },
     {
       id: 2,
-      name: "Bob",
+      firstName: "Bob",
+      lastName: "Johnson",
       email: "bob@example.com",
-      username: "bob123",
       phone: "987-654-3210",
-    },
-    {
-      id: 3,
-      name: "Blake",
-      email: "blake@example.com",
-      username: "blake123",
-      phone: "987-654-3210",
-    },
-    {
-      id: 4,
-      name: "Casse",
-      email: "casse@example.com",
-      username: "casse123",
-      phone: "987-654-3210",
+      username: "bob.johnson",
     },
   ]);
 
   const [newUser, setNewUser] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
-    username: "",
     phone: "",
     password: "",
   });
   const [editingUser, setEditingUser] = useState(null);
 
+  const generateUsername = (firstName, lastName) => {
+    return `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
+  };
+
   const handleAddUser = () => {
     if (
-      newUser.name &&
+      newUser.firstName &&
+      newUser.lastName &&
       newUser.email &&
-      newUser.username &&
       newUser.phone &&
       newUser.password
     ) {
       const newUserId = users.length
         ? Math.max(users.map((user) => user.id)) + 1
         : 1;
-      setUsers([...users, { id: newUserId, ...newUser }]);
+      const username = generateUsername(newUser.firstName, newUser.lastName);
+      setUsers([...users, { id: newUserId, username, ...newUser }]);
       setNewUser({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
-        username: "",
         phone: "",
         password: "",
       });
@@ -74,17 +67,23 @@ const UserManagement = () => {
   };
 
   const handleSaveEdit = () => {
-    if (newUser.name && newUser.email && newUser.username && newUser.phone) {
+    if (
+      newUser.firstName &&
+      newUser.lastName &&
+      newUser.email &&
+      newUser.phone
+    ) {
+      const username = generateUsername(newUser.firstName, newUser.lastName);
       setUsers(
         users.map((user) =>
-          user.id === editingUser.id ? { ...user, ...newUser } : user
+          user.id === editingUser.id ? { ...user, username, ...newUser } : user
         )
       );
       setEditingUser(null);
       setNewUser({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
-        username: "",
         phone: "",
         password: "",
       });
@@ -118,10 +117,21 @@ const UserManagement = () => {
         <div className="flex flex-col gap-2">
           <input
             type="text"
-            placeholder="Name"
+            placeholder="First Name"
             className="border border-gray-300 p-2 rounded"
-            value={newUser.name}
-            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+            value={newUser.firstName}
+            onChange={(e) =>
+              setNewUser({ ...newUser, firstName: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            className="border border-gray-300 p-2 rounded"
+            value={newUser.lastName}
+            onChange={(e) =>
+              setNewUser({ ...newUser, lastName: e.target.value })
+            }
           />
           <input
             type="email"
@@ -129,15 +139,6 @@ const UserManagement = () => {
             className="border border-gray-300 p-2 rounded"
             value={newUser.email}
             onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Username"
-            className="border border-gray-300 p-2 rounded"
-            value={newUser.username}
-            onChange={(e) =>
-              setNewUser({ ...newUser, username: e.target.value })
-            }
           />
           <input
             type="text"
@@ -171,20 +172,22 @@ const UserManagement = () => {
         <table className="w-full border-collapse mt-5">
           <thead>
             <tr>
-              <th className="p-2 border border-gray-300">Name</th>
+              <th className="p-2 border border-gray-300">First Name</th>
+              <th className="p-2 border border-gray-300">Last Name</th>
               <th className="p-2 border border-gray-300">Email</th>
-              <th className="p-2 border border-gray-300">Username</th>
               <th className="p-2 border border-gray-300">Phone</th>
+              <th className="p-2 border border-gray-300">Username</th>
               <th className="p-2 border border-gray-300">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id} className="hover:bg-gray-100">
-                <td className="p-2 border border-gray-300">{user.name}</td>
+                <td className="p-2 border border-gray-300">{user.firstName}</td>
+                <td className="p-2 border border-gray-300">{user.lastName}</td>
                 <td className="p-2 border border-gray-300">{user.email}</td>
-                <td className="p-2 border border-gray-300">{user.username}</td>
                 <td className="p-2 border border-gray-300">{user.phone}</td>
+                <td className="p-2 border border-gray-300">{user.username}</td>
                 <td className="p-2 border border-gray-300 flex justify-around">
                   <button
                     className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center gap-1"

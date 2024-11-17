@@ -13,3 +13,13 @@
   font-weight: 700;
   font-style: normal;
 }
+
+html {
+  max-width: 1440px;
+  margin: auto;
+  width: 100%;
+  background: #fafafa;
+}
+body {
+  font-family: "Roboto", sans-serif;
+}

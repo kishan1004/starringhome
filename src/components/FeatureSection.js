@@ -5,8 +5,8 @@ const FeatureSection = () => {
     {
       icon1: (
         <svg
-          width="150"
-          height="150"
+          width="140"
+          height="130"
           viewBox="0 0 164 164"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -32,13 +32,13 @@ const FeatureSection = () => {
       ),
       title: "Shipping Worldwide",
       description:
-        "Nam posuere accumsan porta. Integer id orci sed ante tincidunt tincidunt sit amet sed libero.",
+        "Wherever you are, we’ve got you covered! Enjoy seamless shopping with fast and reliable worldwide shipping straight to your doorstep.",
     },
     {
       icon1: (
         <svg
-          width="124"
-          height="146"
+          width="114"
+          height="116"
           viewBox="0 0 134 156"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -82,13 +82,13 @@ const FeatureSection = () => {
       ),
       title: "Quality Support",
       description:
-        "Nam posuere accumsan porta. Integer id orci sed ante tincidunt tincidunt sit amet sed libero.",
+        "Experience top-notch assistance every step of the way. Our dedicated support team is here to ensure your satisfaction.",
     },
     {
       icon1: (
         <svg
-          width="130"
-          height="168"
+          width="120"
+          height="148"
           viewBox="0 0 140 188"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +120,7 @@ const FeatureSection = () => {
       ),
       title: "Return Exchange",
       description:
-        "Nam posuere accumsan porta. Integer id orci sed ante tincidunt tincidunt sit amet sed libero.",
+        "Shop with confidence knowing we’ve got you covered. Enjoy hassle-free returns and exchanges for a seamless shopping experience.",
     },
   ];
 

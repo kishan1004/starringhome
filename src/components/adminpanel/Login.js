@@ -1,35 +1,54 @@
 import React, { useState, useEffect } from "react";
 import Blacklogo from "../../images/starringblack.png";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
+
+import { loginApi } from "../../api/auth";
 
 const Login = ({ onLogin }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const mutation = useMutation(loginApi);
 
   useEffect(() => {
     // Check if the user is already logged in (check localStorage)
-    if (localStorage.getItem("isLoggedIn") === "true") {
+    if (localStorage.getItem("authToken")) {
       navigate("/admin/dashboard"); // Redirect to dashboard if already logged in
     }
   }, [navigate]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
+    mutation.mutate(
+      { email: username, password: password },
+      {
+        onSuccess: (res) => {
+          console.log(res);
+          localStorage.setItem("authToken", res.data.detail.token);
+          navigate("/admin/dashboard");
+        },
+        onError: (err) => {
+          console.log(err);
+          alert("Invalid username or password");
+        },
+      }
+    );
+
     // Check if the username and password are correct
-    if (username === "StarringAdmin01" && password === "*#123&%478SSERd") {
-      // Call the onLogin prop to set authentication
-      onLogin();
+    // if (username === "StarringAdmin01" && password === "*#123&%478SSERd") {
+    //   // Call the onLogin prop to set authentication
+    //   onLogin();
 
-      // Persist login state in localStorage
-      localStorage.setItem("isLoggedIn", "true");
+    //   // Persist login state in localStorage
+    //   localStorage.setItem("isLoggedIn", "true");
 
-      // Redirect to dashboard
-      navigate("/admin/dashboard");
-    } else {
-      alert("Invalid username or password");
-    }
+    //   // Redirect to dashboard
+    //   navigate("/admin/dashboard");
+    // } else {
+    //   alert("Invalid username or password");
+    // }
   };
 
   return (

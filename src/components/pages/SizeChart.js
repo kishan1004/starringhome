@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 const SizeChart = () => {
   return (
-    <div className="container mx-auto pb-10 p-4 md:px-10 font-beatrice bg-gray-100">
+    <div className="pb-10 p-4 md:px-10 min-h-screen font-beatrice bg-gray-100">
       {/* Inches Table */}
-      <section className="max-w-screen py-14">
+      <section className="max-w-full py-14">
         <Link to="/one-product">
           <svg
             width="62"

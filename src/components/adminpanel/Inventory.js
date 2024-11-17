@@ -1,46 +1,45 @@
 import React, { useState } from "react";
 
-// Sample inventory data
 const inventoryData = [
   {
     id: "#p1",
     productName: "T-Shirt - Red",
     stockUpdateDate: "2024-11-01",
-    updatedStock: 100,
+    openingStock: 120,
     orderedStock: 20,
-    remainingStock: 80,
+    shippedStock: 10, // Ensure shippedStock <= orderedStock
   },
   {
     id: "#p2",
     productName: "Jeans - Blue",
     stockUpdateDate: "2024-11-02",
-    updatedStock: 150,
+    openingStock: 180,
     orderedStock: 30,
-    remainingStock: 120,
+    shippedStock: 20,
   },
   {
     id: "#p3",
     productName: "Hoodie - Black",
     stockUpdateDate: "2024-11-03",
-    updatedStock: 75,
+    openingStock: 90,
     orderedStock: 10,
-    remainingStock: 65,
+    shippedStock: 5,
   },
   {
     id: "#p4",
     productName: "Jacket - Green",
     stockUpdateDate: "2024-11-04",
-    updatedStock: 50,
+    openingStock: 70,
     orderedStock: 5,
-    remainingStock: 45,
+    shippedStock: 5,
   },
   {
     id: "#p5",
     productName: "Sneakers - White",
     stockUpdateDate: "2024-11-05",
-    updatedStock: 200,
+    openingStock: 220,
     orderedStock: 50,
-    remainingStock: 150,
+    shippedStock: Math.min(50, 70),
   },
 ];
 
@@ -104,9 +103,10 @@ const Inventory = () => {
               <th className="py-3 px-4 border">Product ID</th>
               <th className="py-3 px-4 border">Product Name</th>
               <th className="py-3 px-4 border">Stock Update Date</th>
-              <th className="py-3 px-4 border">Updated Stock</th>
+              <th className="py-3 px-4 border">Opening Stock</th>
+              <th className="py-3 px-4 border">Closing Stock</th>
               <th className="py-3 px-4 border">Ordered Stock</th>
-              <th className="py-3 px-4 border">Remaining Stock</th>
+              <th className="py-3 px-4 border">Shipped Stock</th>
             </tr>
           </thead>
           <tbody>
@@ -116,14 +116,18 @@ const Inventory = () => {
                   <td className="py-3 px-4 border">{item.id}</td>
                   <td className="py-3 px-4 border">{item.productName}</td>
                   <td className="py-3 px-4 border">{item.stockUpdateDate}</td>
-                  <td className="py-3 px-4 border">{item.updatedStock}</td>
+                  <td className="py-3 px-4 border">{item.openingStock}</td>
+                  <td className="py-3 px-4 border">
+                    {item.openingStock - item.shippedStock}
+                  </td>{" "}
+                  {/* Closing stock calculation */}
                   <td className="py-3 px-4 border">{item.orderedStock}</td>
-                  <td className="py-3 px-4 border">{item.remainingStock}</td>
+                  <td className="py-3 px-4 border">{item.shippedStock}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="py-3 px-4 border text-center">
+                <td colSpan="7" className="py-3 px-4 border text-center">
                   No inventory data found for the selected date range.
                 </td>
               </tr>

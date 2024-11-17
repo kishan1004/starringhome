@@ -432,7 +432,7 @@ const Dashboard = () => {
             {/* Adjusted margin for mobile responsiveness */}
             Order Status Distribution
           </h2>
-          <div className="max-w-96">
+          <div className="xl:max-w-96">
             <Doughnut
               data={pieChartData}
               options={{
@@ -456,13 +456,13 @@ const Dashboard = () => {
             />
           </div>
         </div>
-        <div className="">
+        <div>
           <h2 className="text-lg font-semibold mb-4">
             Traffic & Sales Overview
           </h2>
 
           {/* Traffic Sources */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+          <div className="grid grid-cols-1 gap-4 my-6">
             {/* Organic Search */}
             <div className="flex items-center p-4 bg-gray-100 rounded-lg shadow">
               <FaSearch className="text-blue-500 text-3xl mr-4" />
@@ -498,12 +498,12 @@ const Dashboard = () => {
           </div>
 
           {/* Daily Sales */}
-          <div className="p-4 bg-gray-100 rounded-lg shadow">
+          {/* <div className="p-4 bg-gray-100 rounded-lg shadow">
             <h3 className="text-gray-500">Daily Sales</h3>
             <h2 className="text-2xl font-semibold">
               ${stats.trafficData.dailySales}
             </h2>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

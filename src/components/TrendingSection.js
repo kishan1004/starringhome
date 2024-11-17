@@ -61,7 +61,7 @@ const TrendingSection = () => {
         </div>
       </div>
 
-      <div className="relative h-[500px] w-screen bg-cover max-sm:bg-center">
+      <div className="relative 2xl:h-[700px] h-[600px] max-w[1440px] w-full mx-auto bg-cover max-sm:bg-center">
         {/* Video Background */}
         <video
           autoPlay

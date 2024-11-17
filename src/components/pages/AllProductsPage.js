@@ -62,29 +62,6 @@ const AllProductsPage = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
-  const [selectedColors, setSelectedColors] = useState([]);
-
-  const colors = [
-    "Red",
-    "Blue",
-    "Green",
-    "Yellow",
-    "Black",
-    "White",
-    "Pink",
-    "Brown",
-    "Orange",
-  ];
-
-  const handleColorSelect = (color) => {
-    setSelectedColors((prevSelectedColors) =>
-      prevSelectedColors.includes(color)
-        ? prevSelectedColors.filter((c) => c !== color)
-        : [...prevSelectedColors, color]
-    );
-  };
-
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -149,7 +126,7 @@ const AllProductsPage = () => {
     setMinPrice(0);
     setMaxPrice(5000);
     setSelectedRatings([]);
-    setSelectedColors([]);
+
     setSelectedCategories([]);
     setSelectedTags([]);
     setSelectedCollections([]);
@@ -162,7 +139,7 @@ const AllProductsPage = () => {
       minPrice,
       maxPrice,
       selectedRatings,
-      selectedColors,
+
       selectedCategories,
       selectedTags,
       selectedCollections,
@@ -179,10 +156,11 @@ const AllProductsPage = () => {
       name: "Cool Shirt",
       image: Product2img,
       price: 199,
+      offerPrice: 150,
       availability: "available",
       sizes: ["S", "M", "L"],
       ratings: [4, 5],
-      colors: ["Blue", "Red"],
+
       tags: ["Top Rated", "New Trend"],
       collections: ["Summer", "Beach"],
     },
@@ -192,10 +170,11 @@ const AllProductsPage = () => {
       name: "Summer Shorts",
       image: Product4img,
       price: 99,
+      offerPrice: 50,
       availability: "available",
       sizes: ["M", "L"],
       ratings: [3, 4],
-      colors: ["Yellow"],
+
       tags: ["Best Seller"],
       collections: ["Summer"],
     },
@@ -205,10 +184,11 @@ const AllProductsPage = () => {
       name: "Formal Suit",
       image: Product5img,
       price: 399,
+      offerPrice: 150,
       availability: "outOfStock",
       sizes: ["M", "L", "XL"],
       ratings: [5],
-      colors: ["Black"],
+
       tags: ["Classic"],
       collections: ["Winter"],
     },
@@ -217,11 +197,12 @@ const AllProductsPage = () => {
       type: "T-SHIRTS",
       name: "Graphic Tee",
       image: Product6img,
-      price: 49,
+      price: 299,
+      offerPrice: 150,
       availability: "available",
       sizes: ["XS", "S"],
       ratings: [4],
-      colors: ["White"],
+
       tags: ["New Trend"],
       collections: ["Festival"],
     },
@@ -231,10 +212,11 @@ const AllProductsPage = () => {
       name: "Blue Jeans",
       image: Product2img,
       price: 149,
+      offerPrice: 100,
       availability: "available",
       sizes: ["M", "L", "XL"],
       ratings: [3, 4],
-      colors: ["Blue"],
+
       tags: ["Top Rated"],
       collections: ["Trekking"],
     },
@@ -244,10 +226,11 @@ const AllProductsPage = () => {
       name: "Winter Jacket",
       image: Product4img,
       price: 249,
+      offerPrice: 150,
       availability: "available",
       sizes: ["L", "XL"],
       ratings: [5],
-      colors: ["Black"],
+
       tags: ["Classic"],
       collections: ["Winter"],
     },
@@ -257,10 +240,11 @@ const AllProductsPage = () => {
       name: "Classic Coat",
       image: Product5img,
       price: 299,
+      offerPrice: 150,
       availability: "available",
       sizes: ["M", "L"],
       ratings: [4, 5],
-      colors: ["Brown"],
+
       tags: ["Top Rated"],
       collections: ["Winter"],
     },
@@ -270,14 +254,22 @@ const AllProductsPage = () => {
       name: "New Arrival",
       image: Product6img,
       price: 199,
+      offerPrice: 150,
       availability: "available",
       sizes: ["S", "M"],
       ratings: [4],
-      colors: ["Pink"],
+
       tags: ["New Trend"],
       collections: ["Festival"],
     },
   ];
+
+  const updatedItems = items.map((item) => ({
+    ...item,
+    offerPercentage: Math.round(
+      ((item.price - item.offerPrice) / item.price) * 100
+    ),
+  }));
 
   const filters = [
     "ALL",
@@ -306,8 +298,8 @@ const AllProductsPage = () => {
   };
 
   return (
-    <section className="bg-gray-100 font-beatrice">
-      <div className="w-screen  px-4 pb-5">
+    <section className="bg-gray-100 font-beatrice min-h-screen">
+      <div className="w-full  px-4 pb-5">
         <Link to="/">
           <svg
             width="62"
@@ -367,7 +359,7 @@ const AllProductsPage = () => {
           <aside
             className={`${
               isSidebarVisible ? "block" : "hidden"
-            } lg:block pt-4 px-5  bg-gray-100 z-50 absolute top-0 left-0 h-full lg:relative`}
+            } lg:block pt-4 px-5  bg-gray-100 z-50 absolute top-0 left-0 min-h-full lg:relative`}
           >
             <h3 className="text-xl font-bold mb-4">Filters</h3>
 
@@ -425,7 +417,7 @@ const AllProductsPage = () => {
 
               {isAvailabilityOpen && (
                 <div className="flex flex-col space-y-4">
-                  <label className="flex items-center">
+                  <label className="flex items-center font-bold">
                     <input
                       type="checkbox"
                       name="available"
@@ -436,7 +428,7 @@ const AllProductsPage = () => {
                     Available
                     <span className="text-blue-700 ml-5">(450)</span>
                   </label>
-                  <label className="flex items-center">
+                  <label className="flex items-center font-bold">
                     <input
                       type="checkbox"
                       name="outOfStock"
@@ -494,60 +486,14 @@ const AllProductsPage = () => {
                         className="form-checkbox text-blue-500"
                       />
                       <span
-                        className={`text-sm ${
+                        className={`text-sm font-bold ${
                           selectedCategories.includes(category)
-                            ? "font-bold text-blue-500"
-                            : "text-gray-700"
+                            ? "font-bold"
+                            : "text-black"
                         }`}
                       >
                         {category}
                       </span>
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
-
-            <div className="my-4">
-              <div
-                className="flex items-center justify-between cursor-pointer"
-                onClick={() => setIsColorDropdownOpen(!isColorDropdownOpen)}
-              >
-                <h4 className="font-bold text-sm">Colors</h4>
-                <svg
-                  width="7"
-                  height="11"
-                  viewBox="0 0 7 11"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${
-                    isColorDropdownOpen ? "rotate-90" : ""
-                  }`}
-                >
-                  <path
-                    d="M1 10L6 5.5L1 1"
-                    stroke="black"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-              {isColorDropdownOpen && (
-                <div className="flex flex-col space-y-2 mt-4 pl-4">
-                  {colors.map((color) => (
-                    <label
-                      key={color}
-                      className="flex items-center cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedColors.includes(color)}
-                        onChange={() => handleColorSelect(color)}
-                        className="form-checkbox h-4 w-4 text-gray-600 border-gray-300 rounded"
-                      />
-                      <span className="ml-2 text-sm">{color}</span>
                     </label>
                   ))}
                 </div>
@@ -621,7 +567,7 @@ const AllProductsPage = () => {
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                     />
                   </div>
-                  <p className="mt-2 text-sm text-gray-700">
+                  <p className="mt-2 text-sm font-bold">
                     Selected range: ${minPrice} - ${maxPrice}
                   </p>
                 </div>
@@ -670,10 +616,10 @@ const AllProductsPage = () => {
                         className="form-checkbox text-blue-500"
                       />
                       <span
-                        className={`text-sm ${
+                        className={`text-sm font-bold ${
                           selectedCollections.includes(collection)
-                            ? "font-bold text-blue-500"
-                            : "text-gray-700"
+                            ? "font-bold"
+                            : "text-black"
                         }`}
                       >
                         {collection}
@@ -722,10 +668,10 @@ const AllProductsPage = () => {
                         className="form-checkbox text-blue-500"
                       />
                       <span
-                        className={`text-sm ${
+                        className={`text-sm font-bold ${
                           selectedTags.includes(tag)
-                            ? "font-bold text-blue-500"
-                            : "text-gray-700"
+                            ? "font-bold"
+                            : "text-black"
                         }`}
                       >
                         {tag}
@@ -806,7 +752,7 @@ const AllProductsPage = () => {
 
             <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
 
-            <div className="flex space-x-4 mt-6">
+            <div className="flex space-x-4 my-6">
               <button
                 onClick={handleClearAll}
                 className="w-full py-2 bg-black hover:text-[#D9D9D9] text-white font-semibold rounded"
@@ -900,39 +846,44 @@ const AllProductsPage = () => {
           </div>
 
           {/* Display Filtered Products */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-6 pt-10">
             {filteredItems.length > 0 ? (
-              filteredItems.map(({ id, name, image, price }) => (
-                <Link to="/one-product">
-                  <div key={id} className="border rounded-md p-4 bg-white">
-                    <img
-                      src={image}
-                      alt={name}
-                      className="h-80 w-full object-cover"
-                    />
-                    <div className="flex items-center space-x-1 pt-2">
-                      <p className="font-medium text-xs text-gray-600">
-                        {name}
-                      </p>
-                      <div className="h-3 w-3 bg-black"></div>
-                      <p className="font-medium text-xs text-gray-600">
-                        +
-                        {Math.max(
-                          ...items.find((item) => item.id === id).ratings
-                        )}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between pt-2">
-                      <h2 className="font-medium text-sm">
-                        <a href="https://stupendous-cranachan-15451e.netlify.app/">
+              filteredItems.map(({ id, name, image, price, offerPrice }) => {
+                // Find the item to calculate max rating and offer percentage
+                const item = items.find((item) => item.id === id);
+                const maxRating = Math.max(...item.ratings);
+                const offerPercentage = Math.round(
+                  ((price - offerPrice) / price) * 100
+                );
+
+                return (
+                  <Link to="/one-product" key={id}>
+                    <div className="border rounded-md p-4 bg-white">
+                      <img
+                        src={image}
+                        alt={name}
+                        className="h-80 w-full object-cover"
+                      />
+                      <div className="flex items-center space-x-3 pt-2">
+                        <p className="font-medium text-xs text-gray-600">
                           {name}
-                        </a>
-                      </h2>
-                      <p className="text-gray-600">Rs.{price.toFixed(2)}</p>
+                        </p>
+                        <p className="font-medium text-xs text-gray-600">
+                          ({maxRating} ratings)
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between pt-2">
+                        <h2 className="font-medium text-sm">{name}</h2>
+                        <p className="text-gray-600 line-through">Rs.{price}</p>
+                        <p className="text-lg font-bold">Rs.{offerPrice}</p>
+                        <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
+                          {offerPercentage}% OFF
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))
+                  </Link>
+                );
+              })
             ) : (
               <p className="text-gray-500">No items found for this filter.</p>
             )}

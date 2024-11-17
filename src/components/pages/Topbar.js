@@ -133,7 +133,7 @@ const Topbar = ({ cartCount }) => {
       </div>
 
       {isMenuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-white shadow-md md:hidden">
+        <div className="absolute top-24 left-0 w-full bg-white shadow-md md:hidden">
           <nav className="flex flex-col items-center space-y-4 p-4">
             <a href="/" className="text-gray-600 hover:text-black">
               Home
