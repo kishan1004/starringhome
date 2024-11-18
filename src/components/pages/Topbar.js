@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Blacklogo from "../../images/starringblack.png";
 import { Link } from "react-router-dom";
 
-const Topbar = ({ cartCount }) => {
+const Topbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -106,30 +106,31 @@ const Topbar = ({ cartCount }) => {
             </Link>
           </button>
         </div>
-
-        <button>
-          <svg
-            width="51"
-            height="50"
-            viewBox="0 0 51 50"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="25.2593" cy="25" r="25" fill="black" />
-            <circle
-              cx="25.0001"
-              cy="22.4286"
-              r="3.42857"
-              stroke="white"
-              strokeWidth="1.5"
-            />
-            <path
-              d="M31 31.8583C31 29.9647 28.3137 28.4297 25 28.4297C21.6863 28.4297 19 29.9647 19 31.8583"
-              stroke="white"
-              strokeWidth="1.5"
-            />
-          </svg>
-        </button>
+        <Link to="/user-login">
+          <button>
+            <svg
+              width="51"
+              height="50"
+              viewBox="0 0 51 50"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="25.2593" cy="25" r="25" fill="black" />
+              <circle
+                cx="25.0001"
+                cy="22.4286"
+                r="3.42857"
+                stroke="white"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M31 31.8583C31 29.9647 28.3137 28.4297 25 28.4297C21.6863 28.4297 19 29.9647 19 31.8583"
+                stroke="white"
+                strokeWidth="1.5"
+              />
+            </svg>
+          </button>
+        </Link>
       </div>
 
       {isMenuOpen && (

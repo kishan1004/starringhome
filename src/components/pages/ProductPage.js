@@ -264,51 +264,61 @@ const ProductPage = () => {
           <h3 className="text-lg font-semibold mb-4">
             Frequently Bought Together
           </h3>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 items-center">
-            {frequentlyBoughtProducts.map((product, index) => {
-              const offerPercentage = Math.round(
-                ((product.originalPrice - product.offerPrice) /
-                  product.originalPrice) *
-                  100
-              );
-              return (
-                <div
-                  key={product.id}
-                  className="relative border p-4 rounded-lg shadow-md"
-                >
-                  <input
-                    type="checkbox"
-                    className="absolute top-2 left-2"
-                    checked={selectedProducts.includes(product.id)}
-                    onChange={() => handleProductSelect(product.id)}
-                  />
-                  <Link to="/one-product" className="block">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-40 object-cover mb-4"
-                    />
-                    <h4 className="text-sm font-medium">{product.name}</h4>
-                    <div className="flex items-center space-x-2 mt-2">
-                      <p className="text-xs line-through text-gray-500">
-                        Rs.{product.originalPrice}
-                      </p>
-                      <p className="md:text-lg text-sm font-medium">
-                        Rs.{product.offerPrice}
-                      </p>
-                      <p className="text-yellow-600 text-xs md:font-medium font-normal">
-                        {offerPercentage}% OFF
-                      </p>
+          <div className="md:flex items-center md:space-x-5 max-sm:space-y-2">
+            <div className="flex justify-between md:space-x-5">
+              {frequentlyBoughtProducts.map((product, index) => {
+                const offerPercentage = Math.round(
+                  ((product.originalPrice - product.offerPrice) /
+                    product.originalPrice) *
+                    100
+                );
+                return (
+                  <React.Fragment key={product.id}>
+                    <div className="relative border p-4 rounded-lg shadow-md">
+                      <input
+                        type="checkbox"
+                        className="absolute top-2 left-2"
+                        checked={selectedProducts.includes(product.id)}
+                        onChange={() => handleProductSelect(product.id)}
+                      />
+                      <Link to="/one-product" className="block">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-52 object-contain mb-4"
+                        />
+                        <h4 className="text-sm font-medium">{product.name}</h4>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <p className="text-xs line-through text-gray-500">
+                            Rs.{product.originalPrice}
+                          </p>
+                          <p className="md:text-lg text-sm font-medium">
+                            Rs.{product.offerPrice}
+                          </p>
+                          <p className="text-yellow-600 text-xs md:font-medium font-normal">
+                            {offerPercentage}% OFF
+                          </p>
+                        </div>
+                      </Link>
                     </div>
-                  </Link>
-                </div>
-              );
-            })}
-            <Link to="/Checkout" className="md:col-span-1 col-span-2">
-              <button className="bg-[#D9D9D9] text-black w-full py-3 mb-5 h-14 rounded  place-self-center  hover:bg-black hover:text-white">
-                BUY ALL
-              </button>
-            </Link>
+                    {index < frequentlyBoughtProducts.length - 1 && (
+                      <div className="flex items-center justify-center">
+                        <span className="text-xl font-bold text-gray-500">
+                          +
+                        </span>
+                      </div>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+            <div>
+              <Link to="/Checkout" className="md:col-span-1 col-span-2">
+                <button className="bg-[#D9D9D9] text-black w-full py-3 px-3 mb-5 h-14 rounded place-self-center hover:bg-black hover:text-white">
+                  BUY ALL
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -334,7 +344,7 @@ const ProductPage = () => {
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-40 object-cover mb-4"
+                      className="w-full h-64 object-contain mb-4"
                     />
                     <h4 className="text-sm font-medium">{product.name}</h4>
                     <div className="flex items-center space-x-2 mt-2">
@@ -354,6 +364,9 @@ const ProductPage = () => {
             })}
           </div>
         </div>
+      </div>
+      <div className="bg-[#CFD8DC] h-10 flex justify-center items-center">
+        <a href="https://callsharks.in/">Designed by callsharks.in</a>
       </div>
     </section>
   );

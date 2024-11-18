@@ -855,7 +855,7 @@ const AllProductsPage = () => {
                       <img
                         src={image}
                         alt={name}
-                        className="h-80 w-full object-cover"
+                        className="h-80 w-full object-contain"
                       />
                       <div className="flex items-center space-x-3 pt-2">
                         <p className="font-medium text-xs text-gray-600">

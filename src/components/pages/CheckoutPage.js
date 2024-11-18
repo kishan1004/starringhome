@@ -45,7 +45,7 @@ const SavedAddress = ({ savedAddress }) => {
 };
 
 const CheckoutPage = () => {
-  const [order] = useState([
+  const [order, setOrder] = useState([
     {
       name: "Basic Heavy T-Shirt",
       size: "L",
@@ -82,9 +82,31 @@ const CheckoutPage = () => {
 
   const totalCount = order.reduce((acc, item) => acc + item.count, 0);
 
+  const handleIncrease = (index) => {
+    setOrder((prevOrder) => {
+      const updatedOrder = [...prevOrder];
+      updatedOrder[index].count += 1;
+      return updatedOrder;
+    });
+  };
+
+  const handleDecrease = (index) => {
+    setOrder((prevOrder) => {
+      const updatedOrder = [...prevOrder];
+      if (updatedOrder[index].count > 1) {
+        updatedOrder[index].count -= 1;
+      }
+      return updatedOrder;
+    });
+  };
+
+  const handleDelete = (index) => {
+    setOrder((prevOrder) => prevOrder.filter((_, i) => i !== index));
+  };
+
   return (
-    <section className="max-w-[1400px] mx-auto w-full">
-      <div className="w-full md:px-10 md:py-14 px-4 py-10">
+    <section className=" w-full bg-gray-100 min-h-screen">
+      <div className=" md:px-10 md:py-14 px-4 py-10">
         <Link to="/one-product">
           <svg
             width="62"
@@ -211,23 +233,47 @@ const CheckoutPage = () => {
             <div className="space-y-6 mt-6">
               {order.map((item, index) => (
                 <div key={index} className="flex items-center">
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="w-28 h-36 object-cover border-2 mr-4"
-                  />
-                  <div className="grid grid-cols-2 md:gap-10 gap-5 place-content-between">
+                  <Link to="/one-product">
+                    <img
+                      src={item.img}
+                      alt={item.name}
+                      className="w-28 h-36 object-cover border-2"
+                    />
+                  </Link>
+                  <div className="grid grid-cols-2 md:gap-10 gap-5 place-content-between ml-4">
                     <div className="flex flex-col">
-                      <p className="font-medium text-base xl:w-52">
-                        {item.name}
-                      </p>
+                      <Link to="/one-product">
+                        <p className="font-medium text-base xl:w-52">
+                          {item.name}
+                        </p>
+                      </Link>
                       <p className="text-xs text-gray-600">{item.size}</p>
                     </div>
                     <div>
-                      <button className="text-sm">x</button>
+                      <button
+                        className="text-red-500 text-lg"
+                        onClick={() => handleDelete(index)}
+                      >
+                        X
+                      </button>
                     </div>
+
                     <div className="text-[#000E8A]">
-                      <p>({item.count})</p>
+                      <div className="text-[#000E8A] flex items-center space-x-2">
+                        <button
+                          className="px-2 py-1 bg-gray-200"
+                          onClick={() => handleDecrease(index)}
+                        >
+                          -
+                        </button>
+                        <p>({item.count})</p>
+                        <button
+                          className="px-2 py-1 bg-gray-200"
+                          onClick={() => handleIncrease(index)}
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                     <div>
                       <p className="font-medium">Rs.{item.price}</p>

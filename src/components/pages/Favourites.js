@@ -74,8 +74,8 @@ const Favourites = () => {
   // }
 
   return (
-    <div className="min-h-screen md:px-10 bg-gray-100 font-beatrice">
-      <section className="max-w-full md:px-10 px-4 pt-14 py-10">
+    <div className="min-h-screen bg-gray-100 font-beatrice">
+      <section className="max-w-full md:px-10 px-4">
         <Link to="/all-products">
           <svg
             width="62"
@@ -115,23 +115,26 @@ const Favourites = () => {
                   >
                     x
                   </button>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-40 object-cover mb-4"
-                  />
-                  <h4 className="text-sm font-medium">{product.name}</h4>
-                  <div className="flex items-center md:space-x-2 space-x-1 mt-2">
-                    <p className="text-xs line-through text-gray-500">
-                      Rs.{product.originalPrice}
-                    </p>
-                    <p className="text-sm md:text-lg font-light">
-                      Rs.{product.offerPrice}
-                    </p>
-                    <p className="text-yellow-600 text-xs md:font-medium font-light">
-                      {offerPercentage}% OFF
-                    </p>
-                  </div>
+                  <Link to="/one-product">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-52 object-contain mb-4"
+                    />
+
+                    <h4 className="text-sm font-medium">{product.name}</h4>
+                    <div className="flex items-center md:space-x-2 space-x-1 mt-2">
+                      <p className="text-xs line-through text-gray-500">
+                        Rs.{product.originalPrice}
+                      </p>
+                      <p className="text-sm md:text-lg font-light">
+                        Rs.{product.offerPrice}
+                      </p>
+                      <p className="text-yellow-600 text-xs md:font-medium font-light">
+                        {offerPercentage}% OFF
+                      </p>
+                    </div>
+                  </Link>
                 </div>
               );
             })}

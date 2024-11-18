@@ -1,6 +1,6 @@
 import React from "react";
-import Tshirtbanner from "../images/tshirtbanner.png";
-import Hoodiebanner from "../images/hoodiebanner.png";
+import Tshirtbanner from "../images/tshirt.png";
+import Hoodiebanner from "../images/hoodie.png";
 import "aos/dist/aos.css";
 import Aos from "aos";
 import { useEffect } from "react";
@@ -20,13 +20,13 @@ const BannerSection = () => {
       <img
         src={Tshirtbanner}
         alt="tshirt"
-        className="md:w-2/3"
+        className="lg:w-1/3 w-2/3 mx-auto"
         data-aos="fade-up"
       />
       <img
         src={Hoodiebanner}
         alt="hoodie"
-        className="md:w-2/3"
+        className="lg:w-1/3 w-2/3 mx-auto"
         data-aos="fade-up"
       />
     </div>

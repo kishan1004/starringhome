@@ -7,6 +7,7 @@ const ProductUpload = () => {
     name: "",
     id: "",
     brand: "",
+    collection: "",
     tag: "",
     category: "",
     price: "",
@@ -145,6 +146,17 @@ const ProductUpload = () => {
             type="text"
             name="brand"
             value={productData.brand}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded"
+            placeholder="Enter product brand"
+          />
+        </div>
+        <div>
+          <label className="font-semibold">Collection</label>
+          <input
+            type="text"
+            name="Tag"
+            value={productData.collection}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
             placeholder="Enter product brand"
@@ -302,6 +314,9 @@ const ProductUpload = () => {
           </p>
           <p>
             <strong>Brand:</strong> {productData.brand}
+          </p>
+          <p>
+            <strong>Collection:</strong> {productData.collection}
           </p>
           <p>
             <strong>Tag:</strong> {productData.tag}

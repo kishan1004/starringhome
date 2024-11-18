@@ -50,9 +50,9 @@ const ShoppingCart = () => {
   };
 
   return (
-    <section className="bg-gray-100 font-sans min-h-screen">
+    <section className="bg-gray-100 font-sans min-h-screen ">
       {/* Top Navigation */}
-      <div className="w-full px-4 py-5">
+      <div className="w-full px-4 pb-5">
         <Link to="/all-products">
           <svg
             width="62"
@@ -86,15 +86,19 @@ const ShoppingCart = () => {
             className="flex items-center p-4 bg-white shadow-md mb-4 rounded-lg"
           >
             {/* Product Image */}
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-24 h-24 object-cover rounded"
-            />
+            <Link to="/one-product">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-24 h-24 object-contain rounded"
+              />
+            </Link>
             <div className="px-2">
               {/* Product Details */}
               <div className="md:flex justify-between md:space-x-5">
-                <h2 className="text-md font-medium">{product.name}</h2>
+                <Link to="/one-product">
+                  <h2 className="text-md font-medium">{product.name}</h2>
+                </Link>
                 <p className="text-gray-800 font-bold">
                   ₹{product.originalPrice}
                 </p>
@@ -135,10 +139,10 @@ const ShoppingCart = () => {
       </div>
 
       {/* Footer */}
-      <div className="fixed bottom-0 w-full bg-white p-4 border-t">
+      <div className="p-10">
         <Link
           to="/checkout"
-          className="bg-black text-white px-4 py-2 rounded  text-center"
+          className="bg-[#D9D9D9] text-black w-full py-3 px-2 mb-5 hover:bg-black hover:text-white"
         >
           Proceed to Checkout
         </Link>

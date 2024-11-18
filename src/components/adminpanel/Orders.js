@@ -190,7 +190,7 @@ const Orders = () => {
               <th className="py-3 px-4 border">Total Price</th>
               <th className="py-3 px-4 border">Payment Status</th>
               <th className="py-3 px-4 border">Order Status</th>
-              <th className="py-3 px-4 border">Action</th>{" "}
+              <th className="py-3 px-4 border">Download</th>
               {/* Added Action column */}
             </tr>
           </thead>

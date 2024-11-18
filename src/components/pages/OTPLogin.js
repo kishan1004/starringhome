@@ -22,7 +22,7 @@ const OTPLogin = () => {
   };
 
   return (
-    <section>
+    <section className="font-beatrice bg-gray-100">
       <div className="m-4 h-32 overflow-hidden md:hidden">
         <img src={LoginImg} alt="logo" className="rounded-lg object-cover" />
       </div>

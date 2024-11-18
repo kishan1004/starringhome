@@ -128,9 +128,25 @@ function App() {
                 </>
               }
             />
-            <Route path="/favourites" element={<Favourites />} />
+            <Route
+              path="/favourites"
+              element={
+                <>
+                  <Topbar />
+                  <Favourites />
+                </>
+              }
+            />
             <Route path="/size-chart" element={<SizeChart />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route
+              path="/checkout"
+              element={
+                <>
+                  <Topbar />
+                  <CheckoutPage />
+                </>
+              }
+            />
             <Route path="/contact-us" element={<ContactUsPage />} />
             <Route path="/about-us" element={<AboutUsPage />} />
             <Route path="/shipping-info" element={<ShippingInfoPage />} />
@@ -139,7 +155,15 @@ function App() {
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/user-login" element={<UserLogin />} />
             <Route path="/user-account" element={<UserAccountPage />} />
-            <Route path="/shopping-cart" element={<ShoppingCart />} />
+            <Route
+              path="/shopping-cart"
+              element={
+                <>
+                  <Topbar />
+                  <ShoppingCart />
+                </>
+              }
+            />
             <Route path="/otp-login" element={<OTPLogin />} />
 
             {/* Admin Routes */}
