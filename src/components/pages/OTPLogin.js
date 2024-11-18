@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
+import LoginImgsm from "../../images/loginimagesmall.jpeg";
 
 const OTPLogin = () => {
   const [step, setStep] = useState(1); // Step 1: Enter phone/email, Step 2: Enter OTP
@@ -22,12 +23,12 @@ const OTPLogin = () => {
   };
 
   return (
-    <section className="font-beatrice bg-gray-100">
-      <div className="m-4 h-32 overflow-hidden md:hidden">
-        <img src={LoginImg} alt="logo" className="rounded-lg object-cover" />
+    <section className="font-beatrice bg-gray-100 h-screen">
+      <div className="m-4 overflow-hidden md:hidden">
+        <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
       </div>
       <div className="md:flex md:min-h-screen">
-        <div className="flex flex-col justify-center items-center md:w-1/2 p-8">
+        <div className="flex flex-col justify-center items-center md:w-1/2 md:p-8 p-4">
           <h2 className="text-2xl font-semibold text-center text-gray-800">
             Sign Up
           </h2>

@@ -1,17 +1,18 @@
 import React from "react";
 import LoginImg from "../../images/loginimage.jpeg";
+import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { Link } from "react-router-dom";
 
 const UserLogin = () => {
   return (
-    <section className="font-beatrice bg-gray-100">
-      <div className="m-4 h-32 overflow-hidden md:hidden">
-        <img src={LoginImg} alt="logo" className="rounded-lg object-cover" />
+    <section className="font-beatrice bg-gray-100 h-screen">
+      <div className="m-4 overflow-hidden md:hidden">
+        <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
       </div>
 
       <div className="flex md:min-h-screen">
         {/* Left Side - Form Section */}
-        <div className="flex flex-col justify-center items-center md:w-1/2 p-8">
+        <div className="flex flex-col justify-center items-center md:w-1/2 md:p-8 p-4">
           <h1 className="text-3xl font-bold mb-4 text-center">
             Welcome Back{" "}
             <span role="img" aria-label="wave">
