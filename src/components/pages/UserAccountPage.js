@@ -1,196 +1,145 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import LoginImg from "../../images/loginimage.jpeg";
 
-const UserAccountPage = () => {
-  const [userData, setUserData] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "+1 234 567 890",
-    address: "123 Fashion St, Chennai-10001",
-  });
-
-  const [orders] = useState([
-    { id: 1, date: "November 1, 2024", total: 79.99, status: "Shipped" },
-    { id: 2, date: "October 15, 2024", total: 49.99, status: "Delivered" },
-    { id: 3, date: "September 20, 2024", total: 129.99, status: "Pending" },
-  ]);
-
-  const handleSaveChanges = (e) => {
-    e.preventDefault();
-    // Handle saving user data (e.g., API call)
-    console.log("User data saved:", userData);
-  };
-
+const UserLogin = () => {
   return (
-    <div className="bg-gray-50 min-h-screen font-beatrice">
-      {/* Header */}
-      <header className="text-center py-8 bg-black text-white">
-        <h1 className="text-4xl font-bold">Your Account</h1>
-        <p className="text-lg">Manage your profile and orders</p>
-      </header>
-      <div className="w-full md:px-10  px-4 py-4">
-        <Link to="/">
-          <svg
-            width="62"
-            height="14"
-            viewBox="0 0 62 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M60.5 7H1M1 7L7 1M1 7L7 13"
-              stroke="black"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </Link>
+    <section className="font-beatrice bg-gray-100">
+      <div className="m-4 h-32 overflow-hidden md:hidden">
+        <img src={LoginImg} alt="logo" className="rounded-lg object-cover" />
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
-        {/* User Information Section */}
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Personal Information
-          </h2>
-          <form onSubmit={handleSaveChanges} className="mt-4 grid gap-6">
+      <div className="flex md:min-h-screen">
+        {/* Left Side - Form Section */}
+        <div className="flex flex-col justify-center items-center md:w-1/2 p-8">
+          <h1 className="text-3xl font-bold mb-4 text-center">User Account</h1>
+          <p className="mb-8 text-gray-600 text-center">
+            Manage your account details below. Make updates or log out of your
+            account.
+          </p>
+
+          <form className="w-full max-w-sm">
+            {/* Name Input */}
             <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-700">
-                Full Name
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="name"
+              >
+                Name
               </label>
               <input
-                type="text"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="name"
-                value={userData.name}
-                onChange={(e) =>
-                  setUserData({ ...userData, name: e.target.value })
-                }
-                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={userData.email}
-                onChange={(e) =>
-                  setUserData({ ...userData, email: e.target.value })
-                }
-                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="phone" className="block text-gray-700">
-                Phone
-              </label>
-              <input
                 type="text"
-                id="phone"
-                value={userData.phone}
-                onChange={(e) =>
-                  setUserData({ ...userData, phone: e.target.value })
-                }
-                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                required
+                placeholder="Enter your name"
               />
             </div>
+
+            {/* Phone Number Input */}
             <div className="mb-4">
-              <label htmlFor="address" className="block text-gray-700">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="phone"
+              >
+                Phone Number
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="phone"
+                type="text"
+                placeholder="Enter your phone number"
+              />
+            </div>
+
+            {/* Email Input */}
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="email"
+              >
+                Email ID
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="email"
+                type="email"
+                placeholder="Enter your email ID"
+              />
+            </div>
+
+            {/* Address Input */}
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="address"
+              >
                 Address
               </label>
               <textarea
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="address"
-                value={userData.address}
-                onChange={(e) =>
-                  setUserData({ ...userData, address: e.target.value })
-                }
-                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Enter your address"
                 rows="3"
-                required
               ></textarea>
             </div>
+
+            {/* New Password Input */}
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="newPassword"
+              >
+                New Password
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="newPassword"
+                type="password"
+                placeholder="At least 10 characters"
+              />
+            </div>
+
+            {/* Confirm Password Input */}
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="confirmPassword"
+              >
+                Confirm Password
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm your password"
+              />
+            </div>
+
+            {/* Save Changes Button */}
             <button
-              type="submit"
-              className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-400 transition duration-200"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline mb-4"
+              type="button"
             >
               Save Changes
             </button>
-          </form>
-        </section>
 
-        {/* Order History Section */}
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Order History
-          </h2>
-          <div className="overflow-x-auto mt-4">
-            <table className="min-w-full">
-              <thead>
-                <tr className="text-left">
-                  <th className="px-4 py-2 text-gray-600">Order ID</th>
-                  <th className="px-4 py-2 text-gray-600">Date</th>
-                  <th className="px-4 py-2 text-gray-600">Total</th>
-                  <th className="px-4 py-2 text-gray-600">Status</th>
-                  <th className="px-4 py-2 text-gray-600">Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id} className="border-t border-gray-200">
-                    <td className="px-4 py-2">{order.id}</td>
-                    <td className="px-4 py-2">{order.date}</td>
-                    <td className="px-4 py-2">Rs.{order.total.toFixed(2)}</td>
-                    <td className="px-4 py-2">
-                      <span
-                        className={`font-semibold ${
-                          order.status === "Shipped"
-                            ? "text-blue-500"
-                            : order.status === "Delivered"
-                            ? "text-green-500"
-                            : "text-yellow-500"
-                        }`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2">
-                      <button className="text-indigo-600 hover:underline">
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Account Settings Section */}
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Account Settings
-          </h2>
-          <div className="mt-4">
-            <button className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition duration-200">
+            {/* Logout Button */}
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
+              type="button"
+            >
               Logout
             </button>
-          </div>
-        </section>
-      </main>
+          </form>
+        </div>
 
-      {/* Footer */}
-      <footer className="mt-10 text-center py-4 bg-[#CFD8DC] text-black">
-        <p>&copy; 2024 Starring. All Rights Reserved.</p>
-      </footer>
-    </div>
+        {/* Right Side - Image Section */}
+        <div
+          className="w-1/2 bg-cover bg-center m-5 rounded-lg max-sm:hidden"
+          style={{ backgroundImage: `url(${LoginImg})` }}
+        ></div>
+      </div>
+    </section>
   );
 };
 
-export default UserAccountPage;
+export default UserLogin;

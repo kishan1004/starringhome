@@ -22,11 +22,6 @@ import Topbar from "./components/pages/Topbar";
 import ShoppingCart from "./components/pages/ShoppingCart";
 import CheckoutPage from "./components/pages/CheckoutPage";
 import NotFoundPage from "./components/pages/NotFoundPage";
-import ContactUsPage from "./components/pages/ContactUsPage";
-import AboutUsPage from "./components/pages/AboutUsPage";
-import ShippingInfoPage from "./components/pages/ShippingInfoPage";
-import ReturnRefundPolicyPage from "./components/pages/ReturnRefundPolicyPage";
-import PrivacyPolicy from "./components/pages/PrivacyPolicy";
 import OrderConfirmation from "./components/pages/OrderConfirmation";
 import UserLogin from "./components/pages/UserLogin";
 import UserAccountPage from "./components/pages/UserAccountPage";
@@ -147,11 +142,6 @@ function App() {
                 </>
               }
             />
-            <Route path="/contact-us" element={<ContactUsPage />} />
-            <Route path="/about-us" element={<AboutUsPage />} />
-            <Route path="/shipping-info" element={<ShippingInfoPage />} />
-            <Route path="/return-policy" element={<ReturnRefundPolicyPage />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/user-login" element={<UserLogin />} />
             <Route path="/user-account" element={<UserAccountPage />} />
