@@ -851,7 +851,7 @@ const AllProductsPage = () => {
 
                 return (
                   <Link to="/one-product" key={id}>
-                    <div className="border rounded-md p-4 bg-white">
+                    <div className="border rounded-md p-4">
                       <img
                         src={image}
                         alt={name}
