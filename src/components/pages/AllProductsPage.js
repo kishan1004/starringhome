@@ -385,62 +385,6 @@ const AllProductsPage = () => {
             <div className="my-4">
               <div
                 className="my-4 flex items-center justify-between cursor-pointer"
-                onClick={() => setIsAvailabilityOpen(!isAvailabilityOpen)}
-              >
-                <h4 className="font-bold text-sm">Availability</h4>
-
-                <svg
-                  width="7"
-                  height="11"
-                  viewBox="0 0 7 11"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${
-                    isAvailabilityOpen ? "rotate-90" : "rotate-0"
-                  }`}
-                >
-                  <path
-                    d="M1 10L6 5.5L1 1"
-                    stroke="black"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-
-              {isAvailabilityOpen && (
-                <div className="flex flex-col space-y-4">
-                  <label className="flex items-center font-bold">
-                    <input
-                      type="checkbox"
-                      name="available"
-                      checked={availabilityFilters.available}
-                      onChange={handleAvailabilityChange}
-                      className="mr-2 w-5 h-5"
-                    />
-                    Available
-                    <span className="text-blue-700 ml-5">(450)</span>
-                  </label>
-                  <label className="flex items-center font-bold">
-                    <input
-                      type="checkbox"
-                      name="outOfStock"
-                      checked={availabilityFilters.outOfStock}
-                      onChange={handleAvailabilityChange}
-                      className="mr-2 w-5 h-5"
-                    />
-                    Out of Stock
-                    <span className="text-blue-700 ml-5"> (18)</span>
-                  </label>
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
-
-            <div className="my-4">
-              <div
-                className="my-4 flex items-center justify-between cursor-pointer"
                 onClick={() =>
                   setIsCategoryDropdownOpen(!isCategoryDropdownOpen)
                 }
@@ -489,6 +433,62 @@ const AllProductsPage = () => {
                       </span>
                     </label>
                   ))}
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
+
+            <div className="my-4">
+              <div
+                className="my-4 flex items-center justify-between cursor-pointer"
+                onClick={() => setIsAvailabilityOpen(!isAvailabilityOpen)}
+              >
+                <h4 className="font-bold text-sm">Availability</h4>
+
+                <svg
+                  width="7"
+                  height="11"
+                  viewBox="0 0 7 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`transform transition-transform ${
+                    isAvailabilityOpen ? "rotate-90" : "rotate-0"
+                  }`}
+                >
+                  <path
+                    d="M1 10L6 5.5L1 1"
+                    stroke="black"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+
+              {isAvailabilityOpen && (
+                <div className="flex flex-col space-y-4">
+                  <label className="flex items-center font-bold">
+                    <input
+                      type="checkbox"
+                      name="available"
+                      checked={availabilityFilters.available}
+                      onChange={handleAvailabilityChange}
+                      className="mr-2 w-5 h-5"
+                    />
+                    Available
+                    <span className="text-blue-700 ml-5">(450)</span>
+                  </label>
+                  <label className="flex items-center font-bold">
+                    <input
+                      type="checkbox"
+                      name="outOfStock"
+                      checked={availabilityFilters.outOfStock}
+                      onChange={handleAvailabilityChange}
+                      className="mr-2 w-5 h-5"
+                    />
+                    Out of Stock
+                    <span className="text-blue-700 ml-5"> (18)</span>
+                  </label>
                 </div>
               )}
             </div>

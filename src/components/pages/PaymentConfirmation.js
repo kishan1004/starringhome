@@ -230,9 +230,11 @@ const PaymentConfirmation = () => {
                     I agree to the Terms and Conditions
                   </label>
                 </div>
-                <button className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold">
-                  CONTINUE
-                </button>
+                <Link to="/order-confirmation">
+                  <button className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold">
+                    CONTINUE
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

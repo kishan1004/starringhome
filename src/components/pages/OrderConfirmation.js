@@ -136,7 +136,7 @@ const OrderConfirmation = () => {
 
       {/* Footer */}
       <footer className="mt-10 text-center py-4 bg-[#CFD8DC] text-black">
-        <p>&copy; 2024 Starring. All Rights Reserved.</p>
+        <a href="https://callsharks.in/">Designed by callsharks.in</a>
       </footer>
     </div>
   );
