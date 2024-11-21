@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash, FaSave } from "react-icons/fa";
 import Product1img from "../../images/product1.jpeg";
@@ -7,6 +7,7 @@ import Product3img from "../../images/product3.jpeg";
 import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
+import { getProductList, deleteProduct, editProduct, getAllCategories } from "../../api/admin";
 
 const productImages = [
   Product1img,
@@ -45,7 +46,7 @@ const ProductList = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [productCategories] = useState(initialCategories);
+  const [productCategories, setProductCategories] = useState(initialCategories);
   const [products, setProducts] = useState(productsData);
   const [isEditing, setIsEditing] = useState(null);
   const [editFormData, setEditFormData] = useState({});
@@ -72,8 +73,19 @@ const ProductList = () => {
 
   const handlePageChange = (page) => setCurrentPage(page);
   const handleEditClick = (product) => {
-    setIsEditing(product.id);
-    setEditFormData({ ...product });
+    editProduct(product.id, {
+      name: product?.name,
+      category: product?.category,
+      brand: product?.brand,
+      prize: product?.price, 
+      rating: product?.rating,
+      stock: product?.stock,
+    }).then((res)=> {
+      if(res.status === 200) {
+        setIsEditing(product.id);
+        setEditFormData({ ...product });
+      }
+    })
   };
 
   const handleInputChange = (e) => {
@@ -97,11 +109,36 @@ const ProductList = () => {
 
   const handleDelete = (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => product.id !== productId)
-      );
+      deleteProduct(productId).then((res) => {
+        if(res.status === 200) {
+          setProducts((prevProducts) =>
+          prevProducts.filter((product) => product.id !== productId)
+        );
+        }
+      })
     }
   };
+
+  useEffect(() => {
+    console.log("Fetching products...");
+    getProductList(currentPage).then((res) => {
+      // fetched and updated product state , set filtered products and size based on this 
+      // also check is limit param required
+      if(res.status === 200) {
+        console.log('rrrr', res);
+        // setProducts([...res?.data]);
+      }
+    });
+  }, [currentPage])
+
+  useEffect(() => {
+    getAllCategories().then((res) => {
+      //do all logics based on categoris 
+      if(res.status === 200) {
+        setProductCategories([...res?.data]);
+      }
+  })
+}, [])
 
   const navigate = useNavigate();
 
