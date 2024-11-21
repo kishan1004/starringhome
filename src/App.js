@@ -41,6 +41,7 @@ import Login from "./components/adminpanel/Login"; // Admin Login
 import PaymentConfirmation from "./components/pages/PaymentConfirmation";
 import OTPLogin from "./components/pages/OTPLogin";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { userLogout } from "./api/admin";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -74,7 +75,11 @@ function App() {
     };
   }, []);
 
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    userLogout().then((res) => {
+      localStorage.removeItem('authToken');
+    })
+  };
 
   return (
     <QueryClientProvider client={queryClient}>

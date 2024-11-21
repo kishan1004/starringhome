@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { saveProfile } from "../../api/admin";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([
@@ -22,7 +23,7 @@ const UserManagement = () => {
       username: "bob.johnson",
     },
   ]);
-
+  
   const [newUser, setNewUser] = useState({
     firstName: "",
     lastName: "",
@@ -32,6 +33,10 @@ const UserManagement = () => {
   });
   const [editingUser, setEditingUser] = useState(null);
 
+  useEffect(() => {
+    
+  })
+  
   const generateUsername = (firstName, lastName) => {
     return `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
   };
@@ -44,18 +49,23 @@ const UserManagement = () => {
       newUser.phone &&
       newUser.password
     ) {
-      const newUserId = users.length
-        ? Math.max(users.map((user) => user.id)) + 1
-        : 1;
-      const username = generateUsername(newUser.firstName, newUser.lastName);
-      setUsers([...users, { id: newUserId, username, ...newUser }]);
-      setNewUser({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        password: "",
-      });
+      saveProfile(newUser).then((res) => {
+        const newUserId = users.length
+          ? Math.max(users.map((user) => user.id)) + 1
+          : 1;
+        const username = generateUsername(newUser.firstName, newUser.lastName);
+
+        setUsers([...users, { id: newUserId, username, ...newUser }]);
+        setNewUser({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          password: "",
+        });
+      }).catch(err => {
+        alert("Error saving Profile")
+      })
     } else {
       alert("Please fill in all fields.");
     }
@@ -157,9 +167,8 @@ const UserManagement = () => {
             }
           />
           <button
-            className={`${
-              editingUser ? "bg-yellow-500" : "bg-black"
-            } text-white py-2 rounded mt-2 hover:opacity-90`}
+            className={`${editingUser ? "bg-yellow-500" : "bg-black"
+              } text-white py-2 rounded mt-2 hover:opacity-90`}
             onClick={editingUser ? handleSaveEdit : handleAddUser}
           >
             {editingUser ? "Save Changes" : "Add User"}

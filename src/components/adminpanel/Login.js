@@ -12,9 +12,9 @@ const Login = () => {
 
     e.preventDefault();
     userLogin(username, password).then(res => {
-      if(res.status === 200 && res?.data?.detail?.token ) {
-        localStorage.setItem('apiKey', res?.data?.detail?.token);
-        navigate('/');
+      if (res.status === 200 && res?.data?.detail?.token) {
+        localStorage.setItem('authToken', res?.data?.detail?.token);
+        navigate('/admin/dashboard');
       }
     })
   }
