@@ -9,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const loginUser = (e) => {
-
+    //API: Login api handled
     e.preventDefault();
     userLogin(username, password).then(res => {
       if (res.status === 200 && res?.data?.detail?.token) {

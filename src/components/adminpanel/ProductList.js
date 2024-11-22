@@ -347,11 +347,10 @@ const ProductList = () => {
           <button
             key={i}
             onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${
-              currentPage === i + 1
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
+            className={`px-3 py-1 mx-1 rounded-md ${currentPage === i + 1
+              ? "bg-black text-white"
+              : "bg-gray-300 text-gray-800 hover:bg-gray-400"
+              }`}
           >
             {i + 1}
           </button>

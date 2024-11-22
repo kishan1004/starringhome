@@ -1,5 +1,6 @@
 import { axiosInstance } from "../utils/axios";
 
+/* User APIs */
 export const userLogin = (email, password) => {
   return axiosInstance.post('/user/auth/login', {
     email,
@@ -11,14 +12,15 @@ export const userLogout = () => {
   return axiosInstance.delete('/user/auth/logout');
 }
 
+/* Profile APIs */
 export const getProfiles = (page, limit) => {
   return axiosInstance.get('/admin/profiles/details', {
     params: {
-      page,
-      limit
-    }
+      page: page,
+      limit: limit,
+    },
   });
-}
+};
 
 export const saveProfile = (profile = {}) => {
   const { firstName, lastName, email, mobileNumber, password } = profile;
@@ -36,19 +38,24 @@ export const saveProfile = (profile = {}) => {
   });
 }
 
-export const getProductList = (page, limit=null) => {
+export const deleteProfile = (id) => {
+  return axiosInstance.delete(`/admin/profiles/${id}/delete`)
+}
+
+/* Product API */
+
+export const getProductList = (page, limit = null) => {
   return axiosInstance.get(`/admin/products/details/?page=${page}&limit=${limit}`);
 }
 
-export const saveProduct =  (data) => {
-  const { name, brand, prize,  tag, collection} = data;
+export const saveProduct = (data) => {
+  const { name, brand, prize, tag, collection } = data;
   if (!name || !brand || !prize || !tag || !collection) {
     throw new Error('Missing required parameters');
   }
   return axiosInstance.post('/admin/products/save', data);
 }
 
-// do this
 export const getProduct = (id) => {
   if (!id) {
     throw new Error('Product ID is required');
@@ -57,7 +64,7 @@ export const getProduct = (id) => {
 }
 
 export const deleteProduct = (id) => {
-  if(!id) {
+  if (!id) {
     throw new Error('Product ID is required');
   }
 
@@ -65,13 +72,14 @@ export const deleteProduct = (id) => {
 }
 
 export const editProduct = (id, data) => {
-  if(!id) {
+  if (!id) {
     throw new Error('Product ID is required');
   }
 
   return axiosInstance.patch(`/admin/products/${id}/modify, data`);
 }
 
+/* Category API */
 
 export const getAllCategories = () => {
   return axiosInstance.get('/admin/category/names');
