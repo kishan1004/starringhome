@@ -17,14 +17,7 @@ const productImages = [
   Product5img,
   Product6img,
 ];
-const initialCategories = [
-  "Tshirt",
-  "Shirt",
-  "Polo",
-  "Oversized",
-  "Jacket",
-  "Hoodie",
-];
+const initialCategories = [];
 
 const productsData = Array.from({ length: 25 }, (_, i) => ({
   id: `#a${i + 1}`,
@@ -77,11 +70,11 @@ const ProductList = () => {
       name: product?.name,
       category: product?.category,
       brand: product?.brand,
-      prize: product?.price, 
+      prize: product?.price,
       rating: product?.rating,
       stock: product?.stock,
-    }).then((res)=> {
-      if(res.status === 200) {
+    }).then((res) => {
+      if (res.status === 200) {
         setIsEditing(product.id);
         setEditFormData({ ...product });
       }
@@ -110,10 +103,10 @@ const ProductList = () => {
   const handleDelete = (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       deleteProduct(productId).then((res) => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           setProducts((prevProducts) =>
-          prevProducts.filter((product) => product.id !== productId)
-        );
+            prevProducts.filter((product) => product.id !== productId)
+          );
         }
       })
     }
@@ -124,7 +117,7 @@ const ProductList = () => {
     getProductList(currentPage).then((res) => {
       // fetched and updated product state , set filtered products and size based on this 
       // also check is limit param required
-      if(res.status === 200) {
+      if (res.status === 200) {
         console.log('rrrr', res);
         // setProducts([...res?.data]);
       }
@@ -133,12 +126,15 @@ const ProductList = () => {
 
   useEffect(() => {
     getAllCategories().then((res) => {
-      //do all logics based on categoris 
-      if(res.status === 200) {
-        setProductCategories([...res?.data]);
+      //API: Category names are being called here
+      if (res.status === 200) {
+        const categories = res?.data?.detail?.data;
+        const names = categories.map(category => category.name);
+
+        setProductCategories([...names]);
       }
-  })
-}, [])
+    })
+  }, [])
 
   const navigate = useNavigate();
 

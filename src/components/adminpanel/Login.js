@@ -9,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const loginUser = (e) => {
-    //API: Login api handled
+    //API: Login api handled set auth state with this, using react context is prefered
     e.preventDefault();
     userLogin(username, password).then(res => {
       if (res.status === 200 && res?.data?.detail?.token) {
