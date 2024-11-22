@@ -44,8 +44,13 @@ export const deleteProfile = (id) => {
 
 /* Product API */
 
-export const getProductList = (page, limit = null) => {
-  return axiosInstance.get(`/admin/products/details/?page=${page}&limit=${limit}`);
+export const getProductList = (page, limit = 50) => {
+  return axiosInstance.get('/admin/products/details', {
+    params: {
+      page,
+      limit
+    }
+  });
 }
 
 export const saveProduct = (data) => {
