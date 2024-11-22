@@ -76,6 +76,7 @@ function App() {
   }, []);
 
   const handleLogout = () => {
+    //API: logout api handled
     userLogout().then((res) => {
       localStorage.removeItem('authToken');
     })
