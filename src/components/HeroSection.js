@@ -99,25 +99,67 @@ const HeroSection = () => {
               ref={menuRef}
               className="absolute top-14 left-0 w-full bg-[#263238] text-white p-4 z-20 flex flex-col"
             >
-              {[
-                "Home",
-                "All New",
-                "Categories",
-                "Featured",
-                "Testimonials",
-                "Footer",
-              ].map((item, index) => (
-                <a
-                  key={index}
-                  href={`#${item.toLowerCase()}`}
-                  onClick={() => handleNavClick(item)}
-                  className={`py-2 text-lg border-b border-gray-700 ${
-                    activeItem === item ? "text-green-200" : "text-white"
-                  } hover:text-gray-400`}
-                >
-                  {item}
-                </a>
-              ))}
+              <a
+                href="#home"
+                onClick={() => handleNavClick("Home")}
+                className={`py-2 text-lg border-b border-gray-700 ${
+                  activeItem === "Home" ? "text-green-200" : "text-white"
+                } hover:text-gray-400`}
+              >
+                Home
+              </a>
+
+              <a
+                href="#new-arrivals"
+                onClick={() => handleNavClick("All New")}
+                className={`py-2 text-lg border-b border-gray-700 ${
+                  activeItem === "All New" ? "text-green-200" : "text-white"
+                } hover:text-gray-400`}
+              >
+                All New
+              </a>
+
+              <a
+                href="#trending"
+                onClick={() => handleNavClick("Categories")}
+                className={`py-2 text-lg border-b border-gray-700 ${
+                  activeItem === "Categories" ? "text-green-200" : "text-white"
+                } hover:text-gray-400`}
+              >
+                Categories
+              </a>
+
+              <a
+                href="#banner"
+                onClick={() => handleNavClick("Featured")}
+                className={`py-2 text-lg border-b border-gray-700 ${
+                  activeItem === "Featured" ? "text-green-200" : "text-white"
+                } hover:text-gray-400`}
+              >
+                Featured
+              </a>
+
+              <a
+                href="#testimonials"
+                onClick={() => handleNavClick("Testimonials")}
+                className={`py-2 text-lg border-b border-gray-700 ${
+                  activeItem === "Testimonials"
+                    ? "text-green-200"
+                    : "text-white"
+                } hover:text-gray-400`}
+              >
+                Testimonials
+              </a>
+
+              <a
+                href="#footer"
+                onClick={() => handleNavClick("Footer")}
+                className={`py-2 text-lg border-b border-gray-700 ${
+                  activeItem === "Footer" ? "text-green-200" : "text-white"
+                } hover:text-gray-400`}
+              >
+                Footer
+              </a>
             </nav>
           )}
         </div>

@@ -7,6 +7,8 @@ import Product3img from "../../images/product3.jpeg";
 import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
+import { getAllProductApi } from "../../api/admin";
+import { useQuery } from "react-query";
 
 const productImages = [
   Product1img,
@@ -49,6 +51,13 @@ const ProductList = () => {
   const [products, setProducts] = useState(productsData);
   const [isEditing, setIsEditing] = useState(null);
   const [editFormData, setEditFormData] = useState({});
+
+  //API init
+  const query = useQuery({
+    queryKey: [{ page: currentPage }],
+    queryFn: getAllProductApi,
+  });
+  console.log("API Data", query);
 
   const itemsPerPage = 8;
 

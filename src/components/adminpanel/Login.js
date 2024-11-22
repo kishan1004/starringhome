@@ -25,7 +25,6 @@ const Login = ({ onLogin }) => {
       { email: username, password: password },
       {
         onSuccess: (res) => {
-          console.log(res);
           localStorage.setItem("authToken", res.data.detail.token);
           navigate("/admin/dashboard");
         },

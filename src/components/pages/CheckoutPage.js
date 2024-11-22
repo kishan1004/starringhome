@@ -129,15 +129,9 @@ const CheckoutPage = () => {
       <div className="md:px-10 px-3">
         <h1 className="font-beatrice font-extrabold text-4xl pb-7">CHECKOUT</h1>
         <div className="flex md:space-x-8 space-x-4">
-          <h3 className="font-medium text-base">
-            <Link to="/">INFORMATION</Link>
-          </h3>
-          <h3 className="font-normal text-base text-[#8A8A8A]">
-            <Link to="/">SHIPPING</Link>
-          </h3>
-          <h3 className="font-normal text-base text-[#8A8A8A]">
-            <Link to="/">PAYMENT</Link>
-          </h3>
+          <h3 className="font-medium text-base">INFORMATION</h3>
+          <h3 className="font-normal text-base text-[#8A8A8A]">SHIPPING</h3>
+          <h3 className="font-normal text-base text-[#8A8A8A]">PAYMENT</h3>
         </div>
       </div>
 

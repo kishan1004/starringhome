@@ -17,7 +17,6 @@ export const authAxios = axios.create({
 authAxios.interceptors.request.use(
   async (request) => {
     const sessionToken = localStorage.getItem("authToken");
-
     if (request.headers) {
       request.headers.Authorization = `Bearer ${sessionToken}`;
     }
