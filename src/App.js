@@ -74,8 +74,6 @@ function App() {
     };
   }, []);
 
-  const handleLogout = () => {};
-
   return (
     <QueryClientProvider client={queryClient}>
       <Router>

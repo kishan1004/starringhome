@@ -1,4 +1,4 @@
-import { authAxios, AuthAxios } from "../utils/axios";
+import { authAxios } from "../utils/axios";
 
 // export const getAllProfileApi = async ({ queryKey }) => {
 //   let url = `admin/profiles/details?page=${queryKey[0].pageNumber}&limit=${queryKey[0].limit}`;
