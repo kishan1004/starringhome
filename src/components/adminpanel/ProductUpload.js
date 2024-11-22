@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { saveProduct } from "../../api/admin";
 
 const ProductUpload = () => {
   const [productData, setProductData] = useState({
@@ -99,10 +100,12 @@ const ProductUpload = () => {
     setReviewMode(true);
   };
 
-  const handleUpload = () => {
-    console.log("Product uploaded:", productData);
-    alert("Product uploaded successfully!");
-  };
+  const handleUpload = () => { 
+    // created product
+    saveProduct(productData).then((res) => {
+      console.log(res);
+    });
+  };
 
   const navigate = useNavigate();
 
