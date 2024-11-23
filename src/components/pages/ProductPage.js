@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Mainproductimg from "../../images/mainproduct.jpeg";
 import Slide2img from "../../images/slide2.jpeg";
 import Slide3img from "../../images/slide3.jpeg";
@@ -8,13 +8,16 @@ import SimilarProduct1 from "../../images/imgproduct2.jpeg";
 import SimilarProduct2 from "../../images/imgproduct4.jpeg";
 import SimilarProduct3 from "../../images/imgproduct5.jpeg";
 import SimilarProduct4 from "../../images/imgproduct6.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import FrequentProduct1 from "../../images/product1.jpeg";
 import FrequentProduct2 from "../../images/product3.jpeg";
+import { getProductById } from "../../api/user";
 
 const ProductPage = () => {
   // const [selectedColor, setSelectedColor] = useState("black");
   const [selectedSize, setSelectedSize] = useState("M");
+  const [params] = useSearchParams();
+  const productKey = params.get('id');
 
   // const colors = [
   //   "#D9D9D9",
@@ -108,6 +111,12 @@ const ProductPage = () => {
         : [...prevSelected, productId]
     );
   };
+
+  useEffect(() => {
+    getProductById(productKey).then((res) => {
+      console.log(res);
+    })
+  }, [])
 
   return (
     <section className="bg-gray-100 font-beatrice max-w-[1440px] mx-auto w-full">

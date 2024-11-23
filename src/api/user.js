@@ -68,3 +68,18 @@ export const getProductById = (id) => {
     return axiosInstance.get(`/users/orders/products/${id}/view`);
 }
 
+export const addFavouriteProduct = (id, action) => {
+    if(!id) {
+        console.error("Id required");
+        return;
+    }
+
+    return axiosInstance('/users/orders/products/favourites', {
+        productId: [id],
+        action
+    })
+}
+
+export const getAllFavourites = () => {
+    return axiosInstance('/users/orders/products/favourites/details');
+}

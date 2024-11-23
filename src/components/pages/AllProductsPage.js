@@ -293,13 +293,14 @@ const AllProductsPage = () => {
   };
 
   useEffect(() => {
-   const data = {
-      page: 1,
-      limit: 20,
-      sizes : ['s', 'xs'],
-      categories: [],
-    }
-    userProductsList(data).then(res=> {
+    // call this api whenever thre is change in query params
+  //  const data = {
+  //     page: 1,
+  //     limit: 20,
+  //     sizes : ['s', 'xs'],
+  //     categories: [],
+  //   }
+    userProductsList().then(res=> {
       if(res.status === 200) {
         setAllItems([...res?.data?.detail?.data]);
       }
@@ -864,9 +865,8 @@ const AllProductsPage = () => {
                 const offerPercentage = Math.round(
                   ((price - offerPrice) / price) * 100
                 );
-
                 return (
-                  <Link to="/one-product" key={id}>
+                  <Link to={`/one-product?id=${id}`}>
                     <div className="border rounded-md p-4">
                       <img
                         src={image}

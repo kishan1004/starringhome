@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { Link } from "react-router-dom";
-import { userLogin } from "../../api/admin";
+import { userLogin } from "../../api/user";
 
 const UserLogin = () => {
   //show error in UI
@@ -40,7 +40,7 @@ const UserLogin = () => {
     // api call: do route here
     userLogin(userName, password).then((res) => {
       if(res.status === 200) {
-        localStorage.setItem("userToken", res?.detail?.token);
+        localStorage.setItem("userToken", res?.data?.detail?.token);
       }
       console.log(res);
     })
