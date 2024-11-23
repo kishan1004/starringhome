@@ -4,8 +4,10 @@ import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
 import { Link } from "react-router-dom";
+import { userProductsList } from "../../api/user";
 
 const AllProductsPage = () => {
+  const [allItems, setAllItems] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
 
@@ -289,6 +291,10 @@ const AllProductsPage = () => {
     setSearchTerm(e.target.value);
     setSelectedFilter("ALL"); // Automatically set filter to "ALL" when typing in search
   };
+
+  useEffect(() => {
+
+  },[])
 
   return (
     <section className="bg-gray-100 font-beatrice min-h-screen">

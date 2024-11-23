@@ -8,10 +8,10 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
   let apiKey = "";
   if(privateAPIList.has(config.url)){
-    if(config.url.includes('/user/auth/') || config.url.includes('/admin')) {
-      apiKey = localStorage.getItem("userToken");
-    } else {
+    if(config.url.includes('user/auth/') || config.url.includes('admin')) {
       apiKey = localStorage.getItem("authToken");
+    } else {
+      apiKey = localStorage.getItem("userToken");
     }
   }
   console.log(config);
