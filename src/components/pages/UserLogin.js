@@ -3,7 +3,6 @@ import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { Link } from "react-router-dom";
 import { userLogin } from "../../api/user";
-import { userLogin } from "../../api/user";
 
 const UserLogin = () => {
   //show error in UI
