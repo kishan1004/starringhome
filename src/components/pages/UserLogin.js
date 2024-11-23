@@ -30,13 +30,6 @@ const UserLogin = () => {
       }
     }
 
-    //password validation
-    let patt = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-    if (!patt.test(password)) {
-      setError("Invalid password");
-      return;
-    }
-
     // api call: do route here
     userLogin(userName, password).then((res) => {
       if (res.status === 200) {
