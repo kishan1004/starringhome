@@ -1,9 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { Link } from "react-router-dom";
+import { userLogin } from "../../api/admin";
 
 const UserLogin = () => {
+  //show error in UI
+  const [error, setError] = useState();
+  const [userName, setUserName] = useState();
+  const [password, setPassword] = useState();
+
+  const onLogin  = (e) => {
+    e.preventDefault();
+    //email validation
+    if(isNaN(userName)) {
+      const patt = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if(!patt.test(userName)) {
+        setError("Invalid email");
+        return;
+      }
+    } else {
+      // can have 10 numbers
+      // 11 if first number is 0
+      // 12 if first 2 numbers is 91
+      let patt = new RegExp(/(0|91)?[6-9][0-9]{9}/);
+      if(!patt.test(userName)) {
+        setError("Invalid Phone Number");
+        return;
+      }
+    }
+
+    //password validation
+    let patt = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    if(!patt.test(password)) {
+      setError("Invalid password");
+      return;
+    }
+
+    // api call: do route here
+    userLogin(userName, password).then((res) => {
+      if(res.status === 200) {
+        localStorage.setItem("userToken", res?.detail?.token);
+      }
+      console.log(res);
+    })
+  }
+
   return (
     <section className="font-beatrice bg-gray-100 h-screen">
       <div className="m-4 overflow-hidden md:hidden">
@@ -24,7 +66,7 @@ const UserLogin = () => {
             managing your projects.
           </p>
 
-          <form className="w-full max-w-sm">
+          <form className="w-full max-w-sm" onSubmit={onLogin}>
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
@@ -37,6 +79,8 @@ const UserLogin = () => {
                 id="emailOrPhone"
                 type="text"
                 placeholder="Enter Email id or Phone Number"
+                onChange={(e) => setUserName(e.target.value)}
+                value={userName}
               />
             </div>
             <div className="mb-4">
@@ -51,8 +95,11 @@ const UserLogin = () => {
                 id="password"
                 type="password"
                 placeholder="At least 10 characters"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
               />
             </div>
+            {error && <p className="text-red-500">{error}</p>}
             <div className="flex items-center justify-between mb-6">
               <a
                 className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800"
@@ -63,7 +110,7 @@ const UserLogin = () => {
             </div>
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
-              type="button"
+              type="submit"
             >
               Sign in
             </button>
