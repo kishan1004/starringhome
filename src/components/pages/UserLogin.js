@@ -41,7 +41,7 @@ const UserLogin = () => {
     userLogin(userName, password).then((res) => {
       if(res.status === 200) {
         localStorage.setItem("userToken", res?.data?.detail?.token);
-        window.location.href('/');
+        window.location.href = '/';
       }
       console.log(res);
     })

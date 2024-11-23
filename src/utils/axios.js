@@ -1,5 +1,4 @@
 import axios from "axios";
-import privateAPIList from "../api/privateAPI";
 
 /**
  * Base url for backend server is mapped here, functions using axios Instance will
@@ -19,13 +18,11 @@ export const axiosInstance = axios.create({
  */
 axiosInstance.interceptors.request.use((config) => {
   let apiKey = "";
-  if (privateAPIList.has(config.url)) {
     if (config.url.includes('/user/auth') || config.url.includes('/admin')) {
       apiKey = localStorage.getItem("authToken");
     } else {
       apiKey = localStorage.getItem("userToken");
     }
-  }
   if (apiKey) {
     config.headers['Authorization'] = `Bearer ${apiKey}`
   }

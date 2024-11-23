@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SimilarProduct1 from "../../images/imgproduct2.jpeg";
 import SimilarProduct2 from "../../images/imgproduct4.jpeg";
 import SimilarProduct3 from "../../images/imgproduct5.jpeg";
 import SimilarProduct4 from "../../images/imgproduct6.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllFavourites } from "../../api/user";
 
 const Favourites = () => {
+  const navigate = useNavigate()
   const [similarProducts, setSimilarProducts] = useState([
     {
       id: 1,
@@ -73,6 +75,17 @@ const Favourites = () => {
   //   return <div>Loading</div>;
   // }
 
+  useEffect(() => {
+    getAllFavourites().then(res=> {
+      if(res.status === 401) {
+        navigate('/user-login');
+      } else if(res.status === 200) {
+        const allProducts = res?.data?.detail?.data;
+        console.log('all', allProducts);
+      }
+    })
+  }, [])
+
   return (
     <div className="min-h-screen bg-gray-100 font-beatrice">
       <section className="max-w-full md:px-10 px-4">
@@ -115,7 +128,7 @@ const Favourites = () => {
                   >
                     x
                   </button>
-                  <Link to="/one-product">
+                  <Link to={`/one-product?id=${product.id}`}>
                     <img
                       src={product.image}
                       alt={product.name}

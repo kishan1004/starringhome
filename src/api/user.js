@@ -101,12 +101,12 @@ export const addFavouriteProduct = (id, action) => {
         return;
     }
 
-    return axiosInstance('/users/orders/products/favourites', {
+    return axiosInstance.post('/users/orders/products/favourites', {
         productId: [id],
         action
     })
 }
 
-export const getAllFavourites = () => {
-    return axiosInstance('/users/orders/products/favourites/details');
+export const getAllFavourites = (page=1, limit=20) => { 
+    return axiosInstance.get(`/users/orders/products/favourites/details?page=${page}&limit=${limit}`);
 }
