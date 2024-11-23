@@ -13,16 +13,16 @@ export const axiosInstance = axios.create({
  * This is the common place, where auth token is added, to out going request.
  * 
  * The below method adds auth token if it is in the Set of private Api.
- * If it is a private api then it checks if the api is for admin , to attach auth token.
+ * it checks if the api is for admin , to attach auth token.
  * If the api is for user it attaches userToken instead
  */
 axiosInstance.interceptors.request.use((config) => {
   let apiKey = "";
-    if (config.url.includes('/user/auth') || config.url.includes('/admin')) {
-      apiKey = localStorage.getItem("authToken");
-    } else {
-      apiKey = localStorage.getItem("userToken");
-    }
+  if (config.url.includes('/user/auth') || config.url.includes('/admin')) {
+    apiKey = localStorage.getItem("authToken");
+  } else {
+    apiKey = localStorage.getItem("userToken");
+  }
   if (apiKey) {
     config.headers['Authorization'] = `Bearer ${apiKey}`
   }
@@ -40,7 +40,12 @@ axiosInstance.interceptors.response.use((res) => {
   (error) => {
     console.error('error', error);
     if (error?.response?.status === 403 || error?.response?.status === 401) {
-      window.location.href = '/';
+      let url = error?.config?.url;
+      if (url.includes('/user/auth') || url.includes('/admin')) {
+        window.location.href = '/admin/login';
+      } else {
+        window.location.href = '/user-login';
+      }
     }
     return error;
   }
