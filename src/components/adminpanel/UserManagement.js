@@ -1,36 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { deleteProfile, getProfiles, saveProfile } from "../../api/admin";
 
 const UserManagement = () => {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      firstName: "Alice",
-      lastName: "Smith",
-      email: "alice@example.com",
-      phone: "123-456-7890",
-      username: "alice.smith",
-    },
-    {
-      id: 2,
-      firstName: "Bob",
-      lastName: "Johnson",
-      email: "bob@example.com",
-      phone: "987-654-3210",
-      username: "bob.johnson",
-    },
-  ]);
 
+  const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    phone: "",
+    mobileNumber: "",
     password: "",
   });
   const [editingUser, setEditingUser] = useState(null);
+
+  useEffect(() => {
+    //API: Profiles api call made further state management should be handled during pagination
+    getProfiles(1, 50).then((res) => {
+      const data = res?.data?.detail?.data;
+      if (data) {
+        setUsers([...data])
+      }
+    });
+
+  }, [])
 
   const generateUsername = (firstName, lastName) => {
     return `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
@@ -41,21 +37,27 @@ const UserManagement = () => {
       newUser.firstName &&
       newUser.lastName &&
       newUser.email &&
-      newUser.phone &&
+      newUser.mobileNumber &&
       newUser.password
     ) {
-      const newUserId = users.length
-        ? Math.max(users.map((user) => user.id)) + 1
-        : 1;
-      const username = generateUsername(newUser.firstName, newUser.lastName);
-      setUsers([...users, { id: newUserId, username, ...newUser }]);
-      setNewUser({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        password: "",
-      });
+      //API: SaveProfile call made here, further state management should be done bellow line 45
+      saveProfile(newUser).then((res) => {
+        const newUserId = users.length
+          ? Math.max(users.map((user) => user.id)) + 1
+          : 1;
+        const username = generateUsername(newUser.firstName, newUser.lastName);
+
+        setUsers([...users, { id: newUserId, username, ...newUser }]);
+        setNewUser({
+          firstName: "",
+          lastName: "",
+          email: "",
+          mobileNumber: "",
+          password: "",
+        });
+      }).catch(err => {
+        alert("Error saving Profile")
+      })
     } else {
       alert("Please fill in all fields.");
     }
@@ -67,11 +69,12 @@ const UserManagement = () => {
   };
 
   const handleSaveEdit = () => {
+    // Edit api not provided, using existing save api throws server side validation errors
     if (
       newUser.firstName &&
       newUser.lastName &&
       newUser.email &&
-      newUser.phone
+      newUser.mobileNumber
     ) {
       const username = generateUsername(newUser.firstName, newUser.lastName);
       setUsers(
@@ -94,11 +97,15 @@ const UserManagement = () => {
 
   const handleDeleteUser = (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter((user) => user.id !== id));
+      //API: store id state from details api response, and pass it during delete after line 102
+      deleteProfile(id).then((res) => {
+        if (res.status === 200) {
+          setUsers(users.filter((user) => user.id !== id));
+        }
+      })
     }
   };
 
-  const navigate = useNavigate();
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
@@ -144,8 +151,8 @@ const UserManagement = () => {
             type="text"
             placeholder="Phone"
             className="border border-gray-300 p-2 rounded"
-            value={newUser.phone}
-            onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+            value={newUser.mobileNumber}
+            onChange={(e) => setNewUser({ ...newUser, mobileNumber: e.target.value })}
           />
           <input
             type="password"
@@ -157,9 +164,8 @@ const UserManagement = () => {
             }
           />
           <button
-            className={`${
-              editingUser ? "bg-yellow-500" : "bg-black"
-            } text-white py-2 rounded mt-2 hover:opacity-90`}
+            className={`${editingUser ? "bg-yellow-500" : "bg-black"
+              } text-white py-2 rounded mt-2 hover:opacity-90`}
             onClick={editingUser ? handleSaveEdit : handleAddUser}
           >
             {editingUser ? "Save Changes" : "Add User"}
@@ -175,7 +181,7 @@ const UserManagement = () => {
               <th className="p-2 border border-gray-300">First Name</th>
               <th className="p-2 border border-gray-300">Last Name</th>
               <th className="p-2 border border-gray-300">Email</th>
-              <th className="p-2 border border-gray-300">Phone</th>
+              <th className="p-2 border border-gray-300">Mobile</th>
               <th className="p-2 border border-gray-300">Username</th>
               <th className="p-2 border border-gray-300">Actions</th>
             </tr>
@@ -186,7 +192,7 @@ const UserManagement = () => {
                 <td className="p-2 border border-gray-300">{user.firstName}</td>
                 <td className="p-2 border border-gray-300">{user.lastName}</td>
                 <td className="p-2 border border-gray-300">{user.email}</td>
-                <td className="p-2 border border-gray-300">{user.phone}</td>
+                <td className="p-2 border border-gray-300">{user.mobileNumber}</td>
                 <td className="p-2 border border-gray-300">{user.username}</td>
                 <td className="p-2 border border-gray-300 flex justify-around">
                   <button

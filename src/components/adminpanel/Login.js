@@ -1,54 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Blacklogo from "../../images/starringblack.png";
+import { userLogin } from "../../api/admin";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "react-query";
 
-import { loginApi } from "../../api/auth";
-
-const Login = ({ onLogin }) => {
+const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const mutation = useMutation(loginApi);
 
-  useEffect(() => {
-    // Check if the user is already logged in (check localStorage)
-    if (localStorage.getItem("authToken")) {
-      navigate("/admin/dashboard"); // Redirect to dashboard if already logged in
-    }
-  }, [navigate]);
-
-  const handleLogin = async (e) => {
+  const loginUser = (e) => {
+    //API: Login api handled set auth state with this, using react context is prefered
     e.preventDefault();
-
-    mutation.mutate(
-      { email: username, password: password },
-      {
-        onSuccess: (res) => {
-          localStorage.setItem("authToken", res.data.detail.token);
-          navigate("/admin/dashboard");
-        },
-        onError: (err) => {
-          console.log(err);
-          alert("Invalid username or password");
-        },
+    userLogin(username, password).then(res => {
+      if (res.status === 200 && res?.data?.detail?.token) {
+        localStorage.setItem('authToken', res?.data?.detail?.token);
+        navigate('/admin/dashboard');
       }
-    );
-
-    // Check if the username and password are correct
-    // if (username === "StarringAdmin01" && password === "*#123&%478SSERd") {
-    //   // Call the onLogin prop to set authentication
-    //   onLogin();
-
-    //   // Persist login state in localStorage
-    //   localStorage.setItem("isLoggedIn", "true");
-
-    //   // Redirect to dashboard
-    //   navigate("/admin/dashboard");
-    // } else {
-    //   alert("Invalid username or password");
-    // }
-  };
+    })
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -62,7 +31,7 @@ const Login = ({ onLogin }) => {
         <h2 className="text-2xl font-bold text-center text-gray-700">
           Admin Login
         </h2>
-        <form onSubmit={handleLogin} className="mt-8 space-y-6">
+        <form onSubmit={loginUser} className="mt-8 space-y-6">
           {/* Username Input */}
           <div>
             <label htmlFor="username" className="block text-sm text-gray-600">

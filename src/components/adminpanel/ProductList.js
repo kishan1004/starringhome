@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash, FaSave } from "react-icons/fa";
 import Product1img from "../../images/product1.jpeg";
@@ -7,8 +7,7 @@ import Product3img from "../../images/product3.jpeg";
 import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
-import { getAllProductApi } from "../../api/admin";
-import { useQuery } from "react-query";
+import { getProductList, deleteProduct, editProduct, getAllCategories } from "../../api/admin";
 
 const productImages = [
   Product1img,
@@ -18,14 +17,7 @@ const productImages = [
   Product5img,
   Product6img,
 ];
-const initialCategories = [
-  "Tshirt",
-  "Shirt",
-  "Polo",
-  "Oversized",
-  "Jacket",
-  "Hoodie",
-];
+const initialCategories = [];
 
 const productsData = Array.from({ length: 25 }, (_, i) => ({
   id: `#a${i + 1}`,
@@ -47,7 +39,7 @@ const ProductList = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [productCategories] = useState(initialCategories);
+  const [productCategories, setProductCategories] = useState(initialCategories);
   const [products, setProducts] = useState(productsData);
   const [isEditing, setIsEditing] = useState(null);
   const [editFormData, setEditFormData] = useState({});
@@ -81,8 +73,19 @@ const ProductList = () => {
 
   const handlePageChange = (page) => setCurrentPage(page);
   const handleEditClick = (product) => {
-    setIsEditing(product.id);
-    setEditFormData({ ...product });
+    editProduct(product.id, {
+      name: product?.name,
+      category: product?.category,
+      brand: product?.brand,
+      prize: product?.price,
+      rating: product?.rating,
+      stock: product?.stock,
+    }).then((res) => {
+      if (res.status === 200) {
+        setIsEditing(product.id);
+        setEditFormData({ ...product });
+      }
+    })
   };
 
   const handleInputChange = (e) => {
@@ -106,11 +109,38 @@ const ProductList = () => {
 
   const handleDelete = (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => product.id !== productId)
-      );
+      //API: Delete product api is called, write further implementation after line 107
+      deleteProduct(productId).then((res) => {
+        if (res.status === 200) {
+          setProducts((prevProducts) =>
+            prevProducts.filter((product) => product.id !== productId)
+          );
+        }
+      })
     }
   };
+
+  useEffect(() => {
+    //API: fetched and updated product state , set page count and size based for paginations after line 119
+    getProductList(currentPage, 50).then((res) => {
+      if (res.status === 200) {
+        const data = res?.data?.detail?.data
+        console.log(data)
+      }
+    });
+  }, [currentPage])
+
+  useEffect(() => {
+    getAllCategories().then((res) => {
+      //API: Category names are being called here
+      if (res.status === 200) {
+        const categories = res?.data?.detail?.data;
+        const names = categories.map(category => category.name);
+
+        setProductCategories([...names]);
+      }
+    })
+  }, [])
 
   const navigate = useNavigate();
 
@@ -319,11 +349,10 @@ const ProductList = () => {
           <button
             key={i}
             onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${
-              currentPage === i + 1
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
+            className={`px-3 py-1 mx-1 rounded-md ${currentPage === i + 1
+              ? "bg-black text-white"
+              : "bg-gray-300 text-gray-800 hover:bg-gray-400"
+              }`}
           >
             {i + 1}
           </button>

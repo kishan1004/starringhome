@@ -1,38 +1,26 @@
 import axios from "axios";
 
-export const baseAxios = axios.create({
+export const axiosInstance = axios.create({
   baseURL: "https://3.14.249.42:9004/api/v1/",
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
-export const authAxios = axios.create({
-  baseURL: "https://3.14.249.42:9004/api/v1/",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+axiosInstance.interceptors.request.use((config) => {
+  const apiKey = localStorage.getItem("authToken");
+  console.log(config);
+  if (apiKey) {
+    config.headers['Authorization'] = `Bearer ${apiKey}`
+  }
+  return config;
+})
 
-authAxios.interceptors.request.use(
-  async (request) => {
-    const sessionToken = localStorage.getItem("authToken");
-    if (request.headers) {
-      request.headers.Authorization = `Bearer ${sessionToken}`;
-    }
-    request.data = JSON.stringify(request.data);
-    return request;
-  },
+axiosInstance.interceptors.response.use((res) => {
+  return res;
+},
   (error) => {
+    console.error('error', error);
+    if (error?.response?.status === 403 || error?.response?.status === 401) {
+      window.location.href = '/';
+    }
     return error;
   }
-);
-
-authAxios.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+)

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getTestimonialDetails, saveTestimonials } from "../../api/admin";
 
 const testimonialsData = [
   { id: 1, customerName: "Alice", review: "Great product! Highly recommend." },
@@ -48,6 +49,16 @@ const Testimonials = () => {
   const itemsPerPage = 8;
   const totalItems = testimonials.length;
 
+  useEffect(() => {
+    //API: Handled initial testimonial load, copy paste the same code when pagination required
+    getTestimonialDetails(1, 50).then((res) => {
+      if (res.status === 200) {
+        const data = res?.data?.detail?.data;
+        setTestimonials([...data])
+      }
+    })
+  }, [])
+
   const handleNext = () => {
     if (currentIndex < Math.floor(totalItems / itemsPerPage)) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
@@ -68,6 +79,10 @@ const Testimonials = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (newTestimonial.customerName && newTestimonial.review) {
+      //API: Call made to save api, make sure to handle state properly post call
+      saveTestimonials(newTestimonial).then((res) => {
+        console.log(res);
+      })
       setTestimonials((prevTestimonials) => [
         ...prevTestimonials,
         { id: prevTestimonials.length + 1, ...newTestimonial },
@@ -98,20 +113,18 @@ const Testimonials = () => {
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className={`px-4 py-2 rounded ${
-            currentIndex === 0 ? "bg-gray-300" : "bg-black text-white"
-          } `}
+          className={`px-4 py-2 rounded ${currentIndex === 0 ? "bg-gray-300" : "bg-black text-white"
+            } `}
         >
           Prev
         </button>
         <button
           onClick={handleNext}
           disabled={currentIndex >= Math.floor(totalItems / itemsPerPage)}
-          className={`px-4 py-2 rounded ${
-            currentIndex >= Math.floor(totalItems / itemsPerPage)
-              ? "bg-gray-300"
-              : "bg-black text-white"
-          }`}
+          className={`px-4 py-2 rounded ${currentIndex >= Math.floor(totalItems / itemsPerPage)
+            ? "bg-gray-300"
+            : "bg-black text-white"
+            }`}
         >
           Next
         </button>
