@@ -293,7 +293,7 @@ const AllProductsPage = () => {
   };
 
   useEffect(() => {
-    // call this api whenever thre is change in query params
+    // call this api whenever thre is a change in data object, pass it as dependency to useEffect
   //  const data = {
   //     page: 1,
   //     limit: 20,

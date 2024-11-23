@@ -39,7 +39,7 @@ const UserLogin = () => {
 
     // api call: do route here
     userLogin(userName, password).then((res) => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         localStorage.setItem("userToken", res?.data?.detail?.token);
         window.location.href = '/';
       }

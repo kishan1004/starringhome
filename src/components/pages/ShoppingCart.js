@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Product1 from "../../images/product1.jpeg";
 import Product2 from "../../images/product2.jpeg";
+import { getCartDetails } from "../../api/user";
 
 const ShoppingCart = () => {
   const [products, setProducts] = useState([
@@ -48,6 +49,16 @@ const ShoppingCart = () => {
       prevProducts.filter((product) => product.id !== id)
     );
   };
+
+  useEffect(() => {
+    //API: Cart info is retrived here
+    getCartDetails(1, 20).then((res) => {
+      const data = res?.data?.detail?.data
+      if (res.status === 200) {
+        setProducts([...data])
+      }
+    })
+  }, [])
 
   return (
     <section className="bg-gray-100 font-sans min-h-screen ">

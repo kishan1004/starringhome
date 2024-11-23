@@ -11,7 +11,7 @@ import SimilarProduct4 from "../../images/imgproduct6.jpeg";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FrequentProduct1 from "../../images/product1.jpeg";
 import FrequentProduct2 from "../../images/product3.jpeg";
-import { getProductById, addFavouriteProduct } from "../../api/user";
+import { addToCart, getProductById, addFavouriteProduct } from "../../api/user";
 
 const ProductPage = () => {
   // const [selectedColor, setSelectedColor] = useState("black");
@@ -126,6 +126,19 @@ const ProductPage = () => {
     })
   }, [])
 
+  const handleAddToCart = () => {
+    const data = {
+      productId: [
+        "6148e7a9-dbb2-43f8-917d-1722daf5e072"
+      ],
+      action: "ADD"
+    }
+
+    addToCart(data).then((res) => {
+      console.log(data)
+    })
+  }
+
   return (
     <section className="bg-gray-100 font-beatrice max-w-[1440px] mx-auto w-full">
       <div className="w-full md:px-10  px-4">
@@ -163,9 +176,8 @@ const ProductPage = () => {
                 key={index}
                 src={image}
                 alt={`Thumbnail ${index + 1}`}
-                className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${
-                  selectedImage === index ? "opacity-100" : "opacity-50"
-                }`}
+                className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${selectedImage === index ? "opacity-100" : "opacity-50"
+                  }`}
                 onClick={() => setSelectedImage(index)}
               />
             ))}
@@ -250,17 +262,15 @@ const ProductPage = () => {
                     availableSizes.includes(size) && setSelectedSize(size)
                   }
                   disabled={!availableSizes.includes(size)}
-                  className={`py-2 border ${
-                    availableSizes.includes(size)
-                      ? selectedSize === size
-                        ? "border-black"
-                        : "border-gray-300"
-                      : "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
-                  } hover:border-black ${
-                    !availableSizes.includes(size)
+                  className={`py-2 border ${availableSizes.includes(size)
+                    ? selectedSize === size
+                      ? "border-black"
+                      : "border-gray-300"
+                    : "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
+                    } hover:border-black ${!availableSizes.includes(size)
                       ? "hover:border-gray-300"
                       : ""
-                  }`}
+                    }`}
                 >
                   {size}
                 </button>
@@ -270,7 +280,8 @@ const ProductPage = () => {
           <p className="text-xs text-gray-500 pb-3 underline">
             <Link to="/size-chart">FIND YOUR SIZE | MEASUREMENT GUIDE</Link>
           </p>
-          <button className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white">
+          <button className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white"
+            onClick={handleAddToCart}>
             ADD
           </button>
         </div>
@@ -287,7 +298,7 @@ const ProductPage = () => {
                 const offerPercentage = Math.round(
                   ((product.originalPrice - product.offerPrice) /
                     product.originalPrice) *
-                    100
+                  100
                 );
                 return (
                   <React.Fragment key={product.id}>
@@ -350,7 +361,7 @@ const ProductPage = () => {
               const offerPercentage = Math.round(
                 ((product.originalPrice - product.offerPrice) /
                   product.originalPrice) *
-                  100
+                100
               );
               return (
                 <Link to="/one-product" className="block">
