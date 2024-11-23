@@ -100,12 +100,12 @@ const ProductUpload = () => {
     setReviewMode(true);
   };
 
-  const handleUpload = () => { 
+  const handleUpload = () => {
     // created product
     saveProduct(productData).then((res) => {
       console.log(res);
-    });
-  };
+    });
+  };
 
   const navigate = useNavigate();
 
@@ -121,7 +121,7 @@ const ProductUpload = () => {
       <div className="rounded-lg w-full gap-5 grid grid-cols-1 md:grid-cols-2">
         {/* Input Fields */}
         <div>
-          <label className="font-semibold">Product Name</label>
+          <label className="font-semibold">Product Name *</label>
           <input
             type="text"
             name="name"
@@ -132,7 +132,7 @@ const ProductUpload = () => {
           />
         </div>
         <div>
-          <label className="font-semibold">Product ID</label>
+          <label className="font-semibold">Product ID *</label>
           <input
             type="text"
             name="id"
@@ -144,7 +144,7 @@ const ProductUpload = () => {
         </div>
 
         <div>
-          <label className="font-semibold">Product Brand</label>
+          <label className="font-semibold">Product Brand *</label>
           <input
             type="text"
             name="brand"
@@ -173,12 +173,12 @@ const ProductUpload = () => {
             value={productData.tag}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
-            placeholder="Enter product brand"
+            placeholder="Enter product tag"
           />
         </div>
 
         <div>
-          <label className="font-semibold">Product Category</label>
+          <label className="font-semibold">Product Category *</label>
           <select
             name="category"
             value={productData.category}
@@ -198,7 +198,7 @@ const ProductUpload = () => {
 
         <div>
           <label className="font-semibold">
-            Product Size (Multiple Select)
+            Product Size (Multiple Select) *
           </label>
           <div className="flex flex-wrap gap-4 mt-2">
             {["XS", "S", "M", "L", "XL", "2X"].map((size) => (
@@ -219,7 +219,7 @@ const ProductUpload = () => {
         {productData.size.length > 0 &&
           productData.size.map((size) => (
             <div key={size}>
-              <label className="font-semibold">Stock Count for {size}</label>
+              <label className="font-semibold">Stock Count for {size} *</label>
               <input
                 type="number"
                 name="stock"
@@ -232,7 +232,7 @@ const ProductUpload = () => {
           ))}
 
         <div>
-          <label className="font-semibold">Product Price</label>
+          <label className="font-semibold">Product Price *</label>
           <input
             type="number"
             name="price"
@@ -244,7 +244,7 @@ const ProductUpload = () => {
         </div>
 
         <div>
-          <label className="font-semibold">Offer Percentage</label>
+          <label className="font-semibold">Offer Percentage *</label>
           <input
             type="number"
             name="offerPercentage"
@@ -267,7 +267,7 @@ const ProductUpload = () => {
         </div>
 
         <div>
-          <label className="font-semibold">Product Photos (Multiple)</label>
+          <label className="font-semibold">Product Photos (Multiple) *</label>
           <input
             type="file"
             name="photos"
@@ -278,7 +278,7 @@ const ProductUpload = () => {
         </div>
       </div>
       <div>
-        <label className="font-semibold">Description</label>
+        <label className="font-semibold">Description *</label>
         <textarea
           name="description"
           value={productData.description}

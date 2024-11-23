@@ -1,8 +1,30 @@
 import React from "react";
+import { Link } from "react-router-dom"; // Import Link from React Router
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 
 const UserLogin = () => {
+  const accountOptions = [
+    {
+      title: "Your Orders",
+      description: "Track or buy things again",
+      icon: "📦", // Replace with a relevant icon or image
+      link: "/your-orders", // Route for this card
+    },
+    {
+      title: "Login & security",
+      description: "Edit username and password",
+      icon: "🔒",
+      link: "/login-security", // Route for this card
+    },
+    {
+      title: "Your Addresses",
+      description: "Edit addresses for orders",
+      icon: "📍",
+      link: "/addresses", // Route for this card
+    },
+  ];
+
   return (
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
@@ -17,120 +39,22 @@ const UserLogin = () => {
             Manage your account details below. Make updates or log out of your
             account.
           </p>
-
-          <form className="w-full max-w-sm">
-            {/* Name Input */}
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="name"
+          <div className="grid grid-cols-1 gap-6">
+            {accountOptions.map((option, index) => (
+              <Link
+                key={index}
+                to={option.link} // Link to the specified route
+                className="flex items-start p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
               >
-                Name
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
-                type="text"
-                placeholder="Enter your name"
-              />
-            </div>
-
-            {/* Phone Number Input */}
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="phone"
-              >
-                Phone Number
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="phone"
-                type="text"
-                placeholder="Enter your phone number"
-              />
-            </div>
-
-            {/* Email Input */}
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="email"
-              >
-                Email ID
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="email"
-                type="email"
-                placeholder="Enter your email ID"
-              />
-            </div>
-
-            {/* Address Input */}
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="address"
-              >
-                Address
-              </label>
-              <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="address"
-                placeholder="Enter your address"
-                rows="3"
-              ></textarea>
-            </div>
-
-            {/* New Password Input */}
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="newPassword"
-              >
-                New Password
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="newPassword"
-                type="password"
-                placeholder="At least 10 characters"
-              />
-            </div>
-
-            {/* Confirm Password Input */}
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="confirmPassword"
-              >
-                Confirm Password
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-              />
-            </div>
-
-            {/* Save Changes Button */}
-            <button
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline mb-4"
-              type="button"
-            >
-              Save Changes
-            </button>
-
-            {/* Logout Button */}
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
-              type="button"
-            >
-              Logout
-            </button>
-          </form>
+                {/* Replace emoji with images/icons if needed */}
+                <div className="text-3xl mr-4">{option.icon}</div>
+                <div>
+                  <h2 className="text-lg font-medium">{option.title}</h2>
+                  <p className="text-sm text-gray-500">{option.description}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Right Side - Image Section */}

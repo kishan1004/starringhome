@@ -42,6 +42,11 @@ import PaymentConfirmation from "./components/pages/PaymentConfirmation";
 import OTPLogin from "./components/pages/OTPLogin";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { userLogout } from "./api/admin";
+import YourAddresses from "./components/pages/YourAddresses";
+import AddAddress from "./components/pages/AddAddress";
+import LoginAndSecurity from "./components/pages/LoginAndSecurity";
+import ChangePassword from "./components/pages/ChangePassword";
+import YourOrders from "./components/pages/YourOrders";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -78,8 +83,8 @@ function App() {
   const handleLogout = () => {
     //API: logout api handled
     userLogout().then((res) => {
-      localStorage.removeItem('authToken');
-    })
+      localStorage.removeItem("authToken");
+    });
   };
 
   return (
@@ -153,6 +158,12 @@ function App() {
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/user-login" element={<UserLogin />} />
             <Route path="/user-account" element={<UserAccountPage />} />
+            <Route path="/addresses" element={<YourAddresses />} />
+            <Route path="/add-address" element={<AddAddress />} />
+            <Route path="/login-security" element={<LoginAndSecurity />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/your-orders" element={<YourOrders />} />
+
             <Route
               path="/shopping-cart"
               element={
@@ -172,7 +183,10 @@ function App() {
               element={
                 isAuthenticated ? (
                   <>
-                    <Adminbar toggleSidebar={toggleSidebar} onLogout={handleLogout} />
+                    <Adminbar
+                      toggleSidebar={toggleSidebar}
+                      onLogout={handleLogout}
+                    />
                     <div className="flex flex-col lg:flex-row">
                       {isSidebarOpen && (
                         <AdminSidebar toggleSidebar={toggleSidebar} />

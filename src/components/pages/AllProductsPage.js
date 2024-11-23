@@ -7,20 +7,20 @@ import { Link } from "react-router-dom";
 
 const AllProductsPage = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
+  // const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
 
-  const [availabilityFilters, setAvailabilityFilters] = useState({
-    available: false,
-    outOfStock: false,
-  });
+  // const [availabilityFilters, setAvailabilityFilters] = useState({
+  //   available: false,
+  //   outOfStock: false,
+  // });
 
-  const handleAvailabilityChange = (e) => {
-    const { name, checked } = e.target;
-    setAvailabilityFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: checked,
-    }));
-  };
+  // const handleAvailabilityChange = (e) => {
+  //   const { name, checked } = e.target;
+  //   setAvailabilityFilters((prevFilters) => ({
+  //     ...prevFilters,
+  //     [name]: checked,
+  //   }));
+  // };
 
   const [selectedSize, setSelectedSize] = useState(null);
   const sizes = ["XS", "S", "M", "L", "XL", "2X"];
@@ -121,7 +121,7 @@ const AllProductsPage = () => {
   };
 
   const handleClearAll = () => {
-    setAvailabilityFilters({ available: false, outOfStock: false });
+    // setAvailabilityFilters({ available: false, outOfStock: false });
     setSelectedSize(null);
     setMinPrice(0);
     setMaxPrice(5000);
@@ -134,7 +134,7 @@ const AllProductsPage = () => {
 
   const handleApply = () => {
     console.log("Filters applied:", {
-      availability: availabilityFilters,
+      // availability: availabilityFilters,
       selectedSize,
       minPrice,
       maxPrice,
@@ -439,7 +439,7 @@ const AllProductsPage = () => {
 
             <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
 
-            <div className="my-4">
+            {/* <div className="my-4">
               <div
                 className="my-4 flex items-center justify-between cursor-pointer"
                 onClick={() => setIsAvailabilityOpen(!isAvailabilityOpen)}
@@ -493,7 +493,7 @@ const AllProductsPage = () => {
               )}
             </div>
 
-            <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
+            <div className="border-t border-dotted border-gray-500 w-full my-4"></div> */}
 
             <div className="my-4">
               <div
