@@ -4,10 +4,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoNotifications } from "react-icons/io5";
 import { MdAccountCircle } from "react-icons/md";
 import { FaUserCog } from "react-icons/fa";
-import { Link, Navigate } from "react-router-dom";
-import { logoutApi } from "../../api/auth";
-import { useMutation } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const initialRecentOrders = [
   {
@@ -82,15 +79,13 @@ const initialRecentOrders = [
   },
 ];
 
-const Adminbar = ({ toggleSidebar }) => {
+const Adminbar = ({ toggleSidebar, onLogout }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [recentOrders, setRecentOrders] = useState(initialRecentOrders);
   const [clickedOrderIds, setClickedOrderIds] = useState([]);
   const notificationRef = useRef(null);
   const accountRef = useRef(null);
-  const mutation = useMutation(logoutApi);
-  const navigate = useNavigate();
 
   const toggleNotificationDropdown = () => {
     setIsNotificationOpen((prev) => !prev);
@@ -138,23 +133,6 @@ const Adminbar = ({ toggleSidebar }) => {
     setIsNotificationOpen(false);
   };
 
-  const handleLogout = () => {
-    mutation.mutate(
-      {},
-      {
-        onSuccess: () => {
-          localStorage.clear("authToken");
-          setIsAccountOpen(false);
-          Navigate("/admin/login");
-        },
-        onError: (e) => {
-          console.log("err", e);
-          localStorage.clear("authToken");
-          navigate("/admin/login");
-        },
-      }
-    );
-  };
   return (
     <div className="w-full fixed h-[60px] bg-gray-100 flex items-center justify-between p-2 sm:p-4">
       <div className="flex items-center">
@@ -193,11 +171,10 @@ const Adminbar = ({ toggleSidebar }) => {
                     recentOrders.map((order) => (
                       <li
                         key={order.id}
-                        className={`px-4 py-6 cursor-pointer border-b border-gray-300 ${
-                          clickedOrderIds.includes(order.id)
-                            ? "bg-gray-200"
-                            : "hover:bg-gray-100"
-                        }`}
+                        className={`px-4 py-6 cursor-pointer border-b border-gray-300 ${clickedOrderIds.includes(order.id)
+                          ? "bg-gray-200"
+                          : "hover:bg-gray-100"
+                          }`}
                       >
                         <Link
                           to={`/orders/${order.id}`}
@@ -242,7 +219,7 @@ const Adminbar = ({ toggleSidebar }) => {
                 <li
                   className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
                   onClick={() => {
-                    handleLogout();
+                    onLogout();
                   }}
                 >
                   Logout

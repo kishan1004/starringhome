@@ -172,7 +172,7 @@ function App() {
               element={
                 isAuthenticated ? (
                   <>
-                    <Adminbar toggleSidebar={toggleSidebar} />
+                    <Adminbar toggleSidebar={toggleSidebar} onLogout={handleLogout} />
                     <div className="flex flex-col lg:flex-row">
                       {isSidebarOpen && (
                         <AdminSidebar toggleSidebar={toggleSidebar} />

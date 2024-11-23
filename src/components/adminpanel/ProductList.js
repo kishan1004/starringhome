@@ -44,12 +44,6 @@ const ProductList = () => {
   const [isEditing, setIsEditing] = useState(null);
   const [editFormData, setEditFormData] = useState({});
 
-  //API init
-  const query = useQuery({
-    queryKey: [{ page: currentPage }],
-    queryFn: getAllProductApi,
-  });
-  console.log("API Data", query);
 
   const itemsPerPage = 8;
 
