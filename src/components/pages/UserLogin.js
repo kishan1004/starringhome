@@ -3,6 +3,7 @@ import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { Link } from "react-router-dom";
 import { userLogin } from "../../api/user";
+import { userLogin } from "../../api/user";
 
 const UserLogin = () => {
   //show error in UI
@@ -10,12 +11,12 @@ const UserLogin = () => {
   const [userName, setUserName] = useState();
   const [password, setPassword] = useState();
 
-  const onLogin  = (e) => {
+  const onLogin = (e) => {
     e.preventDefault();
     //email validation
-    if(isNaN(userName)) {
+    if (isNaN(userName)) {
       const patt = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if(!patt.test(userName)) {
+      if (!patt.test(userName)) {
         setError("Invalid email");
         return;
       }
@@ -24,7 +25,7 @@ const UserLogin = () => {
       // 11 if first number is 0
       // 12 if first 2 numbers is 91
       let patt = new RegExp(/(0|91)?[6-9][0-9]{9}/);
-      if(!patt.test(userName)) {
+      if (!patt.test(userName)) {
         setError("Invalid Phone Number");
         return;
       }
@@ -32,7 +33,7 @@ const UserLogin = () => {
 
     //password validation
     let patt = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-    if(!patt.test(password)) {
+    if (!patt.test(password)) {
       setError("Invalid password");
       return;
     }
