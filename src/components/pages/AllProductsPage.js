@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Product2img from "../../images/imgproduct2.jpeg";
 import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
 import { Link } from "react-router-dom";
+import { userProductsList } from "../../api/user";
 
 const AllProductsPage = () => {
+  const [allItems, setAllItems] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   // const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
 
@@ -289,6 +291,21 @@ const AllProductsPage = () => {
     setSearchTerm(e.target.value);
     setSelectedFilter("ALL"); // Automatically set filter to "ALL" when typing in search
   };
+
+  useEffect(() => {
+    // call this api whenever thre is a change in data object, pass it as dependency to useEffect
+  //  const data = {
+  //     page: 1,
+  //     limit: 20,
+  //     sizes : ['s', 'xs'],
+  //     categories: [],
+  //   }
+    userProductsList().then(res=> {
+      if(res.status === 200) {
+        setAllItems([...res?.data?.detail?.data]);
+      }
+    })
+  },[])
 
   return (
     <section className="bg-gray-100 font-beatrice min-h-screen">
@@ -848,9 +865,8 @@ const AllProductsPage = () => {
                 const offerPercentage = Math.round(
                   ((price - offerPrice) / price) * 100
                 );
-
                 return (
-                  <Link to="/one-product" key={id}>
+                  <Link to={`/one-product?id=${id}`}>
                     <div className="border rounded-md p-4">
                       <img
                         src={image}

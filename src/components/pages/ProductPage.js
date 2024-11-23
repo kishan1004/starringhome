@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Mainproductimg from "../../images/mainproduct.jpeg";
 import Slide2img from "../../images/slide2.jpeg";
 import Slide3img from "../../images/slide3.jpeg";
@@ -8,13 +8,17 @@ import SimilarProduct1 from "../../images/imgproduct2.jpeg";
 import SimilarProduct2 from "../../images/imgproduct4.jpeg";
 import SimilarProduct3 from "../../images/imgproduct5.jpeg";
 import SimilarProduct4 from "../../images/imgproduct6.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FrequentProduct1 from "../../images/product1.jpeg";
 import FrequentProduct2 from "../../images/product3.jpeg";
+import { addToCart, getProductById, addFavouriteProduct } from "../../api/user";
 
 const ProductPage = () => {
   // const [selectedColor, setSelectedColor] = useState("black");
   const [selectedSize, setSelectedSize] = useState("M");
+  const [params] = useSearchParams();
+  const productKey = params.get('id');
+  const navigate = useNavigate()
 
   // const colors = [
   //   "#D9D9D9",
@@ -47,8 +51,15 @@ const ProductPage = () => {
 
   const [isRed, setIsRed] = useState(false);
 
-  const handleClick = () => {
+  const handleClick = (id) => {
     setIsRed((prev) => !prev); // Toggle between red and white
+    addFavouriteProduct([id], "ADD").then((res) => {
+      if(res?.status == 401) {
+        navigate('/user-login');
+      } else {
+        console.log(res);
+      }
+    })
   };
 
   const similarProducts = [
@@ -109,6 +120,25 @@ const ProductPage = () => {
     );
   };
 
+  useEffect(() => {
+    getProductById(productKey).then((res) => {
+      console.log(res);
+    })
+  }, [])
+
+  const handleAddToCart = () => {
+    const data = {
+      productId: [
+        "6148e7a9-dbb2-43f8-917d-1722daf5e072"
+      ],
+      action: "ADD"
+    }
+
+    addToCart(data).then((res) => {
+      console.log(data)
+    })
+  }
+
   return (
     <section className="bg-gray-100 font-beatrice max-w-[1440px] mx-auto w-full">
       <div className="w-full md:px-10  px-4">
@@ -146,9 +176,8 @@ const ProductPage = () => {
                 key={index}
                 src={image}
                 alt={`Thumbnail ${index + 1}`}
-                className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${
-                  selectedImage === index ? "opacity-100" : "opacity-50"
-                }`}
+                className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${selectedImage === index ? "opacity-100" : "opacity-50"
+                  }`}
                 onClick={() => setSelectedImage(index)}
               />
             ))}
@@ -158,7 +187,7 @@ const ProductPage = () => {
         <div className="lg:max-w-[380px] md:w-1/2 px-10 border-2 relative">
           <button
             className="absolute top-0 right-0"
-            onClick={handleClick}
+            onClick={() => handleClick(productKey)}
             style={{
               border: "none",
               padding: "10px",
@@ -233,17 +262,15 @@ const ProductPage = () => {
                     availableSizes.includes(size) && setSelectedSize(size)
                   }
                   disabled={!availableSizes.includes(size)}
-                  className={`py-2 border ${
-                    availableSizes.includes(size)
-                      ? selectedSize === size
-                        ? "border-black"
-                        : "border-gray-300"
-                      : "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
-                  } hover:border-black ${
-                    !availableSizes.includes(size)
+                  className={`py-2 border ${availableSizes.includes(size)
+                    ? selectedSize === size
+                      ? "border-black"
+                      : "border-gray-300"
+                    : "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
+                    } hover:border-black ${!availableSizes.includes(size)
                       ? "hover:border-gray-300"
                       : ""
-                  }`}
+                    }`}
                 >
                   {size}
                 </button>
@@ -253,7 +280,8 @@ const ProductPage = () => {
           <p className="text-xs text-gray-500 pb-3 underline">
             <Link to="/size-chart">FIND YOUR SIZE | MEASUREMENT GUIDE</Link>
           </p>
-          <button className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white">
+          <button className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white"
+            onClick={handleAddToCart}>
             ADD
           </button>
         </div>
@@ -270,7 +298,7 @@ const ProductPage = () => {
                 const offerPercentage = Math.round(
                   ((product.originalPrice - product.offerPrice) /
                     product.originalPrice) *
-                    100
+                  100
                 );
                 return (
                   <React.Fragment key={product.id}>
@@ -333,7 +361,7 @@ const ProductPage = () => {
               const offerPercentage = Math.round(
                 ((product.originalPrice - product.offerPrice) /
                   product.originalPrice) *
-                  100
+                100
               );
               return (
                 <Link to="/one-product" className="block">

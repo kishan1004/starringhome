@@ -7,7 +7,7 @@ import Product3img from "../../images/product3.jpeg";
 import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
-import { getProductList, deleteProduct, editProduct, getAllCategories } from "../../api/admin";
+import { getProductList, deleteProduct, editProduct, getAllCategories, saveProduct } from "../../api/admin";
 
 const productImages = [
   Product1img,
@@ -116,10 +116,11 @@ const ProductList = () => {
 
   useEffect(() => {
     //API: fetched and updated product state , set page count and size based for paginations after line 119
+    console.log("Fetching products")
     getProductList(currentPage, 50).then((res) => {
       if (res.status === 200) {
         const data = res?.data?.detail?.data
-        console.log(data)
+        console.log("Products", data)
       }
     });
   }, [currentPage])
