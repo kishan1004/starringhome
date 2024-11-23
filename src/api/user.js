@@ -18,20 +18,19 @@ export const userLogout = async() => {
 
 //Orders Management
 export const userProductsList = (data) => {
-    let queryParams = "";
-    const page = data.page ? `page=${data.page}` : null;
-    if(data?.page !== null) {
+    let queryParams = [];
+    if(data?.page) {
         queryParams.push(`page=${data.page}`);
     }
     if(data?.page && data?.limit) {
         queryParams.push(`limit=${data.limit}`);
     }
     if(data?.sizes?.length>0) {
-        const temp = data.sizes.split('').join('&sizes=')
+        const temp = data.sizes.join('&sizes=')
         queryParams.push(`sizes=${temp}`);
     }
     if(data?.category?.length>0) {
-        const temp = data.category.split('').join('&category=');
+        const temp = data.category.join('&category=');
         queryParams.push(`category=${temp}`);
     }
     if(data?.price_gt){
@@ -41,21 +40,24 @@ export const userProductsList = (data) => {
         queryParams.push(`price_lt=${data.price_lt}`);
     }
     if(data?.collections?.length>0) {
-        const temp = data.collections.split('').join('&collections=');
+        const temp = data.collections.join('&collections=');
         queryParams.push(`collections=${temp}`);
     }
     if(data?.tags?.length>0) {
-        const temp = data.tags.split('').join('&tags=');
+        const temp = data.tags.join('&tags=');
         queryParams.push(`tags=${temp}`);
     }
     if(data?.ratings?.length>0) {
-        const temp = data.ratings.split('').join('&ratings=');
+        const temp = data.ratings.join('&ratings=');
         queryParams.push(`ratings=${temp}`);
     }
     
-    const allParams = queryParams.length >0 ?  queryParams.split('').join('&') : null;
-
-    return axiosInstance.get(`users/orders/products/${allParams && `?${allParams}`}`);
+    const allParams = queryParams.length >0 ?  queryParams.join('&') : null;
+    let url = 'users/orders/products';
+    if(allParams) {
+        url += `?${allParams}`;
+    }
+    return axiosInstance.get(url);
 }
 
 export const getProductById = (id) => {

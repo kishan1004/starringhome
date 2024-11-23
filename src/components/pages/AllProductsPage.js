@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Product2img from "../../images/imgproduct2.jpeg";
 import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
@@ -293,7 +293,17 @@ const AllProductsPage = () => {
   };
 
   useEffect(() => {
-
+   const data = {
+      page: 1,
+      limit: 20,
+      sizes : ['s', 'xs'],
+      categories: [],
+    }
+    userProductsList(data).then(res=> {
+      if(res.status === 200) {
+        setAllItems([...res?.data?.detail?.data]);
+      }
+    })
   },[])
 
   return (
