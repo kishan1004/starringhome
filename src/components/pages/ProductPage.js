@@ -8,16 +8,17 @@ import SimilarProduct1 from "../../images/imgproduct2.jpeg";
 import SimilarProduct2 from "../../images/imgproduct4.jpeg";
 import SimilarProduct3 from "../../images/imgproduct5.jpeg";
 import SimilarProduct4 from "../../images/imgproduct6.jpeg";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FrequentProduct1 from "../../images/product1.jpeg";
 import FrequentProduct2 from "../../images/product3.jpeg";
-import { getProductById } from "../../api/user";
+import { getProductById, addFavouriteProduct } from "../../api/user";
 
 const ProductPage = () => {
   // const [selectedColor, setSelectedColor] = useState("black");
   const [selectedSize, setSelectedSize] = useState("M");
   const [params] = useSearchParams();
   const productKey = params.get('id');
+  const navigate = useNavigate()
 
   // const colors = [
   //   "#D9D9D9",
@@ -50,8 +51,15 @@ const ProductPage = () => {
 
   const [isRed, setIsRed] = useState(false);
 
-  const handleClick = () => {
+  const handleClick = (id) => {
     setIsRed((prev) => !prev); // Toggle between red and white
+    addFavouriteProduct([id], "ADD").then((res) => {
+      if(res?.status == 401) {
+        navigate('/user-login');
+      } else {
+        console.log(res);
+      }
+    })
   };
 
   const similarProducts = [
@@ -167,7 +175,7 @@ const ProductPage = () => {
         <div className="lg:max-w-[380px] md:w-1/2 px-10 border-2 relative">
           <button
             className="absolute top-0 right-0"
-            onClick={handleClick}
+            onClick={() => handleClick(productKey)}
             style={{
               border: "none",
               padding: "10px",

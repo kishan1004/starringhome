@@ -101,8 +101,8 @@ export const addFavouriteProduct = (id, action) => {
         return;
     }
 
-    return axiosInstance.post('/users/orders/products/favourites', {
-        productId: [id],
+    return axiosInstance.put('/users/orders/products/favourites', {
+        productId: [...id],
         action
     })
 }
