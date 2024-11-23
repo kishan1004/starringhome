@@ -4,7 +4,7 @@ import LoginImgsm from "../../images/loginimagesmall.jpeg";
 
 const UserLogin = () => {
   return (
-    <section className="font-beatrice bg-gray-100 h-screen">
+    <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
       </div>

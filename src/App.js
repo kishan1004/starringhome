@@ -58,7 +58,7 @@ function App() {
   useEffect(() => {
     // Check if the user is authenticated when the app loads
     const storedAuthState = localStorage.getItem("authToken");
-    console.log(storedAuthState, !!storedAuthState);
+
     if (storedAuthState) {
       setIsAuthenticated(true); // Set state based on stored value
     }
@@ -93,15 +93,16 @@ function App() {
               path="/"
               element={
                 <>
-                  <HeroSection />
-                  <NewArrivalsSection />
-                  <TrendingSection />
-                  <BannerSection />
-                  <FeatureSection />
-                  <FooterSection />
+                  <HeroSection id="hero" />
+                  <NewArrivalsSection id="new-arrivals" />
+                  <TrendingSection id="trending" />
+                  <BannerSection id="banner" />
+                  <FeatureSection id="features" />
+                  <FooterSection id="footer" />
                 </>
               }
             />
+
             <Route
               path="/all-products"
               element={
@@ -148,6 +149,7 @@ function App() {
                 </>
               }
             />
+
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/user-login" element={<UserLogin />} />
             <Route path="/user-account" element={<UserAccountPage />} />
@@ -170,10 +172,7 @@ function App() {
               element={
                 isAuthenticated ? (
                   <>
-                    <Adminbar
-                      toggleSidebar={toggleSidebar}
-                      onLogout={handleLogout}
-                    />
+                    <Adminbar toggleSidebar={toggleSidebar} />
                     <div className="flex flex-col lg:flex-row">
                       {isSidebarOpen && (
                         <AdminSidebar toggleSidebar={toggleSidebar} />

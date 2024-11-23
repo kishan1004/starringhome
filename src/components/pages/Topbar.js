@@ -44,10 +44,10 @@ const Topbar = () => {
           <a href="/" className="text-gray-600 hover:text-black">
             Home
           </a>
-          <a href="/" className="text-gray-600 hover:text-black">
+          <a href="/all-products" className="text-gray-600 hover:text-black">
             Collections
           </a>
-          <a href="/" className="text-gray-600 hover:text-black">
+          <a href="/all-products" className="text-gray-600 hover:text-black">
             New
           </a>
         </nav>
