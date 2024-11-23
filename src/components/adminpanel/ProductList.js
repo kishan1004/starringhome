@@ -102,6 +102,7 @@ const ProductList = () => {
 
   const handleDelete = (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
+      //API: Delete product api is called, write further implementation after line 107
       deleteProduct(productId).then((res) => {
         if (res.status === 200) {
           setProducts((prevProducts) =>
@@ -113,13 +114,11 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    console.log("Fetching products...");
-    getProductList(currentPage).then((res) => {
-      // fetched and updated product state , set filtered products and size based on this 
-      // also check is limit param required
+    //API: fetched and updated product state , set page count and size based for paginations after line 119
+    getProductList(currentPage, 50).then((res) => {
       if (res.status === 200) {
-        console.log('rrrr', res);
-        // setProducts([...res?.data]);
+        const data = res?.data?.detail?.data
+        console.log(data)
       }
     });
   }, [currentPage])

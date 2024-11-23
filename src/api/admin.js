@@ -26,7 +26,7 @@ export const saveProfile = (profile = {}) => {
   const { firstName, lastName, email, mobileNumber, password } = profile;
 
   if (!firstName || !email || !password) {
-    throw new Error('First name, email, and password are required.');
+    console.error('First name, email, and password are required.')
   }
 
   return axiosInstance.post('/admin/profiles/save', {
@@ -61,16 +61,17 @@ export const saveProduct = (data) => {
   return axiosInstance.post('/admin/products/save', data);
 }
 
+//GET PRODUCT DETAIL UI FEATURE NOT PRESENT
 export const getProduct = (id) => {
   if (!id) {
-    throw new Error('Product ID is required');
+    console.error("Product id is required")
   }
   return axiosInstance.get(`admin/products/${id}/details`);
 }
 
 export const deleteProduct = (id) => {
   if (!id) {
-    throw new Error('Product ID is required');
+    console.error("Product id is required")
   }
 
   return axiosInstance.delete(`/admin/products/${id}/remove`);
@@ -78,7 +79,7 @@ export const deleteProduct = (id) => {
 
 export const editProduct = (id, data) => {
   if (!id) {
-    throw new Error('Product ID is required');
+    console.error("Product id is requried");
   }
 
   return axiosInstance.patch(`/admin/products/${id}/modify, data`);
@@ -88,4 +89,33 @@ export const editProduct = (id, data) => {
 
 export const getAllCategories = () => {
   return axiosInstance.get('/admin/category/names');
+}
+
+/* Testimonial API */
+export const saveTestimonials = (data) => {
+  const { customerName: name, review } = data;
+
+  if (!name || !review) {
+    console.error("Invalid request body")
+    return;
+  }
+
+  return axiosInstance.post('/admin/testimonials/save', {
+    name,
+    review
+  })
+}
+
+export const getTestimonialDetails = (page, limit = 50) => {
+  return axiosInstance.get('/admin/testimonials/details', {
+    params: {
+      page: page,
+      limit: limit,
+    },
+  });
+};
+
+//DELETE FUNCTIONALITY NOT PRESENT ON UI
+export const deleteTestimonial = (id) => {
+  return axiosInstance.delete(`/admin/testimonials/${id}/remove`);
 }
