@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Sample order data
 const orderData = [
@@ -130,6 +130,8 @@ const Orders = () => {
     }
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
       <h1 className="text-2xl font-bold mb-6">Orders</h1>
@@ -185,30 +187,29 @@ const Orders = () => {
               <th className="py-3 px-4 border">Order ID</th>
               <th className="py-3 px-4 border">Order Date</th>
               <th className="py-3 px-4 border">Customer Name</th>
-              <th className="py-3 px-4 border">Product ID</th>
-              <th className="py-3 px-4 border">Product Count</th>
+              {/* <th className="py-3 px-4 border">Product ID</th>
+              <th className="py-3 px-4 border">Product Count</th> */}
               <th className="py-3 px-4 border">Total Price</th>
               <th className="py-3 px-4 border">Payment Status</th>
               <th className="py-3 px-4 border">Order Status</th>
               <th className="py-3 px-4 border">Download</th>
-              {/* Added Action column */}
             </tr>
           </thead>
           <tbody>
             {currentOrders.map((order) => (
               <tr key={order.id} className="text-center">
                 <td className="py-3 px-4 border">
-                  <Link
-                    to={`/orders/${order.id}`}
+                  <button
+                    onClick={() => navigate("orderdetail")}
                     className="text-blue-500 hover:underline"
                   >
                     {order.id}
-                  </Link>
+                  </button>
                 </td>
                 <td className="py-3 px-4 border">{order.date}</td>
                 <td className="py-3 px-4 border">{order.customer}</td>
-                <td className="py-3 px-4 border">{order.productId}</td>
-                <td className="py-3 px-4 border">{order.count}</td>
+                {/* <td className="py-3 px-4 border">{order.productId}</td>
+                <td className="py-3 px-4 border">{order.count}</td> */}
                 <td className="py-3 px-4 border">Rs.{order.totalPrice}</td>
                 <td
                   className={`py-3 px-4 border ${getPaymentStatusClass(

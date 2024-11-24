@@ -205,7 +205,7 @@ const Dashboard = () => {
         stack: "Stack 1", // Complements stack
       },
       {
-        label: "Cancelled Orders",
+        label: "Pending Orders",
         data: stats.pendingOrdersOverTime,
         borderColor: "orange",
         backgroundColor: "rgba(255, 165, 0, 0.6)", // Orange with more opacity
@@ -317,7 +317,7 @@ const Dashboard = () => {
         fill: true, // Fill the area under the line
       },
       {
-        label: "Cancelled Orders",
+        label: "Pending Orders",
         borderColor: "#FF4500", // Orange-red
         backgroundColor: "rgba(255, 69, 0, 0.2)", // Light orange-red
         fill: true, // Fill the area under the line
@@ -326,27 +326,27 @@ const Dashboard = () => {
   };
 
   const pieChartData = {
-    labels: ["Completed", "Pending", "Canceled", "Returns"],
+    labels: ["Completed", "Pending"],
     datasets: [
       {
         label: "Order Status Distribution",
         data: [
           stats.completedOrders,
           stats.pendingOrders,
-          stats.canceledOrders,
-          stats.returns,
+          // stats.canceledOrders,
+          // stats.returns,
         ],
         backgroundColor: [
           "rgba(75,192,192,1)",
           "rgba(255,205,86,1)",
-          "rgba(255,99,132,1)",
-          "rgba(153,102,255,1)",
+          // "rgba(255,99,132,1)",
+          // "rgba(153,102,255,1)",
         ],
         hoverBackgroundColor: [
           "rgba(75,192,192,0.8)",
           "rgba(255,205,86,0.8)",
-          "rgba(255,99,132,0.8)",
-          "rgba(153,102,255,0.8)",
+          // "rgba(255,99,132,0.8)",
+          // "rgba(153,102,255,0.8)",
         ],
       },
     ],

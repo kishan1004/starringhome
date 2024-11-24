@@ -9,20 +9,20 @@ import { userProductsList } from "../../api/user";
 const AllProductsPage = () => {
   const [allItems, setAllItems] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
+  // const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
 
-  const [availabilityFilters, setAvailabilityFilters] = useState({
-    available: false,
-    outOfStock: false,
-  });
+  // const [availabilityFilters, setAvailabilityFilters] = useState({
+  //   available: false,
+  //   outOfStock: false,
+  // });
 
-  const handleAvailabilityChange = (e) => {
-    const { name, checked } = e.target;
-    setAvailabilityFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: checked,
-    }));
-  };
+  // const handleAvailabilityChange = (e) => {
+  //   const { name, checked } = e.target;
+  //   setAvailabilityFilters((prevFilters) => ({
+  //     ...prevFilters,
+  //     [name]: checked,
+  //   }));
+  // };
 
   const [selectedSize, setSelectedSize] = useState(null);
   const sizes = ["XS", "S", "M", "L", "XL", "2X"];
@@ -123,7 +123,7 @@ const AllProductsPage = () => {
   };
 
   const handleClearAll = () => {
-    setAvailabilityFilters({ available: false, outOfStock: false });
+    // setAvailabilityFilters({ available: false, outOfStock: false });
     setSelectedSize(null);
     setMinPrice(0);
     setMaxPrice(5000);
@@ -136,7 +136,7 @@ const AllProductsPage = () => {
 
   const handleApply = () => {
     console.log("Filters applied:", {
-      availability: availabilityFilters,
+      // availability: availabilityFilters,
       selectedSize,
       minPrice,
       maxPrice,
@@ -148,7 +148,7 @@ const AllProductsPage = () => {
     });
   };
 
-  const [selectedFilter, setSelectedFilter] = useState("ALL");
+  // const [selectedFilter, setSelectedFilter] = useState("ALL");
   const [searchTerm, setSearchTerm] = useState("");
 
   const items = [
@@ -266,46 +266,50 @@ const AllProductsPage = () => {
     },
   ];
 
-  const filters = [
-    "ALL",
-    "NEW",
-    "SHIRT",
-    "SHORTS",
-    "SUITS",
-    "T-SHIRTS",
-    "JEANS",
-    "JACKETS",
-    "COATS",
-  ];
+  // const filters = [
+  //   "ALL",
+  //   "NEW",
+  //   "SHIRT",
+  //   "SHORTS",
+  //   "SUITS",
+  //   "T-SHIRTS",
+  //   "JEANS",
+  //   "JACKETS",
+  //   "COATS",
+  // ];
 
-  const filteredItems = items.filter((item) => {
-    const matchesFilter =
-      selectedFilter === "ALL" || item.type === selectedFilter;
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  // const filteredItems = items.filter((item) => {
+  //   const matchesFilter =
+  //     selectedFilter === "ALL" || item.type === selectedFilter;
+  //   const matchesSearch = item.name
+  //     .toLowerCase()
+  //     .includes(searchTerm.toLowerCase());
+  //   return matchesFilter && matchesSearch;
+  // });
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setSelectedFilter("ALL"); // Automatically set filter to "ALL" when typing in search
+    //  setSelectedFilter("ALL"); Automatically set filter to "ALL" when typing in search
   };
+
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     // call this api whenever thre is a change in data object, pass it as dependency to useEffect
-  //  const data = {
-  //     page: 1,
-  //     limit: 20,
-  //     sizes : ['s', 'xs'],
-  //     categories: [],
-  //   }
-    userProductsList().then(res=> {
-      if(res.status === 200) {
+    //  const data = {
+    //     page: 1,
+    //     limit: 20,
+    //     sizes : ['s', 'xs'],
+    //     categories: [],
+    //   }
+    userProductsList().then((res) => {
+      if (res.status === 200) {
         setAllItems([...res?.data?.detail?.data]);
       }
-    })
-  },[])
+    });
+  }, []);
 
   return (
     <section className="bg-gray-100 font-beatrice min-h-screen">
@@ -456,7 +460,7 @@ const AllProductsPage = () => {
 
             <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
 
-            <div className="my-4">
+            {/* <div className="my-4">
               <div
                 className="my-4 flex items-center justify-between cursor-pointer"
                 onClick={() => setIsAvailabilityOpen(!isAvailabilityOpen)}
@@ -510,7 +514,7 @@ const AllProductsPage = () => {
               )}
             </div>
 
-            <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
+            <div className="border-t border-dotted border-gray-500 w-full my-4"></div> */}
 
             <div className="my-4">
               <div
@@ -838,7 +842,7 @@ const AllProductsPage = () => {
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex flex-wrap lg:justify-start justify-between gap-2">
+            {/* <div className="flex flex-wrap lg:justify-start justify-between gap-2">
               {filters.map((filter) => (
                 <button
                   key={filter}
@@ -852,7 +856,7 @@ const AllProductsPage = () => {
                   {filter}
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Display Filtered Products */}

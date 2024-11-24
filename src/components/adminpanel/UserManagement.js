@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { deleteProfile, getProfiles, saveProfile } from "../../api/admin";
 
 const UserManagement = () => {
-
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
@@ -22,11 +21,10 @@ const UserManagement = () => {
     getProfiles(1, 50).then((res) => {
       const data = res?.data?.detail?.data;
       if (data) {
-        setUsers([...data])
+        setUsers([...data]);
       }
     });
-
-  }, [])
+  }, []);
 
   const generateUsername = (firstName, lastName) => {
     return `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
@@ -41,23 +39,28 @@ const UserManagement = () => {
       newUser.password
     ) {
       //API: SaveProfile call made here, further state management should be done bellow line 45
-      saveProfile(newUser).then((res) => {
-        const newUserId = users.length
-          ? Math.max(users.map((user) => user.id)) + 1
-          : 1;
-        const username = generateUsername(newUser.firstName, newUser.lastName);
+      saveProfile(newUser)
+        .then((res) => {
+          const newUserId = users.length
+            ? Math.max(users.map((user) => user.id)) + 1
+            : 1;
+          const username = generateUsername(
+            newUser.firstName,
+            newUser.lastName
+          );
 
-        setUsers([...users, { id: newUserId, username, ...newUser }]);
-        setNewUser({
-          firstName: "",
-          lastName: "",
-          email: "",
-          mobileNumber: "",
-          password: "",
+          setUsers([...users, { id: newUserId, username, ...newUser }]);
+          setNewUser({
+            firstName: "",
+            lastName: "",
+            email: "",
+            mobileNumber: "",
+            password: "",
+          });
+        })
+        .catch((err) => {
+          alert("Error saving Profile");
         });
-      }).catch(err => {
-        alert("Error saving Profile")
-      })
     } else {
       alert("Please fill in all fields.");
     }
@@ -102,10 +105,9 @@ const UserManagement = () => {
         if (res.status === 200) {
           setUsers(users.filter((user) => user.id !== id));
         }
-      })
+      });
     }
   };
-
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
@@ -152,7 +154,9 @@ const UserManagement = () => {
             placeholder="Phone"
             className="border border-gray-300 p-2 rounded"
             value={newUser.mobileNumber}
-            onChange={(e) => setNewUser({ ...newUser, mobileNumber: e.target.value })}
+            onChange={(e) =>
+              setNewUser({ ...newUser, mobileNumber: e.target.value })
+            }
           />
           <input
             type="password"
@@ -164,8 +168,9 @@ const UserManagement = () => {
             }
           />
           <button
-            className={`${editingUser ? "bg-yellow-500" : "bg-black"
-              } text-white py-2 rounded mt-2 hover:opacity-90`}
+            className={`${
+              editingUser ? "bg-yellow-500" : "bg-black"
+            } text-white py-2 w-36 rounded mt-2 hover:opacity-90`}
             onClick={editingUser ? handleSaveEdit : handleAddUser}
           >
             {editingUser ? "Save Changes" : "Add User"}
@@ -192,7 +197,9 @@ const UserManagement = () => {
                 <td className="p-2 border border-gray-300">{user.firstName}</td>
                 <td className="p-2 border border-gray-300">{user.lastName}</td>
                 <td className="p-2 border border-gray-300">{user.email}</td>
-                <td className="p-2 border border-gray-300">{user.mobileNumber}</td>
+                <td className="p-2 border border-gray-300">
+                  {user.mobileNumber}
+                </td>
                 <td className="p-2 border border-gray-300">{user.username}</td>
                 <td className="p-2 border border-gray-300 flex justify-around">
                   <button

@@ -12,6 +12,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FrequentProduct1 from "../../images/product1.jpeg";
 import FrequentProduct2 from "../../images/product3.jpeg";
 import { addToCart, getProductById, addFavouriteProduct } from "../../api/user";
+import { buyOrder } from "../../api/admin";
 
 const ProductPage = () => {
   // const [selectedColor, setSelectedColor] = useState("black");
@@ -54,7 +55,7 @@ const ProductPage = () => {
   const handleClick = (id) => {
     setIsRed((prev) => !prev); // Toggle between red and white
     addFavouriteProduct([id], "ADD").then((res) => {
-      if(res?.status == 401) {
+      if (res?.status == 401) {
         navigate('/user-login');
       } else {
         console.log(res);
@@ -137,6 +138,10 @@ const ProductPage = () => {
     addToCart(data).then((res) => {
       console.log(data)
     })
+  }
+
+  const handleBuyAll = () => {
+
   }
 
   return (
@@ -342,7 +347,9 @@ const ProductPage = () => {
             </div>
             <div>
               <Link to="/Checkout" className="md:col-span-1 col-span-2">
-                <button className="bg-[#D9D9D9] text-black w-full py-3 px-3 mb-5 h-14 rounded place-self-center hover:bg-black hover:text-white">
+                <button className="bg-[#D9D9D9] text-black w-full py-3 px-3 mb-5 h-14 rounded place-self-center hover:bg-black hover:text-white"
+                  onClick={handleBuyAll}
+                >
                   BUY ALL
                 </button>
               </Link>
