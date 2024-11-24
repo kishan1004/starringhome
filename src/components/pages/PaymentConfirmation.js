@@ -122,7 +122,7 @@ const PaymentConfirmation = () => {
         color: "#3399cc"
       }
     }
-    const rzPay = new Razorpay(options);
+    const rzPay = new Razorpay(params);
     rzPay.open();
   }
 
