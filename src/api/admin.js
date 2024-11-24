@@ -65,6 +65,22 @@ export const deleteProfile = (id) => {
   return axiosInstance.delete(`/admin/profiles/${id}/delete`)
 }
 
+export const buyOrder = (data) => {
+
+  return axiosInstance.post('/users/orders/buy', {
+    ...data
+  })
+}
+
+export const orderDetails = (page, limit = 20) => {
+  return axiosInstance.get('/users/orders/details', {
+    params: {
+      page,
+      limit
+    }
+  })
+}
+
 /* Product API */
 
 export const getProductList = (page, limit = 50) => {
