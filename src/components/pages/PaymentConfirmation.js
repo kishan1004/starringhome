@@ -98,7 +98,7 @@ const PaymentConfirmation = () => {
       key: process.env.REACT_APP_RAZORPAY_KEY,
       amount: rAmt,
       currecy: data.currency,
-      name: data.name || "Starring",
+      name: "Starring",
       description: "Starring Clothing",
       order_id: rOrderID,
       handler: (res) => {
@@ -111,6 +111,7 @@ const PaymentConfirmation = () => {
         })
       },
       prefill: {
+        //firstname+ last name
         name: data?.name,
         email: data?.email,
         contact: data?.contact
