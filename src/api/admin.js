@@ -1,5 +1,28 @@
 import { axiosInstance } from "../utils/axios";
 
+/**
+ * We use the axios instance from axios file, for creating our api call definitions.
+ * these functions can be called inside any react component and resolve the returned Promise,
+ * the promise returns a response object, use it further for state management in react component.
+ * 
+ * 
+ * Example 1:
+ * POST Method with request body - 
+ * userLogin method takes url endpoint as first param, requestbody is an object passed as second params
+ * 
+ * Example 2:
+ * GET Method with url params
+ * getProfiles method takes url endpoint as first param, and an object to configure the out going axios request.
+ * This object can have another inner object params: to pass url params.
+ * 
+ * Example 3
+ * DELETE Method with path Variable
+ * deleteProfile method dynamically changes path based on the user Id, this is path variable. 
+ * We have used string interpolation ${} to dynamically pass in values.
+ */
+
+
+
 /* User APIs */
 export const userLogin = (email, password) => {
   return axiosInstance.post('/user/auth/login', {
@@ -66,7 +89,7 @@ export const getProduct = (id) => {
   if (!id) {
     console.error("Product id is required")
   }
-  return axiosInstance.get(`admin/products/${id}/details`);
+  return axiosInstance.get(`/admin/products/${id}/details`);
 }
 
 export const deleteProduct = (id) => {
