@@ -83,8 +83,26 @@ const PaymentConfirmation = () => {
   const handleClick = () => {
     setIsRed((prev) => !prev); // Toggle between red and white
   };
+  function loadScript(src) {
+    return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => {
+            resolve(true);
+        };
+        script.onerror = () => {
+            resolve(false);
+        };
+        document.body.appendChild(script);
+    });
+}
 
-  const proceedPayment = (orderID, amt, data) => {
+  const proceedPayment = async (orderID, amt, data) => {
+    const result = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+    if(!result) {
+      console.error("Razorpay not loaded succesfully");
+      return;
+    }
     let rOrderID = "";
     let rAmt= "";
     proceedToPay(orderID, amt).then((res) => {
@@ -95,7 +113,7 @@ const PaymentConfirmation = () => {
     })
     const params =  {
       // store this value in env value
-      key: process.env.REACT_APP_RAZORPAY_KEY,
+      key: process.env.REACT_APP_RAZORPAY_KEY || "rzp_test_cfKaZHLoDVQQkC",
       amount: rAmt,
       currecy: data.currency,
       name: "Starring",
@@ -123,7 +141,7 @@ const PaymentConfirmation = () => {
         color: "#3399cc"
       }
     }
-    const rzPay = new Razorpay(params);
+    const rzPay = new window.Razorpay(params);
     rzPay.open();
   }
 
