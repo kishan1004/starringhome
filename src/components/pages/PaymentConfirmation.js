@@ -104,14 +104,38 @@ const PaymentConfirmation = () => {
       return;
     }
     let rOrderID = "";
-    let rAmt= "";
+    let rAmt = "";
+    const testOrderId = "1113ed75-420e-4a81-a0f2-cbf2f2a857a7"
+    const testAmt = "10000"
+    const testData = {
+      name: "John Doe",
+      email: "johndoe@example.com",
+      contact: "123-456-7890",
+      address: {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "johndoe@example.com",
+        "mobileNumber": "123-456-7890",
+        "country": "United States",
+        "state": "Los Angeles",
+        "address": "123 Main Street",
+        "city": "California",
+        "landmark": "Nearby Church",
+        "postalCode": "90001"
+      },
+    }
+
+    data = { ...testData };
+
     proceedToPay(orderID, amt).then((res) => {
-      if(res.status===200) {
+      if (res.status === 200) {
         rOrderID = res?.data?.detail?.data?.id;
-        rAmt =  res?.data?.detail?.data?.amt;
+        rAmt = res?.data?.detail?.data?.amt;
       }
     })
-    const params =  {
+
+
+    const params = {
       // store this value in env value
       key: process.env.REACT_APP_RAZORPAY_KEY || "rzp_test_cfKaZHLoDVQQkC",
       amount: rAmt,
@@ -124,7 +148,7 @@ const PaymentConfirmation = () => {
         verifyPayment(res?.razorpay_payment_id,
           res?.razorpay_order_id,
           res?.razorpay_signature,
-          ).then(res => {
+        ).then(res => {
           verificationRes = res;
         })
       },
@@ -292,7 +316,7 @@ const PaymentConfirmation = () => {
                     I agree to the Terms and Conditions
                   </label>
                 </div>
-                <button 
+                <button
                   onClick={() => proceedPayment()}
                   className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold">
                   CONTINUE
