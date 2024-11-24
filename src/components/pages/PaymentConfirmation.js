@@ -3,6 +3,7 @@ import Product1 from "../../images/product1.jpeg";
 import Product2 from "../../images/product2.jpeg";
 import { Link } from "react-router-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { verifyPayment, proceedToPay } from "../../api/user";
 
 const SavedAddress = ({ savedAddress }) => {
   const [isAddressVisible, setIsAddressVisible] = useState(false);
@@ -82,6 +83,48 @@ const PaymentConfirmation = () => {
   const handleClick = () => {
     setIsRed((prev) => !prev); // Toggle between red and white
   };
+
+  const proceedPayment = (orderID, amt, data) => {
+    let rOrderID = "";
+    let rAmt= "";
+    proceedToPay(orderID, amt).then((res) => {
+      if(res.status===200) {
+        rOrderID = res?.data?.detail?.data?.id;
+        rAmt =  res?.data?.detail?.data?.amt;
+      }
+    })
+    const params =  {
+      // store this value in env value
+      key: process.env.REACT_APP_RAZORPAY_KEY,
+      amount: rAmt,
+      currecy: data.currency,
+      name: data.name || "Starring",
+      description: "Starring Clothing",
+      order_id: rOrderID,
+      handler: (res) => {
+        let verificationRes = "";
+        verifyPayment(res?.razorpay_payment_id,
+          res?.razorpay_order_id,
+          res?.razorpay_signature,
+          ).then(res => {
+          verificationRes = res;
+        })
+      },
+      prefill: {
+        name: data?.name,
+        email: data?.email,
+        contact: data?.contact
+      },
+      notes: {
+        address: data?.address,
+      },
+      theme: {
+        color: "#3399cc"
+      }
+    }
+    const rzPay = new Razorpay(options);
+    rzPay.open();
+  }
 
   return (
     <section className="bg-gray-100 font-beatrice w-full max-[1440px] mx-auto ">
@@ -230,11 +273,11 @@ const PaymentConfirmation = () => {
                     I agree to the Terms and Conditions
                   </label>
                 </div>
-                <Link to="/order-confirmation">
-                  <button className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold">
-                    CONTINUE
-                  </button>
-                </Link>
+                <button 
+                  onClick={() => proceedPayment()}
+                  className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold">
+                  CONTINUE
+                </button>
               </div>
             </div>
           </div>

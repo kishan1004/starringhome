@@ -136,3 +136,19 @@ export const getCartDetails = (page, limit = 20) => {
         }
     })
 }
+
+export const proceedToPay = (orderID, amt) => {
+    return axiosInstance.post('/payments/proceed/to/pay', {
+        orderID,
+        amt: amt*100
+    })
+}
+
+export const verifyPayment = ( razorpay_payment_id, razorpay_order_id, razorpay_signature) =>{
+    return axiosInstance.post('/payments/verify', {
+        razorpay_payment_id,
+        razorpay_order_id,
+        razorpay_signature
+    });
+}
+
