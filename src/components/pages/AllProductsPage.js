@@ -148,7 +148,7 @@ const AllProductsPage = () => {
     });
   };
 
-  const [selectedFilter, setSelectedFilter] = useState("ALL");
+  // const [selectedFilter, setSelectedFilter] = useState("ALL");
   const [searchTerm, setSearchTerm] = useState("");
 
   const items = [
@@ -266,46 +266,50 @@ const AllProductsPage = () => {
     },
   ];
 
-  const filters = [
-    "ALL",
-    "NEW",
-    "SHIRT",
-    "SHORTS",
-    "SUITS",
-    "T-SHIRTS",
-    "JEANS",
-    "JACKETS",
-    "COATS",
-  ];
+  // const filters = [
+  //   "ALL",
+  //   "NEW",
+  //   "SHIRT",
+  //   "SHORTS",
+  //   "SUITS",
+  //   "T-SHIRTS",
+  //   "JEANS",
+  //   "JACKETS",
+  //   "COATS",
+  // ];
 
-  const filteredItems = items.filter((item) => {
-    const matchesFilter =
-      selectedFilter === "ALL" || item.type === selectedFilter;
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  // const filteredItems = items.filter((item) => {
+  //   const matchesFilter =
+  //     selectedFilter === "ALL" || item.type === selectedFilter;
+  //   const matchesSearch = item.name
+  //     .toLowerCase()
+  //     .includes(searchTerm.toLowerCase());
+  //   return matchesFilter && matchesSearch;
+  // });
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setSelectedFilter("ALL"); // Automatically set filter to "ALL" when typing in search
+    //  setSelectedFilter("ALL"); Automatically set filter to "ALL" when typing in search
   };
+
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     // call this api whenever thre is a change in data object, pass it as dependency to useEffect
-  //  const data = {
-  //     page: 1,
-  //     limit: 20,
-  //     sizes : ['s', 'xs'],
-  //     categories: [],
-  //   }
-    userProductsList().then(res=> {
-      if(res.status === 200) {
+    //  const data = {
+    //     page: 1,
+    //     limit: 20,
+    //     sizes : ['s', 'xs'],
+    //     categories: [],
+    //   }
+    userProductsList().then((res) => {
+      if (res.status === 200) {
         setAllItems([...res?.data?.detail?.data]);
       }
-    })
-  },[])
+    });
+  }, []);
 
   return (
     <section className="bg-gray-100 font-beatrice min-h-screen">
@@ -838,7 +842,7 @@ const AllProductsPage = () => {
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex flex-wrap lg:justify-start justify-between gap-2">
+            {/* <div className="flex flex-wrap lg:justify-start justify-between gap-2">
               {filters.map((filter) => (
                 <button
                   key={filter}
@@ -852,7 +856,7 @@ const AllProductsPage = () => {
                   {filter}
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Display Filtered Products */}

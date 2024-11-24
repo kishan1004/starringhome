@@ -197,10 +197,7 @@ function App() {
                           <Route path="products" element={<ProductList />} />
                           <Route path="upload" element={<ProductUpload />} />
                           <Route path="orders" element={<Orders />} />
-                          <Route
-                            path="orders/:orderId"
-                            element={<OrderDetail />}
-                          />
+                          <Route path="orderdetail" element={<OrderDetail />} />
                           <Route
                             path="testimonials"
                             element={<Testimonials />}

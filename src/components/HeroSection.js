@@ -9,6 +9,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import "aos/dist/aos.css";
 import Aos from "aos";
 import { Link } from "react-router-dom";
+import { IoNotifications } from "react-icons/io5";
 
 const HeroSection = () => {
   const [activeItem, setActiveItem] = useState("Home");
@@ -69,7 +70,7 @@ const HeroSection = () => {
 
             <img src={WhiteLogo} alt="Logo" className="w-[150px] mx-auto" />
 
-            <div className="flex space-x-5 relative">
+            <div className="flex space-x-2 md:space-x-5 relative">
               <div className="relative">
                 {searchActive ? (
                   <input
@@ -87,6 +88,7 @@ const HeroSection = () => {
                   />
                 )}
               </div>
+              <IoNotifications className="text-white" size={32} />
               <Link to="/user-login">
                 <FaRegUserCircle className="text-white" size={32} />
               </Link>

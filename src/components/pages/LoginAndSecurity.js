@@ -1,37 +1,19 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 
 const LoginAndSecurity = () => {
-  const [email, setEmail] = useState("deva@example.com");
+  const [username, setUsername] = useState("deva@example.com");
   const [isEditing, setIsEditing] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
+  const navigate = useNavigate();
 
-  const handleEmailEdit = () => {
+  const handleSave = () => {
     if (isEditing) {
-      if (email.includes("@") && email.includes(".")) {
-        setOtpSent(true); // Simulate OTP being sent
-        alert("OTP sent to the new email ID for verification!");
-      } else {
-        alert("Please enter a valid email address.");
-        return;
-      }
+      // Redirect to another route upon saving new username
+      navigate("/otp-login");
     }
     setIsEditing(!isEditing);
-  };
-
-  const handleOtpVerify = () => {
-    // Simulate OTP verification
-    if (otp === "123456") {
-      setIsVerified(true);
-      setOtpSent(false);
-      alert("Email successfully verified!");
-    } else {
-      alert("Invalid OTP. Please try again.");
-    }
   };
 
   return (
@@ -45,18 +27,18 @@ const LoginAndSecurity = () => {
         <div className="md:w-1/2 m-5 p-6">
           <h2 className="text-xl font-bold mb-4">Login and Security</h2>
 
-          {/* Email Section */}
+          {/* Username Section */}
           <div className="p-4 border-b">
             <div className="flex justify-between items-start">
               <div className="flex-grow">
-                <label htmlFor="email" className="font-semibold">
-                  Email
+                <label htmlFor="username" className="font-semibold">
+                  User Name (Phone Number or Email)
                 </label>
                 <input
-                  id="email"
+                  id="username"
                   type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   disabled={!isEditing}
                   className={`mt-1 block px-3 py-2 text-sm ${
                     isEditing
@@ -66,14 +48,9 @@ const LoginAndSecurity = () => {
                     isEditing ? "focus:ring-2 focus:ring-blue-400" : ""
                   }`}
                 />
-                {isVerified && (
-                  <p className="text-sm text-green-500 mt-2">
-                    Email successfully verified.
-                  </p>
-                )}
               </div>
               <button
-                onClick={handleEmailEdit}
+                onClick={handleSave}
                 className={`py-1 px-4 rounded text-white ${
                   isEditing ? "bg-green-500 hover:bg-green-600" : "bg-black"
                 }`}
@@ -81,29 +58,6 @@ const LoginAndSecurity = () => {
                 {isEditing ? "Save" : "Edit"}
               </button>
             </div>
-
-            {/* OTP Verification */}
-            {otpSent && (
-              <div className="mt-4">
-                <label htmlFor="otp" className="font-semibold text-sm">
-                  Enter OTP
-                </label>
-                <input
-                  id="otp"
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="mt-1 block px-3 py-2 text-sm border-gray-300 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder="Enter OTP"
-                />
-                <button
-                  onClick={handleOtpVerify}
-                  className="mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  Verify OTP
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Password Section */}

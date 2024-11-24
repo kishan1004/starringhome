@@ -12,15 +12,15 @@ const UserLogin = () => {
       link: "/your-orders", // Route for this card
     },
     {
-      title: "Login & security",
+      title: "Login Credentials",
       description: "Edit username and password",
-      icon: "🔒",
+      icon: "📧",
       link: "/login-security", // Route for this card
     },
     {
       title: "Your Addresses",
       description: "Edit addresses for orders",
-      icon: "📍",
+      icon: "📬",
       link: "/addresses", // Route for this card
     },
   ];

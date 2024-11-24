@@ -171,13 +171,14 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
                     recentOrders.map((order) => (
                       <li
                         key={order.id}
-                        className={`px-4 py-6 cursor-pointer border-b border-gray-300 ${clickedOrderIds.includes(order.id)
-                          ? "bg-gray-200"
-                          : "hover:bg-gray-100"
-                          }`}
+                        className={`px-4 py-6 cursor-pointer border-b border-gray-300 ${
+                          clickedOrderIds.includes(order.id)
+                            ? "bg-gray-200"
+                            : "hover:bg-gray-100"
+                        }`}
                       >
                         <Link
-                          to={`/orders/${order.id}`}
+                          to="orderdetail"
                           onClick={() => handleLinkClick(order.id)}
                         >
                           {getNotificationText(order)}
