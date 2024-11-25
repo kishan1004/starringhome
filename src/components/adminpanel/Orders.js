@@ -73,10 +73,10 @@ const orderData = [
     paymentStatus: "Pending",
     orderStatus: "Dispatch",
   },
-  // Add more sample orders as needed
 ];
 
 const Orders = () => {
+  const [orders, setOrders] = useState(orderData); // Manage orders state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
 
@@ -86,8 +86,8 @@ const Orders = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // Function to filter orders based on payment, order status, and date range
-  const filteredOrders = orderData.filter((order) => {
+  // Filtered orders based on criteria
+  const filteredOrders = orders.filter((order) => {
     const orderDate = new Date(order.date);
     const matchesDate =
       (!startDate || orderDate >= new Date(startDate + "T00:00:00")) &&
@@ -112,25 +112,16 @@ const Orders = () => {
     setCurrentPage(page);
   };
 
-  // Helper function to determine class names based on status
-  const getPaymentStatusClass = (status) => {
-    return status === "Success" ? "text-green-500" : "text-yellow-500";
-  };
-
-  const getOrderStatusClass = (status) => {
-    switch (status) {
-      case "Completed":
-        return "text-green-500";
-      case "In Transit":
-        return "text-yellow-500";
-      case "Dispatch":
-        return "text-red-500";
-      default:
-        return "";
-    }
-  };
-
   const navigate = useNavigate();
+
+  // Handle order status change
+  const handleOrderStatusChange = (id, newStatus) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === id ? { ...order, orderStatus: newStatus } : order
+      )
+    );
+  };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
@@ -180,6 +171,7 @@ const Orders = () => {
         </div>
       </div>
 
+      {/* Orders Table */}
       <div className="overflow-x-auto shadow-lg">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-200">
@@ -187,8 +179,6 @@ const Orders = () => {
               <th className="py-3 px-4 border">Order ID</th>
               <th className="py-3 px-4 border">Order Date</th>
               <th className="py-3 px-4 border">Customer Name</th>
-              {/* <th className="py-3 px-4 border">Product ID</th>
-              <th className="py-3 px-4 border">Product Count</th> */}
               <th className="py-3 px-4 border">Total Price</th>
               <th className="py-3 px-4 border">Payment Status</th>
               <th className="py-3 px-4 border">Order Status</th>
@@ -208,27 +198,31 @@ const Orders = () => {
                 </td>
                 <td className="py-3 px-4 border">{order.date}</td>
                 <td className="py-3 px-4 border">{order.customer}</td>
-                {/* <td className="py-3 px-4 border">{order.productId}</td>
-                <td className="py-3 px-4 border">{order.count}</td> */}
                 <td className="py-3 px-4 border">Rs.{order.totalPrice}</td>
                 <td
-                  className={`py-3 px-4 border ${getPaymentStatusClass(
-                    order.paymentStatus
-                  )}`}
+                  className={`py-3 px-4 border ${
+                    order.paymentStatus === "Success"
+                      ? "text-green-500"
+                      : "text-yellow-500"
+                  }`}
                 >
                   {order.paymentStatus}
                 </td>
-                <td
-                  className={`py-3 px-4 border ${getOrderStatusClass(
-                    order.orderStatus
-                  )}`}
-                >
-                  {order.orderStatus}
+                <td className="py-3 px-4 border">
+                  <select
+                    value={order.orderStatus}
+                    onChange={(e) =>
+                      handleOrderStatusChange(order.id, e.target.value)
+                    }
+                    className="border rounded px-2 py-1"
+                  >
+                    <option value="Completed">Completed</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Dispatch">Dispatch</option>
+                  </select>
                 </td>
                 <td className="py-3 px-4 border">
-                  <button title="Download">
-                    📄 {/* Unicode for a document/download icon */}
-                  </button>
+                  <button title="Download">📄</button>
                 </td>
               </tr>
             ))}

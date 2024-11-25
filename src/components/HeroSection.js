@@ -15,6 +15,12 @@ const HeroSection = () => {
   const [activeItem, setActiveItem] = useState("Home");
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
+  const handleScroll = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   // Create a ref for the menu to detect outside clicks
   const menuRef = useRef(null);
@@ -103,7 +109,10 @@ const HeroSection = () => {
             >
               <a
                 href="#home"
-                onClick={() => handleNavClick("Home")}
+                onClick={() => {
+                  handleNavClick("Home");
+                  handleScroll("home");
+                }}
                 className={`py-2 text-lg border-b border-gray-700 ${
                   activeItem === "Home" ? "text-green-200" : "text-white"
                 } hover:text-gray-400`}
@@ -133,7 +142,10 @@ const HeroSection = () => {
 
               <a
                 href="#banner"
-                onClick={() => handleNavClick("Featured")}
+                onClick={() => {
+                  handleNavClick("Featured");
+                  handleScroll("banner");
+                }}
                 className={`py-2 text-lg border-b border-gray-700 ${
                   activeItem === "Featured" ? "text-green-200" : "text-white"
                 } hover:text-gray-400`}
