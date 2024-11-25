@@ -1,6 +1,6 @@
 import React from "react";
 
-const FeatureSection = () => {
+const FeatureSection = (props) => {
   const infoItems = [
     {
       icon1: (
@@ -125,7 +125,10 @@ const FeatureSection = () => {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row justify-around items-center gap-8 md:p-10 max-sm:py-5 mx-5">
+    <div
+      className="flex flex-col md:flex-row justify-around items-center gap-8 md:p-10 max-sm:py-5 mx-5"
+      id={props.id}
+    >
       {infoItems.map((item, index) => (
         <div key={index} className="text-center max-w-xs">
           <div className="mb-8 flex justify-center">{item.icon1}</div>

@@ -11,7 +11,7 @@ import Aos from "aos";
 import { Link } from "react-router-dom";
 import { IoNotifications } from "react-icons/io5";
 
-const HeroSection = () => {
+const HeroSection = (props) => {
   const [activeItem, setActiveItem] = useState("Home");
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
@@ -52,7 +52,10 @@ const HeroSection = () => {
 
   return (
     <>
-      <div className="relative h-screen max-w-[1440px] w-full mx-auto bg-cover bg-center">
+      <div
+        className="relative h-screen max-w-[1440px] w-full mx-auto bg-cover bg-center"
+        id={props.id}
+      >
         <video
           autoPlay
           loop
@@ -154,7 +157,7 @@ const HeroSection = () => {
               </a>
 
               <a
-                href="#testimonials"
+                href="#features"
                 onClick={() => handleNavClick("Testimonials")}
                 className={`py-2 text-lg border-b border-gray-700 ${
                   activeItem === "Testimonials"
@@ -201,27 +204,31 @@ const HeroSection = () => {
             >
               <circle cx="50" cy="50" r="30" strokeDasharray="8,5" />
             </svg>
-            <svg
-              width="40"
-              height="30"
-              viewBox="0 0 56 56"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className=" absolute top-[35%] right-[30%]"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M31.5 0V42.5246L51.1003 22.9243L56 28L28 56L0 28L4.89984 23.1005L24.5 42.5246V0H31.5Z"
-                fill="white"
-              />
-            </svg>
+            <a href="#new-arrivals">
+              <svg
+                width="40"
+                height="30"
+                viewBox="0 0 56 56"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className=" absolute top-[35%] right-[30%]"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M31.5 0V42.5246L51.1003 22.9243L56 28L28 56L0 28L4.89984 23.1005L24.5 42.5246V0H31.5Z"
+                  fill="white"
+                />
+              </svg>
+            </a>
           </div>
         </div>
 
         <div className="flex h-96 md:w-[80%] w-[90%] bg-[#D7CCC8] mx-auto absolute top-[90%] lg:top-[75%] left-[10%]">
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-            <IoArrowBack className="text-black text-3xl cursor-pointer" />
+            <Link to="/all-products">
+              <IoArrowBack className="text-black text-3xl" />
+            </Link>
           </div>
           <div className="flex absolute -top-10">
             <div className="flex flex-col justify-center items-center bg-[#263238] lg:w-1/3 md:w-[40%] p-8 text-white ml-20">

@@ -7,13 +7,16 @@ import "aos/dist/aos.css";
 import Aos from "aos";
 import { useEffect } from "react";
 
-const TrendingSection = () => {
+const TrendingSection = (props) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
     <>
-      <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-1 w-full h-[400px] ">
+      <div
+        className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-1 w-full h-[400px] "
+        id={props.id}
+      >
         {/* Left Section */}
         <div
           className="relative col-span-1 bg-cover"
@@ -98,21 +101,24 @@ const TrendingSection = () => {
             >
               <circle cx="50" cy="50" r="30" strokeDasharray="8,5" />
             </svg>
-            <svg
-              width="40"
-              height="30"
-              viewBox="0 0 56 56"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className=" absolute top-[35%] right-[30%]"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M31.5 0V42.5246L51.1003 22.9243L56 28L28 56L0 28L4.89984 23.1005L24.5 42.5246V0H31.5Z"
-                fill="white"
-              />
-            </svg>
+
+            <a href="#footer">
+              <svg
+                width="40"
+                height="30"
+                viewBox="0 0 56 56"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className=" absolute top-[35%] right-[30%]"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M31.5 0V42.5246L51.1003 22.9243L56 28L28 56L0 28L4.89984 23.1005L24.5 42.5246V0H31.5Z"
+                  fill="white"
+                />
+              </svg>
+            </a>
           </div>
         </div>
       </div>

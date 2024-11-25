@@ -53,7 +53,7 @@ const ProductCard = ({ image, title, price }) => {
 };
 
 // Main Component
-const NewArrivalsSection = () => {
+const NewArrivalsSection = (props) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
@@ -66,7 +66,10 @@ const NewArrivalsSection = () => {
   ];
 
   return (
-    <section className="md:flex gap-8 lg:p-8 lg:mt-72 mt-96 md:mx-10">
+    <section
+      className="md:flex gap-8 lg:p-8 lg:mt-72 mt-96 md:mx-10"
+      id={props.id}
+    >
       {/* Left Text Section */}
       <div className="w-full md:w-1/3 p-4 text-center md:text-start">
         <h2 className="text-4xl font-bold text-gray-800" data-aos="fade-right">

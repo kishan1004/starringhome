@@ -66,7 +66,7 @@ function AdminSidebar({ toggleSidebar }) {
         >
           <FaStar className="mr-3" /> Testimonials
         </NavLink>
-        <NavLink
+        {/* <NavLink
           to="settings"
           className={({ isActive }) =>
             `flex items-center px-3 py-2 rounded ${
@@ -78,6 +78,19 @@ function AdminSidebar({ toggleSidebar }) {
           onClick={toggleSidebar} // Close sidebar on link click
         >
           <FaCog className="mr-3" /> Settings
+        </NavLink> */}
+        <NavLink
+          to="inventory"
+          className={({ isActive }) =>
+            `flex items-center px-3 py-2 rounded ${
+              isActive
+                ? "bg-black text-white"
+                : "hover:bg-black hover:text-white"
+            }`
+          }
+          onClick={toggleSidebar} // Close sidebar on link click
+        >
+          <MdInventory className="mr-3" /> Inventory
         </NavLink>
       </nav>
       {/* <NavLink
@@ -91,17 +104,6 @@ function AdminSidebar({ toggleSidebar }) {
       >
         <FaBox className="mr-3" /> Report
       </NavLink> */}
-      <NavLink
-        to="inventory"
-        className={({ isActive }) =>
-          `flex items-center px-3 py-2 rounded ${
-            isActive ? "bg-black text-white" : "hover:bg-black hover:text-white"
-          }`
-        }
-        onClick={toggleSidebar} // Close sidebar on link click
-      >
-        <MdInventory className="mr-3" /> Inventory
-      </NavLink>
     </aside>
   );
 }
