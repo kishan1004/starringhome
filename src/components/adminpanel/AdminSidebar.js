@@ -6,7 +6,7 @@ import {
   FaBox,
   FaClipboardList,
   FaStar,
-  FaCog,
+  // FaCog,
 } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
 

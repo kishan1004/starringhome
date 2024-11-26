@@ -74,7 +74,7 @@ const PaymentConfirmation = () => {
     (acc, item) => acc + item.price * item.count,
     0
   );
-  const shipping = 99;
+  const shipping = subtotal >= 3000 ? 0 : 100;
 
   const total = subtotal + shipping;
 
@@ -85,45 +85,47 @@ const PaymentConfirmation = () => {
   };
   function loadScript(src) {
     return new Promise((resolve) => {
-        const script = document.createElement("script");
-        script.src = src;
-        script.onload = () => {
-            resolve(true);
-        };
-        script.onerror = () => {
-            resolve(false);
-        };
-        document.body.appendChild(script);
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
     });
-}
+  }
 
   const proceedPayment = async (orderID, amt, data) => {
-    const result = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-    if(!result) {
+    const result = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+    if (!result) {
       console.error("Razorpay not loaded succesfully");
       return;
     }
     let rOrderID = "";
     let rAmt = "";
-    const testOrderId = "1113ed75-420e-4a81-a0f2-cbf2f2a857a7"
-    const testAmt = "10000"
+    const testOrderId = "1113ed75-420e-4a81-a0f2-cbf2f2a857a7";
+    const testAmt = "10000";
     const testData = {
       name: "John Doe",
       email: "johndoe@example.com",
       contact: "123-456-7890",
       address: {
-        "firstName": "John",
-        "lastName": "Doe",
-        "email": "johndoe@example.com",
-        "mobileNumber": "123-456-7890",
-        "country": "United States",
-        "state": "Los Angeles",
-        "address": "123 Main Street",
-        "city": "California",
-        "landmark": "Nearby Church",
-        "postalCode": "90001"
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@example.com",
+        mobileNumber: "123-456-7890",
+        country: "United States",
+        state: "Los Angeles",
+        address: "123 Main Street",
+        city: "California",
+        landmark: "Nearby Church",
+        postalCode: "90001",
       },
-    }
+    };
 
     data = { ...testData };
 
@@ -132,8 +134,7 @@ const PaymentConfirmation = () => {
         rOrderID = res?.data?.detail?.data?.id;
         rAmt = res?.data?.detail?.data?.amt;
       }
-    })
-
+    });
 
     const params = {
       // store this value in env value
@@ -145,29 +146,30 @@ const PaymentConfirmation = () => {
       order_id: rOrderID,
       handler: (res) => {
         let verificationRes = "";
-        verifyPayment(res?.razorpay_payment_id,
+        verifyPayment(
+          res?.razorpay_payment_id,
           res?.razorpay_order_id,
-          res?.razorpay_signature,
-        ).then(res => {
+          res?.razorpay_signature
+        ).then((res) => {
           verificationRes = res;
-        })
+        });
       },
       prefill: {
         //firstname+ last name
         name: data?.name,
         email: data?.email,
-        contact: data?.contact
+        contact: data?.contact,
       },
       notes: {
         address: data?.address,
       },
       theme: {
-        color: "#3399cc"
-      }
-    }
+        color: "#3399cc",
+      },
+    };
     const rzPay = new window.Razorpay(params);
     rzPay.open();
-  }
+  };
 
   return (
     <section className="bg-gray-100 font-beatrice w-full max-[1440px] mx-auto ">
@@ -318,7 +320,8 @@ const PaymentConfirmation = () => {
                 </div>
                 <button
                   onClick={() => proceedPayment()}
-                  className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold">
+                  className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold"
+                >
                   CONTINUE
                 </button>
               </div>
