@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import Insta from "../images/instagram.png";
 import Fbimg from "../images/facebook.png";
 import Twitterimg from "../images/twitter.png";
+import { Link } from "react-router-dom";
 
 const FooterSection = (props) => {
   useEffect(() => {
@@ -103,21 +104,21 @@ const FooterSection = (props) => {
             Testimonials
           </a>
 
-          <a
-            href="#footer"
+          <Link
+            to="/refund-policy"
             onClick={() => handleNavClick("Footer")}
-            className={`py-2 text-lg  ${
+            className={`py-2 text-lg ${
               activeItem === "Footer"
                 ? "text-[#6D4C41] border-b border-gray-700"
                 : "text-[#263238]"
             } hover:text-gray-400`}
           >
-            Footer
-          </a>
+            Return & Exchange
+          </Link>
         </nav>
         <div className="flex justify-center space-x-14 mb-8">
           <a
-            href="/"
+            href="https://www.instagram.com/starringindia/?igsh=ZGUzMzM3NWJiOQ%3D%3D"
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
             data-aos-duration="1000"

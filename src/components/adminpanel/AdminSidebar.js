@@ -8,6 +8,8 @@ import {
   FaStar,
   // FaCog,
 } from "react-icons/fa";
+import { RiCoupon2Fill } from "react-icons/ri";
+import { FaExchangeAlt } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
 
 function AdminSidebar({ toggleSidebar }) {
@@ -41,6 +43,19 @@ function AdminSidebar({ toggleSidebar }) {
           <FaBox className="mr-3" /> Product
         </NavLink>
         <NavLink
+          to="coupons"
+          className={({ isActive }) =>
+            `flex items-center px-3 py-2 rounded ${
+              isActive
+                ? "bg-black text-white"
+                : "hover:bg-black hover:text-white"
+            }`
+          }
+          onClick={toggleSidebar} // Close sidebar on link click
+        >
+          <RiCoupon2Fill className="mr-3" /> Coupons
+        </NavLink>
+        <NavLink
           to="orders"
           className={({ isActive }) =>
             `flex items-center px-3 py-2 rounded ${
@@ -54,6 +69,20 @@ function AdminSidebar({ toggleSidebar }) {
           <FaClipboardList className="mr-3" /> Orders
         </NavLink>
         <NavLink
+          to="returns"
+          className={({ isActive }) =>
+            `flex items-center px-3 py-2 rounded ${
+              isActive
+                ? "bg-black text-white"
+                : "hover:bg-black hover:text-white"
+            }`
+          }
+          onClick={toggleSidebar} // Close sidebar on link click
+        >
+          <FaExchangeAlt className="mr-3" /> Return/Exchange
+        </NavLink>
+
+        <NavLink
           to="testimonials"
           className={({ isActive }) =>
             `flex items-center px-3 py-2 rounded ${
@@ -66,19 +95,7 @@ function AdminSidebar({ toggleSidebar }) {
         >
           <FaStar className="mr-3" /> Testimonials
         </NavLink>
-        {/* <NavLink
-          to="settings"
-          className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded ${
-              isActive
-                ? "bg-black text-white"
-                : "hover:bg-black hover:text-white"
-            }`
-          }
-          onClick={toggleSidebar} // Close sidebar on link click
-        >
-          <FaCog className="mr-3" /> Settings
-        </NavLink> */}
+
         <NavLink
           to="inventory"
           className={({ isActive }) =>

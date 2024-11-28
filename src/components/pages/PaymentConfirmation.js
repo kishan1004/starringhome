@@ -57,7 +57,7 @@ const PaymentConfirmation = () => {
     {
       name: "Basic Heavy T-Shirt",
       size: "L",
-      price: 99,
+      price: 199,
       img: Product1,
       count: 2,
     },
@@ -65,7 +65,7 @@ const PaymentConfirmation = () => {
       name: "Basic Fit T-Shirt",
       size: "L",
 
-      price: 99,
+      price: 199,
       img: Product2,
       count: 1,
     },
@@ -75,8 +75,56 @@ const PaymentConfirmation = () => {
     0
   );
   const shipping = subtotal >= 3000 ? 0 : 100;
+  const [couponDiscount, setCouponDiscount] = useState(0); // Discount value
+  const [showCouponModal, setShowCouponModal] = useState(false); // Modal visibility state
+  const [selectedCoupon, setSelectedCoupon] = useState(null); // Selected coupon
+  const [enteredCoupon, setEnteredCoupon] = useState(""); // Coupon entered by the user
+  const [errorMessage, setErrorMessage] = useState(""); // Error message for invalid coupons
+  const [successMessage, setSuccessMessage] = useState(""); // Success message for valid coupons
 
-  const total = subtotal + shipping;
+  const availableCoupons = [
+    {
+      code: "TRYMFTW",
+      discount: 40,
+      description: "15% off on minimum purchase of Rs. 300.",
+      expiry: "30th January 2025",
+    },
+    {
+      code: "NEWDRESS",
+      discount: 100,
+      description: "25% off on minimum purchase of Rs. 500.",
+      expiry: "15th January 2025",
+    },
+    // Add more coupons as needed
+  ];
+
+  const handleCheckCoupon = () => {
+    const foundCoupon = availableCoupons.find(
+      (coupon) => coupon.code.toUpperCase() === enteredCoupon.toUpperCase()
+    );
+
+    if (foundCoupon) {
+      setSelectedCoupon(foundCoupon); // Set the valid coupon as selected
+      setErrorMessage(""); // Clear error message
+      setSuccessMessage("Coupon available!"); // Set success message
+    } else {
+      setSelectedCoupon(null); // Clear the selected coupon
+      setSuccessMessage(""); // Clear success message
+      setErrorMessage("Coupon not available."); // Show error message
+    }
+  };
+
+  const applySelectedCoupon = () => {
+    if (selectedCoupon) {
+      setCouponDiscount(selectedCoupon.discount);
+      setShowCouponModal(false);
+      //   alert(`Coupon ${selectedCoupon.code} applied successfully!`);
+      // } else {
+      //   alert("Please select or check a valid coupon first.");
+    }
+  };
+
+  const total = subtotal + shipping - couponDiscount;
 
   const [isRed, setIsRed] = useState(false);
 
@@ -174,7 +222,7 @@ const PaymentConfirmation = () => {
   return (
     <section className="bg-gray-100 font-beatrice w-full max-[1440px] mx-auto ">
       <div className="max-w-full md:px-10  px-4">
-        <Link to="/all-products">
+        <Link to="/checkout">
           <svg
             width="62"
             height="14"
@@ -289,7 +337,7 @@ const PaymentConfirmation = () => {
               <div className="md:hidden">
                 <SavedAddress savedAddress={savedAddress} />
               </div>
-              <div className="md:pt-14 md:px-10 md:pb-10 p-4 border">
+              <div className="p-4 border">
                 <h2 className="text-lg font-medium mb-4">ORDER SUMMARY</h2>
                 <div className="flex justify-between mb-2">
                   <p className="text-sm">Subtotal</p>
@@ -299,31 +347,118 @@ const PaymentConfirmation = () => {
                   <p className="text-sm">Shipping</p>
                   <p>Rs.{shipping.toFixed(2)}</p>
                 </div>
+                <div className="flex justify-between mb-2">
+                  <p className="text-sm">Coupon Discount</p>
+                  <p className="text-green-600">
+                    -Rs.{couponDiscount.toFixed(2)}
+                  </p>
+                </div>
+                <div className="text-right mb-4">
+                  <button
+                    onClick={() => setShowCouponModal(true)}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    Apply Coupon
+                  </button>
+                </div>
                 <div className="border-t border-dotted border-gray-500 w-full my-6"></div>
                 <div className="flex justify-between font-bold mb-12">
-                  <p>
-                    TOTAL{" "}
-                    <span className="text-gray-500 text-xs font-sans">
-                      (TAX INCL.)
-                    </span>
-                  </p>
+                  <p>TOTAL (TAX INCL.)</p>
                   <p>Rs.{total.toFixed(2)}</p>
                 </div>
                 <div className="mb-4">
                   <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="mr-2 h-7 w-7 rounded-none text-xz font-extralight"
-                    />
-                    I agree to the Terms and Conditions
+                    <input type="checkbox" className="mr-2 h-5 w-5 rounded" />I
+                    agree to the Terms and Conditions
                   </label>
                 </div>
                 <button
-                  onClick={() => proceedPayment()}
-                  className="w-full bg-[#D9D9D9] hover:text-white hover:bg-black text-center py-2 font-bold"
+                  onClick={proceedPayment}
+                  className="w-full bg-gray-300 hover:text-white hover:bg-black text-center py-2 font-bold"
                 >
                   CONTINUE
                 </button>
+
+                {/* Modal for Coupons */}
+                {showCouponModal && (
+                  <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-[400px]">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-medium">APPLY COUPON</h3>
+                        <button
+                          onClick={() => setShowCouponModal(false)}
+                          className="text-gray-500 hover:text-black"
+                        >
+                          &#x2715; {/* Close Icon */}
+                        </button>
+                      </div>
+                      <div className="mb-4">
+                        <input
+                          type="text"
+                          value={enteredCoupon}
+                          onChange={(e) => setEnteredCoupon(e.target.value)}
+                          placeholder="Enter coupon code"
+                          className="w-full border p-2 rounded"
+                        />
+                        <button
+                          onClick={handleCheckCoupon}
+                          className="mt-2 w-full bg-gray-300 hover:text-white hover:bg-black text-center py-2 font-bold"
+                        >
+                          CHECK
+                        </button>
+                        {successMessage && (
+                          <p className="text-green-500 text-sm mt-2">
+                            {successMessage}
+                          </p>
+                        )}
+                        {errorMessage && (
+                          <p className="text-red-500 text-sm mt-2">
+                            {errorMessage}
+                          </p>
+                        )}
+                      </div>
+                      <ul className="mb-4">
+                        {availableCoupons.map((coupon, index) => (
+                          <li
+                            key={index}
+                            className={`p-4 border rounded mb-2 cursor-pointer ${
+                              selectedCoupon?.code === coupon.code
+                                ? "border-black bg-gray-200"
+                                : "hover:bg-gray-100"
+                            }`}
+                            onClick={() => setSelectedCoupon(coupon)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-black">
+                                {coupon.code}
+                              </span>
+                              {selectedCoupon?.code === coupon.code && (
+                                <span className="text-black">&#10003;</span>
+                              )}
+                            </div>
+                            <p className="text-gray-600 text-sm">
+                              {coupon.description}
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Expires on: {coupon.expiry}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500">
+                          Maximum savings: ₹{selectedCoupon?.discount || 0}
+                        </span>
+                        <button
+                          onClick={applySelectedCoupon}
+                          className="bg-gray-300 hover:text-white hover:bg-black text-center py-2 px-3 rounded font-bold"
+                        >
+                          APPLY
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
