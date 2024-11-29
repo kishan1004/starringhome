@@ -63,11 +63,14 @@ const Dashboard = () => {
     facebook:0,
     instagram:0
   });
+
+  const [timeRange, setTimeRange] = useState("lastDay");
+
   
   useEffect(() => {
     const fetchOrderStats = async () => {
       try {
-        const res = await getOrderStats(); 
+        const res = await getOrderStats(timeRange); 
         if (res.status === 200) {
           console.log("Success", res.data);
           setOrderStats(res.data.detail);
@@ -80,7 +83,7 @@ const Dashboard = () => {
     };
   
     fetchOrderStats();
-  }, []);
+  }, [timeRange]);
 
   useEffect(() => {
     const fetchSalesDetails = async () => {
@@ -239,7 +242,6 @@ const Dashboard = () => {
     },
   };
 
-  const [timeRange, setTimeRange] = useState("lastDay");
   const stats = statsData[timeRange];
 
   // Prepare data for the chart

@@ -182,10 +182,13 @@ const token = localStorage.getItem("authToken");
   });
 }
 
-export const getOrderStats = () => {
+export const getOrderStats = (day_filter) => {
 const token = localStorage.getItem("authToken");
 
   return axiosInstance.get("/dashboard/admin/user/orders/stats", {
+    params:{
+      day_filter:day_filter
+    },
     headers: {
       Authorization: `Bearer ${token}`
     }
