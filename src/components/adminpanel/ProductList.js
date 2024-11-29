@@ -1,38 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash, FaSave } from "react-icons/fa";
-import Product1img from "../../images/product1.jpeg";
-import Product2img from "../../images/product2.jpeg";
-import Product3img from "../../images/product3.jpeg";
-import Product4img from "../../images/imgproduct4.jpeg";
-import Product5img from "../../images/imgproduct5.jpeg";
-import Product6img from "../../images/imgproduct6.jpeg";
-import { getProductList, deleteProduct, editProduct, getAllCategories, saveProduct } from "../../api/admin";
 
-const productImages = [
-  Product1img,
-  Product2img,
-  Product3img,
-  Product4img,
-  Product5img,
-  Product6img,
-];
+import {
+  getProductList,
+  deleteProduct,
+  editProduct,
+  getAllCategories,
+  saveProduct,
+} from "../../api/admin";
+
+const productImages = [];
 const initialCategories = [];
 
-const productsData = Array.from({ length: 25 }, (_, i) => ({
-  id: `#a${i + 1}`,
-  photo: productImages[i % productImages.length],
-  name: `Product ${i + 1}`,
-  category:
-    initialCategories[Math.floor(Math.random() * initialCategories.length)],
-  brand: "Brand",
-  price: (i + 1) * 10,
-  rating: (1 + Math.random() * 4).toFixed(1),
-  stock: Math.floor(Math.random() * 100),
-  stockUpdatedDate: new Date(
-    new Date().setDate(new Date().getDate() - Math.floor(Math.random() * 30))
-  ),
-}));
+const productsData = [];
 
 const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +24,6 @@ const ProductList = () => {
   const [products, setProducts] = useState(productsData);
   const [isEditing, setIsEditing] = useState(null);
   const [editFormData, setEditFormData] = useState({});
-
 
   const itemsPerPage = 8;
 
@@ -79,7 +59,7 @@ const ProductList = () => {
         setIsEditing(product.id);
         setEditFormData({ ...product });
       }
-    })
+    });
   };
 
   const handleInputChange = (e) => {
@@ -110,32 +90,32 @@ const ProductList = () => {
             prevProducts.filter((product) => product.id !== productId)
           );
         }
-      })
+      });
     }
   };
 
   useEffect(() => {
     //API: fetched and updated product state , set page count and size based for paginations after line 119
-    console.log("Fetching products")
+    console.log("Fetching products");
     getProductList(currentPage, 50).then((res) => {
       if (res.status === 200) {
-        const data = res?.data?.detail?.data
-        console.log("Products", data)
+        const data = res?.data?.detail?.data;
+        console.log("Products", data);
       }
     });
-  }, [currentPage])
+  }, [currentPage]);
 
   useEffect(() => {
     getAllCategories().then((res) => {
       //API: Category names are being called here
       if (res.status === 200) {
         const categories = res?.data?.detail?.data;
-        const names = categories.map(category => category.name);
+        const names = categories.map((category) => category.name);
 
         setProductCategories([...names]);
       }
-    })
-  }, [])
+    });
+  }, []);
 
   const navigate = useNavigate();
 
@@ -344,10 +324,11 @@ const ProductList = () => {
           <button
             key={i}
             onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${currentPage === i + 1
-              ? "bg-black text-white"
-              : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-              }`}
+            className={`px-3 py-1 mx-1 rounded-md ${
+              currentPage === i + 1
+                ? "bg-black text-white"
+                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
+            }`}
           >
             {i + 1}
           </button>
@@ -355,7 +336,7 @@ const ProductList = () => {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-1```javascript
+          className="px-3 py-1
         rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
         >
           Next

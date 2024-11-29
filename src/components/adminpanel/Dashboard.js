@@ -205,7 +205,7 @@ const Dashboard = () => {
         stack: "Stack 1", // Complements stack
       },
       {
-        label: "Pending Orders",
+        label: "Dispatched Orders",
         data: stats.pendingOrdersOverTime,
         borderColor: "orange",
         backgroundColor: "rgba(255, 165, 0, 0.6)", // Orange with more opacity
@@ -326,7 +326,7 @@ const Dashboard = () => {
   };
 
   const pieChartData = {
-    labels: ["Completed", "Pending"],
+    labels: ["Completed", "Dispatched"],
     datasets: [
       {
         label: "Order Status Distribution",
@@ -402,7 +402,7 @@ const Dashboard = () => {
         <div className="bg-white p-4 rounded-lg shadow-md flex items-center">
           <FaClock className="text-yellow-500 text-3xl mr-4" />
           <div>
-            <p className="text-gray-500">Orders Pending</p>
+            <p className="text-gray-500">Orders Dispatched</p>
             <h3 className="text-2xl font-semibold">{stats.pendingOrders}</h3>
           </div>
         </div>
@@ -443,7 +443,7 @@ const Dashboard = () => {
                   },
                   title: {
                     display: true,
-                    text: "Completed vs Pending Orders",
+                    text: "Completed vs Dispatched Orders",
                     font: {
                       size: 18,
                       weight: "bold",
