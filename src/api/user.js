@@ -1,3 +1,4 @@
+import axios from "axios";
 import { axiosInstance } from "../utils/axios";
 
 export const userLogin = (userName, password) => {
@@ -152,3 +153,81 @@ export const verifyPayment = ( razorpay_payment_id, razorpay_order_id, razorpay_
     });
 }
 
+export const updatePassword = (currentPassword,newPassword)=>{
+    console.log("In user function")
+    return axiosInstance.patch('/users/profiles/password/reset',{
+        currentPassword,
+        newPassword
+    })
+}
+
+
+export const forgotPassword = (userName,newPassword) => {
+    console.log(userName,newPassword)
+    return axiosInstance.post('/users/profiles/password/forgot',{
+        userName,
+        newPassword
+    })
+}
+
+
+export const getAddresses = ()=>{
+    console.log("in user file")
+    return axiosInstance.get('/users/profiles/address');
+}
+
+
+export const addAddress = (firstName,
+    lastName,
+    email,
+    mobileNumber,
+    country,
+    state,
+    address,
+    city,
+    landmark,
+    postalCode,
+    isDefault,
+    id)=>{
+    console.log(firstName,
+        lastName,
+        email,
+        mobileNumber,
+        country,
+        state,
+        address,
+        city,
+        landmark,
+        postalCode,
+        isDefault,
+        id)
+    return axiosInstance.put('/users/profiles/address/save/update',
+        {
+            firstName,
+            lastName,
+            email,
+            mobileNumber,
+            country,
+            state,
+            address,
+            city,
+            landmark,   
+            postalCode,
+            isDefault
+        },
+        {
+            ...(id !== "new" && { params: { address_id: id } })
+        }
+    )
+}
+
+
+export const deleteAddress = async(addressId)=>{
+    console.log(addressId);
+    const r = {addressId:addressId};
+    console.log("swagger format",r);
+    return await axiosInstance.delete('users/profiles/adddress/remove',{
+                r
+            }
+    )
+}

@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
+import { addAddress, getAddresses } from "../../api/user";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AddAddress = () => {
   const [formData, setFormData] = useState({
     country: "India",
-    fullName: "",
+    firstName: "",
+    lastName:"",
     mobile: "",
     pincode: "",
     flat: "",
@@ -15,6 +19,10 @@ const AddAddress = () => {
     state: "",
     isDefault: false,
   });
+  const [email, setEmail] = useState("");
+  const [isUpdate,setIsUpdate] = useState(false);
+  const navigate = useNavigate();
+  const {id} = useParams();
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -24,10 +32,78 @@ const AddAddress = () => {
     });
   };
 
-  const handleFormSubmit = (e) => {
+  useEffect(()=>{
+    const token = localStorage.getItem('userToken');
+    const getAddress=async()=>{
+      const user = jwtDecode(token);
+      console.log("email",user.userName);
+      if(id!=='new')
+      {
+        setIsUpdate(true);
+        const resp = await getAddresses();
+        if(resp.status===200)
+        {
+          const address = resp.data.detail.data.find(address => address._id === id);
+          const arr = address.address.split(' ');
+          setFormData({
+            firstName:address.firstName,
+            lastName:address.lastName,
+            email:token.userName,
+            pincode:address.postalCode,
+            state:address.state,
+            landmark:address.landmark,
+            city:address.city,
+            mobile:address.mobileNumber,
+            flat:arr[0],
+            area:arr[1]
+          })
+        }
+      }
+      console.log(id,user.userName);
+      setEmail(user.userName);
+    }
+  getAddress();
+  },[])
+
+  const handleFormSubmit = async(e) => {
     e.preventDefault();
     console.log("Submitted Data: ", formData);
-    // Call API or handle form submission logic
+    try{
+      const address = formData.flat+" "+formData.area;
+      const res = await addAddress(formData.firstName,
+        formData.lastName,
+        email,
+        formData.mobile,
+        formData.country,
+        formData.state,
+        address,
+        formData.city,
+        formData.landmark,
+        formData.pincode,
+        formData.isDefault,
+        id)
+        if(res.status===200)
+        {
+          console.log(res.data);
+          setFormData({
+            country: "India",
+            firstName: "",
+            lastName: "",
+            mobile: "",
+            pincode: "",
+            flat: "",
+            area: "",
+            landmark: "",
+            city: "",
+            state: "",
+            isDefault: false,
+            id
+          });
+        }
+        navigate('/addresses')
+    }catch (err) {
+      console.error("Error submitting form: ", err); 
+    }
   };
 
   return (
@@ -40,7 +116,7 @@ const AddAddress = () => {
         {/* Left Side - Form Section */}
 
         <div className="md:w-1/2 mx-5 p-6   mt-5">
-          <h1 className="text-2xl font-bold mb-6">Add a New Address</h1>
+          <h1 className="text-2xl font-bold mb-6"> {isUpdate?("Update Address"):("Add a new Address")}</h1>
 
           <form onSubmit={handleFormSubmit}>
             {/* Country/Region */}
@@ -63,14 +139,27 @@ const AddAddress = () => {
             {/* Full Name */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">
-                Full Name
+                First Name
               </label>
               <input
                 type="text"
-                name="fullName"
-                value={formData.fullName}
+                name="firstName"
+                value={formData.firstName}
                 onChange={handleInputChange}
-                placeholder="First and Last name"
+                placeholder="First name"
+                className="w-full border rounded p-2"
+              />
+              </div>
+                <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">
+                Last Name
+              </label>
+                <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                placeholder=" Last name"
                 className="w-full border rounded p-2"
               />
             </div>
@@ -194,7 +283,8 @@ const AddAddress = () => {
                 type="submit"
                 className="w-full bg-black text-white py-2 rounded"
               >
-                Add Address
+              {isUpdate?("Update Address"):("Add Address")}
+                
               </button>
             </div>
           </form>

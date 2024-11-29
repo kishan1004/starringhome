@@ -63,9 +63,12 @@ function App() {
   useEffect(() => {
     // Check if the user is authenticated when the app loads
     const storedAuthState = localStorage.getItem("authToken");
+    // console.log(' storedAuthState :',  storedAuthState);
+    
 
     if (storedAuthState) {
-      setIsAuthenticated(true); // Set state based on stored value
+      console.log("Verified")
+      setIsAuthenticated(true); 
     }
 
     // Add resize event listener to determine if the screen is large
@@ -159,7 +162,7 @@ function App() {
             <Route path="/user-login" element={<UserLogin />} />
             <Route path="/user-account" element={<UserAccountPage />} />
             <Route path="/addresses" element={<YourAddresses />} />
-            <Route path="/add-address" element={<AddAddress />} />
+            <Route path="/add-address/:id" element={<AddAddress />} />
             <Route path="/login-security" element={<LoginAndSecurity />} />
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/your-orders" element={<YourOrders />} />
@@ -195,9 +198,9 @@ function App() {
                         <Routes>
                           <Route path="dashboard" element={<Dashboard />} />
                           <Route path="products" element={<ProductList />} />
-                          <Route path="upload" element={<ProductUpload />} />
+                          <Route path="product/:productId" element={<ProductUpload />} />
                           <Route path="orders" element={<Orders />} />
-                          <Route path="orderdetail" element={<OrderDetail />} />
+                          <Route path="orderdetail/:orderId" element={<OrderDetail />} />
                           <Route
                             path="testimonials"
                             element={<Testimonials />}
@@ -214,7 +217,7 @@ function App() {
                     </div>
                   </>
                 ) : (
-                  <Navigate to="/admin/login" /> // Redirect unauthenticated users to admin login page
+                  <Navigate to="/admin/login" /> 
                 )
               }
             />

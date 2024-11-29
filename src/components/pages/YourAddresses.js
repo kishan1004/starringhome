@@ -1,28 +1,59 @@
-import React from "react";
-import { Link } from "react-router-dom"; // Import Link from React Router
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // Import Link from React Router
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
+import { deleteAddress, getAddresses } from "../../api/user";
+import { jwtDecode } from "jwt-decode";
 
 const YourAddresses = () => {
-  const addresses = [
-    {
-      id: 1,
-      name: "Deva",
-      address:
-        "133/2, S.V.R Nagar, 5th Street, nesavalar colony, dadagapatti, Salem, TAMIL NADU 636006, India",
-      phone: "6379518189",
-      isDefault: true,
-    },
-    {
-      id: 2,
-      name: "Deva",
-      address:
-        "#5, 1st floor GST Road, NH service road, Perumal kovil st, Urapakkam land mark, CHENNAI, TAMIL NADU 603210, India",
-      phone: "6379518189",
-      isDefault: false,
-    },
-  ];
+  const [addresses,setAddresses] = useState([]);
+  const navigate = useNavigate();
 
+  useEffect(()=>{
+    const token = localStorage.getItem('userToken');
+    const user = jwtDecode(token);
+    console.log(user);
+    const fetchAddresses = async()=>{
+      try{
+        const res = await getAddresses();
+        if(res.status===200)
+        {
+          console.log(res.data);
+          setAddresses(res.data.detail.data);
+        }
+        else
+        {
+          console.log(res.data);
+        }
+      }
+      catch(err)
+      {
+        console.error(err);
+      }
+    }
+    fetchAddresses();
+  },[])
+
+
+  const handleAddressUpdate = async(id)=>{
+    navigate(`/add-address/${id}`)
+  }
+
+  const handleAddressDelete = async(id)=>{
+    const addressId = [];
+    addressId.push(id);
+    try{
+      const res = await deleteAddress(addressId);
+      if(res.status===200)
+      {
+        console.log(res);
+      }
+    }
+    catch(err)
+    {
+      console.log(err);
+    }
+  }
   return (
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
@@ -36,7 +67,7 @@ const YourAddresses = () => {
           <h1 className="text-2xl font-semibold mb-6">Your Addresses</h1>
           <div className="grid grid-cols-1 gap-6">
             {/* Add Address Card */}
-            <Link to="/add-address">
+            <Link to="/add-address/new">
               <div className="flex items-center justify-center p-4 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-100">
                 <div className="text-center">
                   <div className="text-4xl font-bold text-gray-400">+</div>
@@ -48,7 +79,7 @@ const YourAddresses = () => {
             {/* Existing Address Cards */}
             {addresses.map((address) => (
               <div
-                key={address.id}
+                key={address._id}
                 className="border rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200"
               >
                 {/* Default Badge */}
@@ -62,15 +93,15 @@ const YourAddresses = () => {
                 <h2 className="text-lg font-semibold">{address.name}</h2>
                 <p className="text-sm text-gray-600 mt-1">{address.address}</p>
                 <p className="text-sm text-gray-600 mt-1">
-                  Phone number: {address.phone}
+                  Phone number: {address.mobileNumber}
                 </p>
 
                 {/* Action Buttons */}
                 <div className="flex space-x-4 mt-4 text-sm">
-                  <button className="text-blue-500 hover:underline">
+                  <button onClick={()=>handleAddressUpdate(address._id)} className="text-blue-500 hover:underline">
                     Edit
                   </button>
-                  <button className="text-blue-500 hover:underline">
+                  <button onClick={()=>handleAddressDelete(address._id)} className="text-blue-500 hover:underline">
                     Remove
                   </button>
                   {!address.isDefault && (
