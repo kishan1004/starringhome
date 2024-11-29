@@ -92,18 +92,6 @@ const FooterSection = (props) => {
             Featured
           </a>
 
-          <a
-            href="#features"
-            onClick={() => handleNavClick("Testimonials")}
-            className={`py-2 text-lg  ${
-              activeItem === "Testimonials"
-                ? "text-[#6D4C41] border-b border-gray-700"
-                : "text-[#263238]"
-            } hover:text-gray-400`}
-          >
-            Testimonials
-          </a>
-
           <Link
             to="/refund-policy"
             onClick={() => handleNavClick("Footer")}
@@ -115,6 +103,18 @@ const FooterSection = (props) => {
           >
             Return & Exchange
           </Link>
+
+          <a
+            href="#features"
+            onClick={() => handleNavClick("Testimonials")}
+            className={`py-2 text-lg  ${
+              activeItem === "Testimonials"
+                ? "text-[#6D4C41] border-b border-gray-700"
+                : "text-[#263238]"
+            } hover:text-gray-400`}
+          >
+            Contact Us
+          </a>
         </nav>
         <div className="flex justify-center space-x-14 mb-8">
           <a

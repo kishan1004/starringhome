@@ -47,9 +47,11 @@ import AddAddress from "./components/pages/AddAddress";
 import LoginAndSecurity from "./components/pages/LoginAndSecurity";
 import ChangePassword from "./components/pages/ChangePassword";
 import YourOrders from "./components/pages/YourOrders";
+import UserOrderDetail from "./components/pages/UserOrderDetail";
 import AdminCouponPage from "./components/adminpanel/AdminCouponPage";
 import RefundPolicyPage from "./components/pages/RefundPolicyPage";
 import ReturnExchangePage from "./components/adminpanel/ReturnExchangePage";
+import AddCouponPage from "./components/adminpanel/AddCouponPage";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -167,6 +169,7 @@ function App() {
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/your-orders" element={<YourOrders />} />
             <Route path="/refund-policy" element={<RefundPolicyPage />} />
+            <Route path="/userorderdetail" element={<UserOrderDetail />} />
 
             <Route
               path="/shopping-cart"
@@ -203,6 +206,11 @@ function App() {
                           <Route path="orders" element={<Orders />} />
                           <Route path="orderdetail" element={<OrderDetail />} />
                           <Route path="coupons" element={<AdminCouponPage />} />
+                          <Route
+                            path="add-coupon"
+                            element={<AddCouponPage />}
+                          />
+
                           <Route
                             path="returns"
                             element={<ReturnExchangePage />}
