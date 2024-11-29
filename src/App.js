@@ -68,10 +68,11 @@ function App() {
   useEffect(() => {
     // Check if the user is authenticated when the app loads
     const storedAuthState = localStorage.getItem("authToken");
+    setIsAuthenticated(!!storedAuthState); // Set state based on stored token
 
-    if (storedAuthState) {
-      setIsAuthenticated(true); // Set state based on stored value
-    }
+    // if (storedAuthState) {
+    //   setIsAuthenticated(true); // Set state based on stored value
+    // }
 
     // Add resize event listener to determine if the screen is large
     const updateScreenSize = () => {
@@ -89,6 +90,7 @@ function App() {
     //API: logout api handled
     userLogout().then((res) => {
       localStorage.removeItem("authToken");
+      setIsAuthenticated(false); // Update state on logout
     });
   };
 
@@ -188,7 +190,7 @@ function App() {
             <Route
               path="/admin/*"
               element={
-                isAuthenticated ? (
+                isAuthenticated || localStorage.getItem("authToken") ? (
                   <>
                     <Adminbar
                       toggleSidebar={toggleSidebar}
@@ -210,12 +212,10 @@ function App() {
                             path="add-coupon"
                             element={<AddCouponPage />}
                           />
-
                           <Route
                             path="returns"
                             element={<ReturnExchangePage />}
                           />
-
                           <Route
                             path="testimonials"
                             element={<Testimonials />}
@@ -225,7 +225,6 @@ function App() {
                             path="user-management"
                             element={<UserManagement />}
                           />
-                          {/* <Route path="report" element={<OrderReport />} /> */}
                           <Route path="inventory" element={<Inventory />} />
                         </Routes>
                       </div>
@@ -236,6 +235,7 @@ function App() {
                 )
               }
             />
+
             {/* Redirect 404 */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

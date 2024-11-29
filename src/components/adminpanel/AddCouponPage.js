@@ -43,7 +43,8 @@ const AddCouponPage = () => {
             name="code"
             value={formData.code}
             onChange={handleChange}
-            placeholder="Enter coupon code"
+            placeholder="Enter coupon code (max 15 characters)"
+            maxLength="15"
             className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -68,9 +69,10 @@ const AddCouponPage = () => {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Enter description"
+            placeholder="Enter description (max 50 characters)"
             className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows="2"
+            maxLength="50"
           />
         </div>
         <div>

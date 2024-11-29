@@ -171,7 +171,9 @@ const UserOrderDetail = () => {
                       value={formData.reason}
                       onChange={handleInputChange}
                       className="w-full border p-2 rounded"
-                      placeholder="Enter reason for return or exchange"
+                      maxLength="250"
+                      placeholder="Enter reason for return or exchange (max 250 characters)"
+                      rows="5"
                       required
                     ></textarea>
                   </div>

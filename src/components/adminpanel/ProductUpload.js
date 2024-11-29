@@ -128,7 +128,8 @@ const ProductUpload = () => {
             value={productData.name}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
-            placeholder="Enter product name"
+            placeholder="Enter product name (max 15 characters)"
+            maxLength="15"
           />
         </div>
         <div>
@@ -139,7 +140,8 @@ const ProductUpload = () => {
             value={productData.id}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
-            placeholder="Enter product ID"
+            placeholder="Enter product ID (max 15 characters)"
+            maxLength="15"
           />
         </div>
 
@@ -151,29 +153,32 @@ const ProductUpload = () => {
             value={productData.brand}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
-            placeholder="Enter product brand"
+            placeholder="Enter product brand (max 15 characters)"
+            maxLength="15"
           />
         </div>
         <div>
           <label className="font-semibold">Collection</label>
           <input
             type="text"
-            name="Tag"
+            name="collection"
             value={productData.collection}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
-            placeholder="Enter product brand"
+            placeholder="Enter product collection (max 15 characters)"
+            maxLength="15"
           />
         </div>
         <div>
           <label className="font-semibold">Tag</label>
           <input
             type="text"
-            name="Tag"
+            name="tag"
             value={productData.tag}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
-            placeholder="Enter product tag"
+            placeholder="Enter product tag (max 15 characters)"
+            maxLength="15"
           />
         </div>
 
@@ -284,8 +289,9 @@ const ProductUpload = () => {
           value={productData.description}
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded"
-          placeholder="Enter product description"
+          placeholder="Enter product description (max 150 characters)"
           rows="3"
+          maxLength="150"
         />
       </div>
 
