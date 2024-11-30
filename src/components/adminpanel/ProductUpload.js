@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { saveProduct } from "../../api/admin";
+import { getProduct, mediaUpload, saveProduct } from "../../api/admin";
+import { jwtDecode } from "jwt-decode";
 
 const ProductUpload = () => {
+  const {productId} = useParams();
   const [productData, setProductData] = useState({
     name: "",
-    id: "",
     brand: "",
     collection: "",
     tag: "",
     category: "",
     price: "",
-    stock: {},
-    rating: "",
+    stockCount: [],
+    rating: 5,
     description: "",
-    size: [],
+    sizes: [],
     offerPrice: "",
     offerPercentage: "",
     photos: [],
@@ -33,7 +34,40 @@ const ProductUpload = () => {
     "Hoodie",
   ];
 
-  // Effect to update offerPrice whenever offerPercentage changes
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (productId !== "new") {
+        const res = await getProduct(productId);
+        if (res.status === 200) {
+          console.log(res.data.detail);
+          setProductData({
+            name: res.data.detail.name,
+            id: productId, 
+            brand: res.data.detail.brand,
+            collection: res.data.detail.collection,
+            tag: res.data.detail.tag,
+            category: res.data.detail.category,
+            price: res.data.detail.price,
+            stockCount: res.data.detail.stockCount ? res.data.detail.stockCount.reduce((acc, item) => {
+              acc[item.sizes.toUpperCase()] = item.count; 
+              return acc;
+            }, {}) : {},
+            rating: res.data.detail.rating,
+            description: res.data.detail.description,
+            sizes: res.data.detail.sizes.map(size => size.toUpperCase()), 
+            offerPrice: res.data.detail.offerPrice,
+            offerPercentage: res.data.detail.offerPercentage,
+            photos: res.data.detail.photos,
+          });
+        } else {
+          console.log(res);
+        }
+      }
+    };
+    fetchProduct();
+  }, [productId]);
+
   useEffect(() => {
     if (productData.offerPercentage && productData.price) {
       const offerPrice =
@@ -50,33 +84,41 @@ const ProductUpload = () => {
     const { name, value } = e.target;
     setProductData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: name === "photos" ? e.target.files[0].name : value,
     }));
   };
 
   const handleSizeChange = (e) => {
-    const size = e.target.value;
+    const sizes = e.target.value;
     setProductData((prevData) => {
       const newSizes = e.target.checked
-        ? [...prevData.size, size] // Add the size if checked
-        : prevData.size.filter((item) => item !== size); // Remove the size if unchecked
+        ? [...prevData.sizes, sizes] // Add the sizes if checked
+        : prevData.sizes.filter((item) => item !== sizes); // Remove the sizes if unchecked
 
       return {
         ...prevData,
-        size: newSizes,
+        sizes: newSizes,
       };
     });
   };
 
   const handleStockChange = (e, size) => {
     const { value } = e.target;
-    setProductData((prevData) => ({
-      ...prevData,
-      stock: {
-        ...prevData.stock,
-        [size]: value,
-      },
-    }));
+    setProductData((prevData) => {
+      const updatedStockCount = prevData.stockCount.map(stock => 
+        stock.size === size ? { ...stock, count: value } : stock
+      );
+
+      // Check if the size does not exist in the stockCount array
+      if (!updatedStockCount.some(stock => stock.size === size)) {
+        updatedStockCount.push({ count: value, size }); // Add new size if it doesn't exist
+      }
+
+      return {
+        ...prevData,
+        stockCount: updatedStockCount,
+      };
+    });
   };
 
   const handlePriceChange = (e) => {
@@ -87,13 +129,29 @@ const ProductUpload = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async(e) => {
     const files = Array.from(e.target.files);
     setProductData((prevData) => ({
       ...prevData,
       photos: files,
     }));
     setImagePreview(files.map((file) => URL.createObjectURL(file)));
+    const token = localStorage.getItem('authToken')
+    const user = jwtDecode(token);
+    console.log(user);
+    try{
+      const res = await mediaUpload(files);
+      console.log(res.data?.detail[0]?.imageUrls);
+      setProductData((prevData) => ({
+        ...prevData,
+        photos: res.data?.detail[0]?.imageUrls,
+      }));
+      console.log(res);
+    }
+    catch(err)
+    {
+      console.log(err);
+    }
   };
 
   const handleReview = () => {
@@ -104,6 +162,16 @@ const ProductUpload = () => {
     // created product
     saveProduct(productData).then((res) => {
       console.log(res);
+      if(res.status===201)
+      {
+        alert("Added successfully");
+        navigate('../admin/products');
+      }
+      else
+      {
+        console.log(res.data);
+        alert('Something went wrong');
+      }
     });
   };
 
@@ -132,7 +200,7 @@ const ProductUpload = () => {
             maxLength="15"
           />
         </div>
-        <div>
+        {/* <div>
           <label className="font-semibold">Product ID *</label>
           <input
             type="text"
@@ -143,7 +211,7 @@ const ProductUpload = () => {
             placeholder="Enter product ID (max 15 characters)"
             maxLength="15"
           />
-        </div>
+        </div> */}
 
         <div>
           <label className="font-semibold">Product Brand *</label>
@@ -211,7 +279,7 @@ const ProductUpload = () => {
                 <input
                   type="checkbox"
                   value={size}
-                  checked={productData.size.includes(size)}
+                  checked={productData.sizes.includes(size)}
                   onChange={handleSizeChange}
                   className="form-checkbox"
                 />
@@ -221,14 +289,14 @@ const ProductUpload = () => {
           </div>
         </div>
 
-        {productData.size.length > 0 &&
-          productData.size.map((size) => (
+        {productData.sizes.length > 0 &&
+          productData.sizes.map((size) => (
             <div key={size}>
               <label className="font-semibold">Stock Count for {size} *</label>
               <input
                 type="number"
-                name="stock"
-                value={productData.stock[size] || ""}
+                name="stockCount"
+                value={productData.stockCount[size] !== undefined ? productData.stockCount[size] : ""}
                 onChange={(e) => handleStockChange(e, size)}
                 className="w-full px-4 py-2 border rounded"
                 placeholder={`Enter stock count for ${size}`}
@@ -334,12 +402,12 @@ const ProductUpload = () => {
             <strong>Category:</strong> {productData.category}
           </p>
           <p>
-            <strong>Size:</strong> {productData.size.join(", ")}
+            <strong>Size:</strong> {productData.sizes.join(", ")}
           </p>
-          {productData.size.length > 0 &&
-            productData.size.map((size) => (
+          {productData.sizes.length > 0 &&
+            productData.sizes.map((size) => (
               <p key={size}>
-                <strong>Stock for {size}:</strong> {productData.stock[size]}
+                <strong>Stock for {size}:</strong> {productData.stockCount[size]}
               </p>
             ))}
           <p>

@@ -5,6 +5,7 @@ import { IoNotifications } from "react-icons/io5";
 import { MdAccountCircle } from "react-icons/md";
 import { FaUserCog } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { getNotifications } from "../../api/admin";
 
 const initialRecentOrders = [
   {
@@ -87,7 +88,21 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
   const notificationRef = useRef(null);
   const accountRef = useRef(null);
 
+  const fetchNotifications = async ()=>{
+    try {
+    const res = await getNotifications();
+    if (res.status === 200) {
+      console.log("Success", res.data);
+    } else {
+      console.log(res);
+    }
+  } catch (error) {
+    console.error("Error fetching order stats:", error);
+  }
+  }
+
   const toggleNotificationDropdown = () => {
+    fetchNotifications();
     setIsNotificationOpen((prev) => !prev);
   };
 
@@ -144,10 +159,10 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
       </div>
       <div className="flex items-center gap-3 sm:gap-10 relative">
         {/* Notification Icon */}
+        
         <div className="relative" ref={notificationRef}>
           <IoNotifications
             className="text-xl sm:text-2xl cursor-pointer"
-            onClick={toggleNotificationDropdown}
           />
           {recentOrders.length > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-3 h-3 flex items-center justify-center text-xs">

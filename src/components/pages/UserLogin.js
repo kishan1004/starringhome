@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
-import { Link } from "react-router-dom";
-import { userLogin } from "../../api/user";
+import { Link, useNavigate } from "react-router-dom";
+import { forgotPassword, userLogin } from "../../api/user";
 
 const UserLogin = () => {
   //show error in UI
   const [error, setError] = useState();
   const [userName, setUserName] = useState();
   const [password, setPassword] = useState();
+  const [isForgotPassword,setIsForgotPassword] = useState(false);
+  const navigate = useNavigate();
+
 
   const onLogin = (e) => {
     e.preventDefault();
@@ -40,6 +43,30 @@ const UserLogin = () => {
     })
   }
 
+  const handleForgotPassword = async()=>{
+    setIsForgotPassword(true);
+    setPassword('')
+    setUserName('');
+  }
+
+
+  const updatePassword = async(e)=>{
+    e.preventDefault();
+    console.log(userName,password);
+    const res = await forgotPassword(userName,password);
+
+    if(res.status===200)
+    {
+      alert('password changed');
+      navigate('/user-login')
+    }
+    setIsForgotPassword(false);
+  }
+
+  const handleBack = ()=>{
+    setIsForgotPassword(false);
+  }
+
   return (
     <section className="font-beatrice bg-gray-100 h-screen">
       <div className="m-4 overflow-hidden md:hidden">
@@ -59,7 +86,62 @@ const UserLogin = () => {
             Today is a new day. It's your day. You shape it. Sign in to start
             managing your projects.
           </p>
-
+          {isForgotPassword && 
+          (
+            <div>
+               <form className="w-full max-w-sm" onSubmit={updatePassword}>
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="emailOrPhone"
+              >
+                Email or Phone Number
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="emailOrPhone"
+                type="text"
+                placeholder="Enter Email id or Phone Number"
+                onChange={(e) => setUserName(e.target.value)}
+                value={userName}
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="password"
+              >
+                Password
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                id="password"
+                type="password"
+                placeholder="At least 10 characters"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+            </div>
+            {error && <p className="text-red-500">{error}</p>}
+            <div className="flex items-center justify-between mb-6">
+              <button
+                className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800"
+                onClick={handleBack}
+              >
+                back
+              </button>
+            </div>
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+            >
+              Update Password
+            </button>
+          </form>
+            </div>
+          )
+          }
+          {!isForgotPassword && (
           <form className="w-full max-w-sm" onSubmit={onLogin}>
             <div className="mb-4">
               <label
@@ -95,12 +177,12 @@ const UserLogin = () => {
             </div>
             {error && <p className="text-red-500">{error}</p>}
             <div className="flex items-center justify-between mb-6">
-              <a
+              <button
                 className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800"
-                href="/"
+                onClick={handleForgotPassword}
               >
                 Forgot Password?
-              </a>
+              </button>
             </div>
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
@@ -109,7 +191,7 @@ const UserLogin = () => {
               Sign in
             </button>
           </form>
-
+            )}
           <p className="pt-4">
             Don't you have an account?{" "}
             <span className="underline text-blue-500">

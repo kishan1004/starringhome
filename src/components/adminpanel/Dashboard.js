@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Doughnut } from "react-chartjs-2";
 
@@ -23,6 +23,8 @@ import {
   ArcElement,
   RadialLinearScale,
 } from "chart.js";
+import { axiosInstance } from "../../utils/axios";
+import { getOrderStats, getSalesDetails } from "../../api/admin";
 
 // Register chart components
 ChartJS.register(
@@ -46,7 +48,64 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-  // Dummy data for different time ranges
+  const [orderStats, setOrderStats] = useState({
+    completedOrders: 0,
+    completedOrdersPercent: 0,
+    dispatchedOrders: 0,
+    dispatchedOrdersPercent: 0,
+    totalEarnings: 0,
+    totalOrders: 0,
+    totalUsers: 0,
+  });
+
+  const [salesDetails,setSalesDetails] = useState({
+    google:0,
+    facebook:0,
+    instagram:0
+  });
+
+  const [timeRange, setTimeRange] = useState("lastDay");
+
+  
+  useEffect(() => {
+    const fetchOrderStats = async () => {
+      try {
+        const res = await getOrderStats(timeRange); 
+        if (res.status === 200) {
+          console.log("Success", res.data);
+          setOrderStats(res.data.detail);
+        } else {
+          console.log(res);
+        }
+      } catch (error) {
+        console.error("Error fetching order stats:", error);
+      }
+    };
+  
+    fetchOrderStats();
+  }, [timeRange]);
+
+  useEffect(() => {
+    const fetchSalesDetails = async () => {
+      try {
+        const res = await getSalesDetails(); 
+        if (res.status === 200) {
+          console.log("Success", res.data);
+          setSalesDetails(res.data.detail);
+        } else {
+          console.log(res);
+        }
+      } catch (error) {
+        console.error("Error fetching order stats:", error);
+      }
+    };
+  
+    fetchSalesDetails();
+  }, []);
+
+  
+  
+
   const statsData = {
     lastDay: {
       totalUsers: 150,
@@ -183,7 +242,6 @@ const Dashboard = () => {
     },
   };
 
-  const [timeRange, setTimeRange] = useState("lastDay");
   const stats = statsData[timeRange];
 
   // Prepare data for the chart
@@ -376,7 +434,7 @@ const Dashboard = () => {
           <FaUsers className="text-blue-500 text-3xl mr-4" />
           <div>
             <p className="text-gray-500">Total Users</p>
-            <h3 className="text-2xl font-semibold">{stats.totalUsers}</h3>
+            <h3 className="text-2xl font-semibold">{orderStats.totalUsers}</h3>
           </div>
         </div>
 
@@ -385,7 +443,7 @@ const Dashboard = () => {
           <FaShoppingCart className="text-green-500 text-3xl mr-4" />
           <div>
             <p className="text-gray-500">Total Orders</p>
-            <h3 className="text-2xl font-semibold">{stats.totalOrders}</h3>
+            <h3 className="text-2xl font-semibold">{orderStats.totalOrders}</h3>
           </div>
         </div>
 
@@ -394,7 +452,7 @@ const Dashboard = () => {
           <FaCheck className="text-purple-500 text-3xl mr-4" />
           <div>
             <p className="text-gray-500">Orders Completed</p>
-            <h3 className="text-2xl font-semibold">{stats.completedOrders}</h3>
+            <h3 className="text-2xl font-semibold">{orderStats.completedOrders}</h3>
           </div>
         </div>
 
@@ -412,7 +470,7 @@ const Dashboard = () => {
           <FaRupeeSign className="text-red-500 text-3xl mr-4" />
           <div>
             <p className="text-gray-500">Earnings</p>
-            <h3 className="text-2xl font-semibold">{stats.earnings}</h3>
+            <h3 className="text-2xl font-semibold">{orderStats.totalEarnings}</h3>
           </div>
         </div>
       </div>
@@ -469,7 +527,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-gray-500">Organic Search</p>
                 <h3 className="text-2xl font-semibold">
-                  {stats.trafficData.organicSearch}
+                  {salesDetails.google}
                 </h3>
               </div>
             </div>
@@ -480,7 +538,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-gray-500">Facebook</p>
                 <h3 className="text-2xl font-semibold">
-                  {stats.trafficData.facebook}
+                  {salesDetails.facebook}
                 </h3>
               </div>
             </div>
@@ -491,7 +549,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-gray-500">Instagram</p>
                 <h3 className="text-2xl font-semibold">
-                  {stats.trafficData.instagram}
+                  {salesDetails.instagram}
                 </h3>
               </div>
             </div>

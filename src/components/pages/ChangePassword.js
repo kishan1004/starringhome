@@ -1,20 +1,35 @@
 import React, { useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
+import { updatePassword } from "../../api/user";
+import { useNavigate } from "react-router-dom";
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [reenterPassword, setReenterPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(currentPassword,newPassword);
     if (newPassword !== reenterPassword) {
       alert("New password and reentered password do not match!");
-      return;
     }
-    // Handle password update logic here (API call or other actions)
-    alert("Password updated successfully!");
+    else
+    {
+      const res =await updatePassword(currentPassword,newPassword);
+      if(res.status===200)
+      {
+        console.log("Updated");
+        alert("Password updated successfully!");
+        navigate('/')
+      }
+      else
+      {
+        console.log(res);
+      }
+    }
   };
 
   return (

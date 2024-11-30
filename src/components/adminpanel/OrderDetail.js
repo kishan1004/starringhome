@@ -1,24 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { getOrder, statusToShipping } from "../../api/admin";
+import { Button, Card, Select } from "antd";
 
 const OrderDetail = () => {
-  const { orderId } = useParams(); // Get the order ID from the URL
+  const { orderId } = useParams();
+  console.log("In order details",orderId);
 
-  // Sample order details (in a real app, fetch this data based on orderId)
+  useEffect(()=>{
+    const fetchOrder = async()=>{
+      const resp = await getOrder(orderId);
+      if(resp.status===200)
+      {
+        console.log(resp.data.detail.data);
+        setOrderDetails(resp.data.detail.data);
+      }
+      else
+      {
+        console.log(resp);
+      }
+    }
+    fetchOrder();
+  },[])
+
   const [orderDetails, setOrderDetails] = useState({
-    id: 1,
-    date: "2024-10-01",
-    customer: "Alice",
-    productId: "#a1",
-    count: 2,
-    totalPrice: 50,
-    paymentStatus: "Success",
-    orderStatus: "Completed",
+    addressDetails: {
+      address: "",
+      city: "",
+      country: "",
+      email: "",
+      firstName: "",
+      landmark: "",
+      lastName: "",
+      mobileNumber: "",
+      postalCode: "",
+      state: "",
+    },
+    orderId: "",
+    orderStatus: "",
+    paymentStatus: "",
+    products: [],
+    shipping: 0,
+    total: 0,
+    createdTime: "",
+    updatedTime: "",
   });
 
-  const statusOptions = ["Dispatched", "Shipped", "Delivered"]; // Status options
+  const statusOptions = ["Dispatched", "Shipped", "Delivered"]; 
 
-  // Handle order status change
   const handleStatusChange = (event) => {
     setOrderDetails((prevDetails) => ({
       ...prevDetails,
@@ -26,44 +55,67 @@ const OrderDetail = () => {
     }));
   };
 
+  const handleStatus = async()=>{
+    const res = await statusToShipping(orderId,"Shipping");
+    if(res.status===200)
+    {
+      console.log(res.data);
+    }
+    else
+    {
+      console.log(res);
+    }
+  }
+
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
       <h1 className="text-2xl font-bold mb-4">Order Details</h1>
-      <p>
-        <strong>Order ID:</strong> {orderDetails.id}
-      </p>
-      <p>
-        <strong>Date:</strong> {orderDetails.date}
-      </p>
-      <p>
-        <strong>Customer:</strong> {orderDetails.customer}
-      </p>
-      <p>
-        <strong>Product ID:</strong> {orderDetails.productId}
-      </p>
-      <p>
-        <strong>Quantity:</strong> {orderDetails.count}
-      </p>
-      <p>
-        <strong>Total Price:</strong> Rs.{orderDetails.totalPrice}
-      </p>
-      <p>
-        <strong>Payment Status:</strong> {orderDetails.paymentStatus}
-      </p>
-      <div>
+  
+      <Card title="Order Information" className="mb-4">
+        <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
+        <p><strong>Order Status:</strong> {orderDetails.orderStatus}</p>
+        <p><strong>Payment Status:</strong> {orderDetails.paymentStatus}</p>
+        <p><strong>Total Amount:</strong> Rs.{orderDetails.total}</p>
+        <p><strong>Shipping Cost:</strong> Rs.{orderDetails.shipping}</p>
+        <p><strong>Created Time:</strong> {new Date(orderDetails.createdTime).toLocaleString()}</p>
+        <p><strong>Updated Time:</strong> {new Date(orderDetails.updatedTime).toLocaleString()}</p>
+      </Card>
+
+      <Card title="Customer Information" className="mb-4">
+        <p><strong>Name:</strong> {orderDetails.addressDetails.firstName} {orderDetails.addressDetails.lastName}</p>
+        <p><strong>Email:</strong> {orderDetails.addressDetails.email}</p>
+        <p><strong>Mobile Number:</strong> {orderDetails.addressDetails.mobileNumber}</p>
+        <p><strong>Address:</strong> {orderDetails.addressDetails.address}, {orderDetails.addressDetails.landmark}, {orderDetails.addressDetails.city}, {orderDetails.addressDetails.state}, {orderDetails.addressDetails.postalCode}, {orderDetails.addressDetails.country}</p>
+      </Card>
+
+      <Card title="Product Details" className="mb-4">
+        {orderDetails.products.map((product, index) => (
+          <div key={index} className="border p-2 mb-2 rounded">
+            <p><strong>Product Name:</strong> {product.name}</p>
+            <p><strong>Product ID:</strong> {product.productId}</p>
+            <p><strong>Size:</strong> {product.size}</p>
+            <p><strong>Quantity:</strong> {product.count}</p>
+          </div>
+        ))}
+      </Card>
+
+      <div className="mb-4">
         <strong>Order Status:</strong>
-        <select
+        <Select
           value={orderDetails.orderStatus}
           onChange={handleStatusChange}
-          className="ml-2 px-3  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="ml-2"
+          style={{ width: 200 }}
         >
           {statusOptions.map((status) => (
-            <option key={status} value={status}>
+            <Select.Option key={status} value={status}>
               {status}
-            </option>
+            </Select.Option>
           ))}
-        </select>
+        </Select>
       </div>
+      <Button type="primary" onClick={handleStatus}>Update Status</Button>
     </div>
   );
 };

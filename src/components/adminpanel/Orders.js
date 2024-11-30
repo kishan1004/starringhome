@@ -1,13 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getOrders } from "../../api/admin";
 
 // Sample order data
 const orderData = [];
 
 const Orders = () => {
-  const [orders, setOrders] = useState(orderData); // Manage orders state
+  const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(6);
+  const [itemsPerPage] = useState(2);
+
+  useEffect(()=>{
+    const fetchOrders = async()=>{
+      const res = await getOrders(currentPage,itemsPerPage);
+      if(res.status===200)
+      {
+        console.log(res.data.detail.data);
+        setOrders(res.data.detail.data);
+      }
+      else
+      {
+        console.log(res);
+      }
+    }
+    fetchOrders();
+  },[])
 
   // Filtering states
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState("");
@@ -17,7 +34,7 @@ const Orders = () => {
 
   // Filtered orders based on criteria
   const filteredOrders = orders.filter((order) => {
-    const orderDate = new Date(order.date);
+    const orderDate = new Date(order.orderDate);
     const matchesDate =
       (!startDate || orderDate >= new Date(startDate + "T00:00:00")) &&
       (!endDate || orderDate <= new Date(endDate + "T23:59:59"));
@@ -119,15 +136,15 @@ const Orders = () => {
               <tr key={order.id} className="text-center">
                 <td className="py-3 px-4 border">
                   <button
-                    onClick={() => navigate("orderdetail")}
+                    onClick={() => navigate(`../orderdetail/${order._id}`)}
                     className="text-blue-500 hover:underline"
                   >
-                    {order.id}
+                    {order.orderId}
                   </button>
                 </td>
-                <td className="py-3 px-4 border">{order.date}</td>
-                <td className="py-3 px-4 border">{order.customer}</td>
-                <td className="py-3 px-4 border">Rs.{order.totalPrice}</td>
+                <td className="py-3 px-4 border">{new Date(order.orderDate).toLocaleDateString()}</td>
+                <td className="py-3 px-4 border">{order.userName}</td>
+                <td className="py-3 px-4 border">Rs.{order.total}</td>
                 <td
                   className={`py-3 px-4 border ${
                     order.paymentStatus === "Success"
