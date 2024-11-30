@@ -43,6 +43,8 @@ const productsData = Array.from({ length: 25 }, (_, i) => ({
 const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [productCategories, setProductCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [isEditing, setIsEditing] = useState(null);
@@ -53,7 +55,12 @@ const ProductList = () => {
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
       !selectedCategory || product.category === selectedCategory;
-    return matchesCategory;
+    const matchesDate =
+      (!startDate ||
+        new Date(product.stockUpdatedDate) >= new Date(startDate)) &&
+      (!endDate || new Date(product.stockUpdatedDate) <= new Date(endDate));
+
+    return matchesCategory && matchesDate;
   });
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -157,7 +164,25 @@ const ProductList = () => {
             </option>
           ))}
         </select>
+        <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2">
+          <label className="font-medium">From:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="px-3 py-2 border rounded w-full md:w-auto"
+          />
+          <label className="font-medium">To:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="px-3 py-2 border rounded w-full md:w-auto"
+          />
+        </div>
       </div>
+
+      {/* Date range filters */}
 
       {/* Product Table */}
       <div className="overflow-x-auto shadow-lg">
