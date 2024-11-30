@@ -5,7 +5,7 @@ import { getProduct, mediaUpload, saveProduct } from "../../api/admin";
 import { jwtDecode } from "jwt-decode";
 
 const ProductUpload = () => {
-  const {productId} = useParams();
+  const { productId } = useParams();
   const [productData, setProductData] = useState({
     name: "",
     brand: "",
@@ -13,7 +13,7 @@ const ProductUpload = () => {
     tag: "",
     category: "",
     price: "",
-    stockCount: [],
+    stockCount: {},
     rating: 5,
     description: "",
     sizes: [],
@@ -21,7 +21,7 @@ const ProductUpload = () => {
     offerPercentage: "",
     photos: [],
   });
-
+  const [errors, setErrors] = useState({});
   const [reviewMode, setReviewMode] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -34,34 +34,33 @@ const ProductUpload = () => {
     "Hoodie",
   ];
 
-
   useEffect(() => {
     const fetchProduct = async () => {
       if (productId !== "new") {
         const res = await getProduct(productId);
         if (res.status === 200) {
-          console.log(res.data.detail);
+          const detail = res.data.detail;
           setProductData({
-            name: res.data.detail.name,
-            id: productId, 
-            brand: res.data.detail.brand,
-            collection: res.data.detail.collection,
-            tag: res.data.detail.tag,
-            category: res.data.detail.category,
-            price: res.data.detail.price,
-            stockCount: res.data.detail.stockCount ? res.data.detail.stockCount.reduce((acc, item) => {
-              acc[item.sizes.toUpperCase()] = item.count; 
-              return acc;
-            }, {}) : {},
-            rating: res.data.detail.rating,
-            description: res.data.detail.description,
-            sizes: res.data.detail.sizes.map(size => size.toUpperCase()), 
-            offerPrice: res.data.detail.offerPrice,
-            offerPercentage: res.data.detail.offerPercentage,
-            photos: res.data.detail.photos,
+            name: detail.name || "",
+            id: productId,
+            brand: detail.brand || "",
+            collection: detail.collection || "",
+            tag: detail.tag || "",
+            category: detail.category || "",
+            price: detail.price || "",
+            stockCount: detail.stockCount
+              ? detail.stockCount.reduce((acc, item) => {
+                  acc[item.size.toUpperCase()] = item.count;
+                  return acc;
+                }, {})
+              : {},
+            rating: detail.rating || 5,
+            description: detail.description || "",
+            sizes: detail.sizes?.map((size) => size.toUpperCase()) || [],
+            offerPrice: detail.offerPrice || "",
+            offerPercentage: detail.offerPercentage || "",
+            photos: detail.photos || [],
           });
-        } else {
-          console.log(res);
         }
       }
     };
@@ -89,11 +88,11 @@ const ProductUpload = () => {
   };
 
   const handleSizeChange = (e) => {
-    const sizes = e.target.value;
+    const size = e.target.value;
     setProductData((prevData) => {
       const newSizes = e.target.checked
-        ? [...prevData.sizes, sizes] // Add the sizes if checked
-        : prevData.sizes.filter((item) => item !== sizes); // Remove the sizes if unchecked
+        ? [...prevData.sizes, size]
+        : prevData.sizes.filter((item) => item !== size);
 
       return {
         ...prevData,
@@ -104,53 +103,28 @@ const ProductUpload = () => {
 
   const handleStockChange = (e, size) => {
     const { value } = e.target;
-    setProductData((prevData) => {
-      const updatedStockCount = prevData.stockCount.map(stock => 
-        stock.size === size ? { ...stock, count: value } : stock
-      );
-
-      // Check if the size does not exist in the stockCount array
-      if (!updatedStockCount.some(stock => stock.size === size)) {
-        updatedStockCount.push({ count: value, size }); // Add new size if it doesn't exist
-      }
-
-      return {
-        ...prevData,
-        stockCount: updatedStockCount,
-      };
-    });
-  };
-
-  const handlePriceChange = (e) => {
-    const { value } = e.target;
     setProductData((prevData) => ({
       ...prevData,
-      price: value,
+      stockCount: {
+        ...prevData.stockCount,
+        [size]: value,
+      },
     }));
   };
 
-  const handleFileChange = async(e) => {
+  const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
-    setProductData((prevData) => ({
-      ...prevData,
-      photos: files,
-    }));
     setImagePreview(files.map((file) => URL.createObjectURL(file)));
-    const token = localStorage.getItem('authToken')
+    const token = localStorage.getItem("authToken");
     const user = jwtDecode(token);
-    console.log(user);
-    try{
+    try {
       const res = await mediaUpload(files);
-      console.log(res.data?.detail[0]?.imageUrls);
       setProductData((prevData) => ({
         ...prevData,
         photos: res.data?.detail[0]?.imageUrls,
       }));
-      console.log(res);
-    }
-    catch(err)
-    {
-      console.log(err);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -159,18 +133,55 @@ const ProductUpload = () => {
   };
 
   const handleUpload = () => {
-    // created product
+    const {
+      name,
+      brand,
+      collection,
+      tag,
+      category,
+      price,
+      offerPercentage,
+      sizes,
+      stockCount,
+      photos,
+      description,
+    } = productData;
+
+    const newErrors = {};
+
+    if (!name) newErrors.name = "Product name is required.";
+    if (!brand) newErrors.brand = "Brand is required.";
+    if (!collection) newErrors.collection = "Collection is required.";
+    if (!tag) newErrors.tag = "Tag is required.";
+    if (!category) newErrors.category = "Category is required.";
+    if (!price) newErrors.price = "Price is required.";
+    if (!offerPercentage)
+      newErrors.offerPercentage = "Offer percentage is required.";
+    if (!description) newErrors.description = "Description is required.";
+    if (!photos || photos.length === 0)
+      newErrors.photos = "At least one photo is required.";
+    if (sizes.length === 0) newErrors.sizes = "At least one size is required.";
+    if (sizes.length > 0) {
+      sizes.forEach((size) => {
+        if (!stockCount[size]) {
+          newErrors[
+            `stockCount-${size}`
+          ] = `Stock count for ${size} is required.`;
+        }
+      });
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     saveProduct(productData).then((res) => {
-      console.log(res);
-      if(res.status===201)
-      {
-        alert("Added successfully");
-        navigate('../admin/products');
-      }
-      else
-      {
-        console.log(res.data);
-        alert('Something went wrong');
+      if (res.status === 201) {
+        alert("Product added successfully");
+        navigate("../admin/products");
+      } else {
+        alert("Something went wrong");
       }
     });
   };
@@ -195,23 +206,14 @@ const ProductUpload = () => {
             name="name"
             value={productData.name}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
+            className={`w-full border ${
+              errors.name ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter product name (max 15 characters)"
             maxLength="15"
           />
+          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
-        {/* <div>
-          <label className="font-semibold">Product ID *</label>
-          <input
-            type="text"
-            name="id"
-            value={productData.id}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
-            placeholder="Enter product ID (max 15 characters)"
-            maxLength="15"
-          />
-        </div> */}
 
         <div>
           <label className="font-semibold">Product Brand *</label>
@@ -220,34 +222,47 @@ const ProductUpload = () => {
             name="brand"
             value={productData.brand}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
+            className={`w-full border ${
+              errors.brand ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter product brand (max 15 characters)"
             maxLength="15"
           />
+          {errors.brand && (
+            <p className="text-red-500 text-sm">{errors.brand}</p>
+          )}
         </div>
         <div>
-          <label className="font-semibold">Collection</label>
+          <label className="font-semibold">Collection *</label>
           <input
             type="text"
             name="collection"
             value={productData.collection}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
+            className={`w-full border ${
+              errors.collection ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter product collection (max 15 characters)"
             maxLength="15"
           />
+          {errors.collection && (
+            <p className="text-red-500 text-sm">{errors.collection}</p>
+          )}
         </div>
         <div>
-          <label className="font-semibold">Tag</label>
+          <label className="font-semibold">Tag *</label>
           <input
             type="text"
             name="tag"
             value={productData.tag}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
+            className={`w-full border ${
+              errors.tag ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter product tag (max 15 characters)"
             maxLength="15"
           />
+          {errors.tag && <p className="text-red-500 text-sm">{errors.tag}</p>}
         </div>
 
         <div>
@@ -256,7 +271,9 @@ const ProductUpload = () => {
             name="category"
             value={productData.category}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
+            className={`w-full border ${
+              errors.category ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           >
             <option value="" disabled>
               Select category
@@ -267,6 +284,9 @@ const ProductUpload = () => {
               </option>
             ))}
           </select>
+          {errors.category && (
+            <p className="text-red-500 text-sm">{errors.category}</p>
+          )}
         </div>
 
         <div>
@@ -275,18 +295,20 @@ const ProductUpload = () => {
           </label>
           <div className="flex flex-wrap gap-4 mt-2">
             {["XS", "S", "M", "L", "XL", "2X"].map((size) => (
-              <label key={size} className="flex items-center space-x-2">
+              <label key={size} className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   value={size}
                   checked={productData.sizes.includes(size)}
                   onChange={handleSizeChange}
-                  className="form-checkbox"
                 />
-                <span>{size}</span>
+                {size}
               </label>
             ))}
           </div>
+          {errors.sizes && (
+            <p className="text-red-500 text-sm">{errors.sizes}</p>
+          )}
         </div>
 
         {productData.sizes.length > 0 &&
@@ -296,11 +318,24 @@ const ProductUpload = () => {
               <input
                 type="number"
                 name="stockCount"
-                value={productData.stockCount[size] !== undefined ? productData.stockCount[size] : ""}
+                value={
+                  productData.stockCount[size] !== undefined
+                    ? productData.stockCount[size]
+                    : ""
+                }
                 onChange={(e) => handleStockChange(e, size)}
-                className="w-full px-4 py-2 border rounded"
+                className={`w-full border ${
+                  errors[`stockCount-${size}`]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder={`Enter stock count for ${size}`}
               />
+              {errors[`stockCount-${size}`] && (
+                <p className="text-red-500 text-sm">
+                  {errors[`stockCount-${size}`]}
+                </p>
+              )}
             </div>
           ))}
 
@@ -310,10 +345,14 @@ const ProductUpload = () => {
             type="number"
             name="price"
             value={productData.price}
-            onChange={handlePriceChange}
-            className="w-full px-4 py-2 border rounded"
-            placeholder="Enter product price"
+            onChange={handleChange}
+            className={`w-full border ${
+              errors.price ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
+          {errors.price && (
+            <p className="text-red-500 text-sm">{errors.price}</p>
+          )}
         </div>
 
         <div>
@@ -323,24 +362,28 @@ const ProductUpload = () => {
             name="offerPercentage"
             value={productData.offerPercentage}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
-            placeholder="Enter offer percentage"
+            className={`w-full border ${
+              errors.offerPercentage ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
+          {errors.offerPercentage && (
+            <p className="text-red-500 text-sm">{errors.offerPercentage}</p>
+          )}
         </div>
 
         <div>
-          <label className="font-semibold">Offer Price</label>
+          <label className="font-semibold">Offer Price *</label>
           <input
-            type="text"
+            type="number"
+            name="offerPrice"
             value={productData.offerPrice}
-            readOnly
+            onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
-            placeholder="Calculated offer price"
           />
         </div>
 
         <div>
-          <label className="font-semibold">Product Photos (Multiple) *</label>
+          <label className="font-semibold">Product Image (Multiple) *</label>
           <input
             type="file"
             name="photos"
@@ -348,6 +391,9 @@ const ProductUpload = () => {
             onChange={handleFileChange}
             className="w-full px-4 py-2 border rounded"
           />
+          {errors.photos && (
+            <p className="text-red-500 text-sm">{errors.photos}</p>
+          )}
         </div>
       </div>
       <div>
@@ -356,11 +402,14 @@ const ProductUpload = () => {
           name="description"
           value={productData.description}
           onChange={handleChange}
-          className="w-full px-4 py-2 border rounded"
-          placeholder="Enter product description (max 150 characters)"
-          rows="3"
-          maxLength="150"
-        />
+          className={`w-full border ${
+            errors.description ? "border-red-500" : "border-gray-300"
+          } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+          rows="4"
+        ></textarea>
+        {errors.description && (
+          <p className="text-red-500 text-sm">{errors.description}</p>
+        )}
       </div>
 
       {/* Buttons */}
@@ -407,7 +456,8 @@ const ProductUpload = () => {
           {productData.sizes.length > 0 &&
             productData.sizes.map((size) => (
               <p key={size}>
-                <strong>Stock for {size}:</strong> {productData.stockCount[size]}
+                <strong>Stock for {size}:</strong>{" "}
+                {productData.stockCount[size]}
               </p>
             ))}
           <p>

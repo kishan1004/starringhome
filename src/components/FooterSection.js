@@ -7,19 +7,25 @@ import Insta from "../images/instagram.png";
 import Fbimg from "../images/facebook.png";
 import Twitterimg from "../images/twitter.png";
 import { Link } from "react-router-dom";
-
+import ContactDrawer from "./ContactUsDrawer";
 const FooterSection = (props) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
   const [activeItem, setActiveItem] = useState("Home");
-
+  const [showDrawer, setShowDrawer] = useState(false);
   const handleNavClick = (item) => {
     setActiveItem(item);
   };
 
   return (
     <>
+      <ContactDrawer
+        isOpen={showDrawer}
+        closeDrawer={() => {
+          setShowDrawer(false);
+        }}
+      />
       <div className="p-6 text-center" id={props.id}>
         <img
           src={Blacklogo}
@@ -106,7 +112,9 @@ const FooterSection = (props) => {
 
           <a
             href="#features"
-            onClick={() => handleNavClick("Testimonials")}
+            onClick={() => {
+              setShowDrawer(true);
+            }}
             className={`py-2 text-lg  ${
               activeItem === "Testimonials"
                 ? "text-[#6D4C41] border-b border-gray-700"

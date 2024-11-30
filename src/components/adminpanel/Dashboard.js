@@ -58,19 +58,18 @@ const Dashboard = () => {
     totalUsers: 0,
   });
 
-  const [salesDetails,setSalesDetails] = useState({
-    google:0,
-    facebook:0,
-    instagram:0
+  const [salesDetails, setSalesDetails] = useState({
+    google: 0,
+    facebook: 0,
+    instagram: 0,
   });
 
   const [timeRange, setTimeRange] = useState("lastDay");
 
-  
   useEffect(() => {
     const fetchOrderStats = async () => {
       try {
-        const res = await getOrderStats(timeRange); 
+        const res = await getOrderStats(timeRange);
         if (res.status === 200) {
           console.log("Success", res.data);
           setOrderStats(res.data.detail);
@@ -81,14 +80,14 @@ const Dashboard = () => {
         console.error("Error fetching order stats:", error);
       }
     };
-  
+
     fetchOrderStats();
   }, [timeRange]);
 
   useEffect(() => {
     const fetchSalesDetails = async () => {
       try {
-        const res = await getSalesDetails(); 
+        const res = await getSalesDetails();
         if (res.status === 200) {
           console.log("Success", res.data);
           setSalesDetails(res.data.detail);
@@ -99,12 +98,9 @@ const Dashboard = () => {
         console.error("Error fetching order stats:", error);
       }
     };
-  
+
     fetchSalesDetails();
   }, []);
-
-  
-  
 
   const statsData = {
     lastDay: {
@@ -452,7 +448,9 @@ const Dashboard = () => {
           <FaCheck className="text-purple-500 text-3xl mr-4" />
           <div>
             <p className="text-gray-500">Orders Completed</p>
-            <h3 className="text-2xl font-semibold">{orderStats.completedOrders}</h3>
+            <h3 className="text-2xl font-semibold">
+              {orderStats.completedOrders}
+            </h3>
           </div>
         </div>
 
@@ -470,7 +468,9 @@ const Dashboard = () => {
           <FaRupeeSign className="text-red-500 text-3xl mr-4" />
           <div>
             <p className="text-gray-500">Earnings</p>
-            <h3 className="text-2xl font-semibold">{orderStats.totalEarnings}</h3>
+            <h3 className="text-2xl font-semibold">
+              {orderStats.totalEarnings}
+            </h3>
           </div>
         </div>
       </div>

@@ -30,6 +30,7 @@ const UserOrderDetail = () => {
   const [formData, setFormData] = useState({
     action: "Return", // Default action
     reason: "",
+    size: "s",
   });
 
   const navigate = useNavigate();
@@ -163,6 +164,26 @@ const UserOrderDetail = () => {
                     </select>
                   </div>
 
+                  {formData?.action === "Exchange" && (
+                    <div className="mb-4">
+                      <label className="block font-medium mb-2">
+                        Choose New Size:
+                      </label>
+                      <select
+                        name="size"
+                        value={formData.size}
+                        onChange={handleInputChange}
+                        className="w-full border p-2 rounded"
+                      >
+                        <option value="xs">XS</option>
+                        <option value="s">S</option>
+                        <option value="m">M</option>
+                        <option value="l">L</option>
+                        <option value="xl">XL</option>
+                        <option value="2xl">2XL</option>
+                      </select>
+                    </div>
+                  )}
                   {/* Reason Input */}
                   <div className="mb-4">
                     <label className="block font-medium mb-2">Reason:</label>

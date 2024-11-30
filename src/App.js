@@ -52,6 +52,7 @@ import AdminCouponPage from "./components/adminpanel/AdminCouponPage";
 import RefundPolicyPage from "./components/pages/RefundPolicyPage";
 import ReturnExchangePage from "./components/adminpanel/ReturnExchangePage";
 import AddCouponPage from "./components/adminpanel/AddCouponPage";
+import AdminContactForm from "./components/adminpanel/AdminContactForm";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -228,6 +229,10 @@ function App() {
                             element={<UserManagement />}
                           />
                           <Route path="inventory" element={<Inventory />} />
+                          <Route
+                            path="admincontactform"
+                            element={<AdminContactForm />}
+                          />
                         </Routes>
                       </div>
                     </div>
