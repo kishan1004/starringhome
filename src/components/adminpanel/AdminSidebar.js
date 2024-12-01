@@ -8,6 +8,9 @@ import {
   FaStar,
   // FaCog,
 } from "react-icons/fa";
+import { MdContactSupport } from "react-icons/md";
+import { RiCoupon2Fill } from "react-icons/ri";
+import { FaExchangeAlt } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
 
 function AdminSidebar({ toggleSidebar }) {
@@ -41,6 +44,19 @@ function AdminSidebar({ toggleSidebar }) {
           <FaBox className="mr-3" /> Product
         </NavLink>
         <NavLink
+          to="coupons"
+          className={({ isActive }) =>
+            `flex items-center px-3 py-2 rounded ${
+              isActive
+                ? "bg-black text-white"
+                : "hover:bg-black hover:text-white"
+            }`
+          }
+          onClick={toggleSidebar} // Close sidebar on link click
+        >
+          <RiCoupon2Fill className="mr-3" /> Coupons
+        </NavLink>
+        <NavLink
           to="orders"
           className={({ isActive }) =>
             `flex items-center px-3 py-2 rounded ${
@@ -52,6 +68,19 @@ function AdminSidebar({ toggleSidebar }) {
           onClick={toggleSidebar} // Close sidebar on link click
         >
           <FaClipboardList className="mr-3" /> Orders
+        </NavLink>
+        <NavLink
+          to="returns"
+          className={({ isActive }) =>
+            `flex items-center px-3 py-2 rounded ${
+              isActive
+                ? "bg-black text-white"
+                : "hover:bg-black hover:text-white"
+            }`
+          }
+          onClick={toggleSidebar} // Close sidebar on link click
+        >
+          <FaExchangeAlt className="mr-3" /> Return/Exchange
         </NavLink>
         <NavLink
           to="testimonials"
@@ -66,19 +95,6 @@ function AdminSidebar({ toggleSidebar }) {
         >
           <FaStar className="mr-3" /> Testimonials
         </NavLink>
-        {/* <NavLink
-          to="settings"
-          className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded ${
-              isActive
-                ? "bg-black text-white"
-                : "hover:bg-black hover:text-white"
-            }`
-          }
-          onClick={toggleSidebar} // Close sidebar on link click
-        >
-          <FaCog className="mr-3" /> Settings
-        </NavLink> */}
         <NavLink
           to="inventory"
           className={({ isActive }) =>
@@ -91,6 +107,19 @@ function AdminSidebar({ toggleSidebar }) {
           onClick={toggleSidebar} // Close sidebar on link click
         >
           <MdInventory className="mr-3" /> Inventory
+        </NavLink>
+        <NavLink
+          to="admincontactform"
+          className={({ isActive }) =>
+            `flex items-center px-3 py-2 rounded ${
+              isActive
+                ? "bg-black text-white"
+                : "hover:bg-black hover:text-white"
+            }`
+          }
+          onClick={toggleSidebar} // Close sidebar on link click
+        >
+          <MdContactSupport className="mr-3" /> Contact form
         </NavLink>
       </nav>
       {/* <NavLink

@@ -47,6 +47,12 @@ import AddAddress from "./components/pages/AddAddress";
 import LoginAndSecurity from "./components/pages/LoginAndSecurity";
 import ChangePassword from "./components/pages/ChangePassword";
 import YourOrders from "./components/pages/YourOrders";
+import UserOrderDetail from "./components/pages/UserOrderDetail";
+import AdminCouponPage from "./components/adminpanel/AdminCouponPage";
+import RefundPolicyPage from "./components/pages/RefundPolicyPage";
+import ReturnExchangePage from "./components/adminpanel/ReturnExchangePage";
+import AddCouponPage from "./components/adminpanel/AddCouponPage";
+import AdminContactForm from "./components/adminpanel/AdminContactForm";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -63,13 +69,7 @@ function App() {
   useEffect(() => {
     // Check if the user is authenticated when the app loads
     const storedAuthState = localStorage.getItem("authToken");
-    // console.log(' storedAuthState :',  storedAuthState);
-    
-
-    if (storedAuthState) {
-      console.log("Verified")
-      setIsAuthenticated(true); 
-    }
+    setIsAuthenticated(!!storedAuthState);
 
     // Add resize event listener to determine if the screen is large
     const updateScreenSize = () => {
@@ -87,6 +87,7 @@ function App() {
     //API: logout api handled
     userLogout().then((res) => {
       localStorage.removeItem("authToken");
+      setIsAuthenticated(false); // Update state on logout
     });
   };
 
@@ -166,6 +167,8 @@ function App() {
             <Route path="/login-security" element={<LoginAndSecurity />} />
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/your-orders" element={<YourOrders />} />
+            <Route path="/refund-policy" element={<RefundPolicyPage />} />
+            <Route path="/userorderdetail" element={<UserOrderDetail />} />
 
             <Route
               path="/shopping-cart"
@@ -184,7 +187,7 @@ function App() {
             <Route
               path="/admin/*"
               element={
-                isAuthenticated ? (
+                isAuthenticated || localStorage.getItem("authToken") ? (
                   <>
                     <Adminbar
                       toggleSidebar={toggleSidebar}
@@ -198,9 +201,24 @@ function App() {
                         <Routes>
                           <Route path="dashboard" element={<Dashboard />} />
                           <Route path="products" element={<ProductList />} />
-                          <Route path="product/:productId" element={<ProductUpload />} />
+                          <Route
+                            path="product/:productId"
+                            element={<ProductUpload />}
+                          />
                           <Route path="orders" element={<Orders />} />
-                          <Route path="orderdetail/:orderId" element={<OrderDetail />} />
+                          <Route
+                            path="orderdetail/:orderId"
+                            element={<OrderDetail />}
+                          />
+                          <Route path="coupons" element={<AdminCouponPage />} />
+                          <Route
+                            path="add-coupon"
+                            element={<AddCouponPage />}
+                          />
+                          <Route
+                            path="returns"
+                            element={<ReturnExchangePage />}
+                          />
                           <Route
                             path="testimonials"
                             element={<Testimonials />}
@@ -210,17 +228,21 @@ function App() {
                             path="user-management"
                             element={<UserManagement />}
                           />
-                          {/* <Route path="report" element={<OrderReport />} /> */}
                           <Route path="inventory" element={<Inventory />} />
+                          <Route
+                            path="admincontactform"
+                            element={<AdminContactForm />}
+                          />
                         </Routes>
                       </div>
                     </div>
                   </>
                 ) : (
-                  <Navigate to="/admin/login" /> 
+                  <Navigate to="/admin/login" />
                 )
               }
             />
+
             {/* Redirect 404 */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

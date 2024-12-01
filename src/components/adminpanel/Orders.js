@@ -3,78 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getOrders } from "../../api/admin";
 
 // Sample order data
-const orderData = [
-  {
-    id: "#ts1",
-    date: "2024-10-01",
-    customer: "Alice",
-    productId: "#a1",
-    count: 2,
-    totalPrice: 50,
-    paymentStatus: "Success",
-    orderStatus: "Completed",
-  },
-  {
-    id: "#ts2",
-    date: "2024-10-02",
-    customer: "Bob",
-    productId: "#a23",
-    count: 1,
-    totalPrice: 20,
-    paymentStatus: "Pending",
-    orderStatus: "In Transit",
-  },
-  {
-    id: "#ts3",
-    date: "2024-10-03",
-    customer: "Charlie",
-    productId: "#a11",
-    count: 3,
-    totalPrice: 60,
-    paymentStatus: "Success",
-    orderStatus: "Dispatch",
-  },
-  {
-    id: "#ts4",
-    date: "2024-10-04",
-    customer: "David",
-    productId: "#a7",
-    count: 5,
-    totalPrice: 100,
-    paymentStatus: "Success",
-    orderStatus: "Completed",
-  },
-  {
-    id: "#ts5",
-    date: "2024-10-05",
-    customer: "Eva",
-    productId: "#a21",
-    count: 2,
-    totalPrice: 40,
-    paymentStatus: "Pending",
-    orderStatus: "In Transit",
-  },
-  {
-    id: "#ts6",
-    date: "2024-10-06",
-    customer: "Frank",
-    productId: "#a10",
-    count: 1,
-    totalPrice: 30,
-    paymentStatus: "Success",
-    orderStatus: "Completed",
-  },
-  {
-    id: "#ts7",
-    date: "2024-10-07",
-    customer: "Grace",
-    productId: "#a20",
-    count: 4,
-    totalPrice: 80,
-    paymentStatus: "Pending",
-    orderStatus: "Dispatch",
-  },
-];
+const orderData = [];
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);

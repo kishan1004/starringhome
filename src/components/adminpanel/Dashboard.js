@@ -69,6 +69,7 @@ const Dashboard = () => {
   
   useEffect(() => {
     const fetchOrderStats = async () => {
+      console.log(stats.completedOrders);
       try {
         const res = await getOrderStats(timeRange); 
         if (res.status === 200) {

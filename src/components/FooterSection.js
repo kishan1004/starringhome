@@ -6,19 +6,26 @@ import { useEffect } from "react";
 import Insta from "../images/instagram.png";
 import Fbimg from "../images/facebook.png";
 import Twitterimg from "../images/twitter.png";
-
+import { Link } from "react-router-dom";
+import ContactDrawer from "./ContactUsDrawer";
 const FooterSection = (props) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
   const [activeItem, setActiveItem] = useState("Home");
-
+  const [showDrawer, setShowDrawer] = useState(false);
   const handleNavClick = (item) => {
     setActiveItem(item);
   };
 
   return (
     <>
+      <ContactDrawer
+        isOpen={showDrawer}
+        closeDrawer={() => {
+          setShowDrawer(false);
+        }}
+      />
       <div className="p-6 text-center" id={props.id}>
         <img
           src={Blacklogo}
@@ -91,33 +98,35 @@ const FooterSection = (props) => {
             Featured
           </a>
 
+          <Link
+            to="/refund-policy"
+            onClick={() => handleNavClick("Footer")}
+            className={`py-2 text-lg ${
+              activeItem === "Footer"
+                ? "text-[#6D4C41] border-b border-gray-700"
+                : "text-[#263238]"
+            } hover:text-gray-400`}
+          >
+            Return & Exchange
+          </Link>
+
           <a
             href="#features"
-            onClick={() => handleNavClick("Testimonials")}
+            onClick={() => {
+              setShowDrawer(true);
+            }}
             className={`py-2 text-lg  ${
               activeItem === "Testimonials"
                 ? "text-[#6D4C41] border-b border-gray-700"
                 : "text-[#263238]"
             } hover:text-gray-400`}
           >
-            Testimonials
-          </a>
-
-          <a
-            href="#footer"
-            onClick={() => handleNavClick("Footer")}
-            className={`py-2 text-lg  ${
-              activeItem === "Footer"
-                ? "text-[#6D4C41] border-b border-gray-700"
-                : "text-[#263238]"
-            } hover:text-gray-400`}
-          >
-            Footer
+            Contact Us
           </a>
         </nav>
         <div className="flex justify-center space-x-14 mb-8">
           <a
-            href="/"
+            href="https://www.instagram.com/starringindia/?igsh=ZGUzMzM3NWJiOQ%3D%3D"
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
             data-aos-duration="1000"

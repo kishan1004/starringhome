@@ -254,7 +254,7 @@ const HeroSection = (props) => {
                 className="bg-[#6D4C41] px-4 py-1 mt-4 inline-block text-sm font-medium"
                 data-aos="fade-up"
               >
-                Vivamus sit amet interdum elit.
+                Vivamus sit ameet interdum elit.
               </p>
               <p
                 className="bg-[#6D4C41] px-4 py-1 mt-1 inline-block text-sm font-medium"

@@ -7,7 +7,13 @@ import Product3img from "../../images/product3.jpeg";
 import Product4img from "../../images/imgproduct4.jpeg";
 import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
-import { getProductList, deleteProduct, editProduct, getAllCategories } from "../../api/admin";
+import {
+  getProductList,
+  deleteProduct,
+  editProduct,
+  getAllCategories,
+  saveProduct,
+} from "../../api/admin";
 
 const productImages = [
   Product1img,
@@ -17,10 +23,28 @@ const productImages = [
   Product5img,
   Product6img,
 ];
+const initialCategories = [];
+
+const productsData = Array.from({ length: 25 }, (_, i) => ({
+  id: `#a${i + 1}`,
+  photo: productImages[i % productImages.length],
+  name: `Product ${i + 1}`,
+  category:
+    initialCategories[Math.floor(Math.random() * initialCategories.length)],
+  brand: "Brand",
+  price: (i + 1) * 10,
+  rating: (1 + Math.random() * 4).toFixed(1),
+  stock: Math.floor(Math.random() * 100),
+  stockUpdatedDate: new Date(
+    new Date().setDate(new Date().getDate() - Math.floor(Math.random() * 30))
+  ),
+}));
 
 const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [productCategories, setProductCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [isEditing, setIsEditing] = useState(null);
@@ -31,7 +55,12 @@ const ProductList = () => {
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
       !selectedCategory || product.category === selectedCategory;
-    return matchesCategory;
+    const matchesDate =
+      (!startDate ||
+        new Date(product.stockUpdatedDate) >= new Date(startDate)) &&
+      (!endDate || new Date(product.stockUpdatedDate) <= new Date(endDate));
+
+    return matchesCategory && matchesDate;
   });
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -43,8 +72,19 @@ const ProductList = () => {
 
   const handlePageChange = (page) => setCurrentPage(page);
   const handleEditClick = (product) => {
-    setIsEditing(product._id); // Use _id for editing
-    setEditFormData({ ...product });
+    editProduct(product.id, {
+      name: product?.name,
+      category: product?.category,
+      brand: product?.brand,
+      prize: product?.price,
+      rating: product?.rating,
+      stock: product?.stock,
+    }).then((res) => {
+      if (res.status === 200) {
+        setIsEditing(product.id);
+        setEditFormData({ ...product });
+      }
+    });
   };
 
   const handleInputChange = (e) => {
@@ -74,10 +114,12 @@ const ProductList = () => {
   };
 
   useEffect(() => {
+    //API: fetched and updated product state , set page count and size based for paginations after line 119
+    console.log("Fetching products");
     getProductList(currentPage, 50).then((res) => {
       if (res.status === 200) {
         const data = res?.data?.detail?.data;
-        setProducts(data); // Set products directly from the fetched data
+        console.log("Products", data);
       }
     });
   }, [currentPage]);
@@ -86,7 +128,8 @@ const ProductList = () => {
     getAllCategories().then((res) => {
       if (res.status === 200) {
         const categories = res?.data?.detail?.data;
-        const names = categories.map(category => category.name);
+        const names = categories.map((category) => category.name);
+
         setProductCategories([...names]);
       }
     });
@@ -121,7 +164,25 @@ const ProductList = () => {
             </option>
           ))}
         </select>
+        <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2">
+          <label className="font-medium">From:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="px-3 py-2 border rounded w-full md:w-auto"
+          />
+          <label className="font-medium">To:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="px-3 py-2 border rounded w-full md:w-auto"
+          />
+        </div>
       </div>
+
+      {/* Date range filters */}
 
       {/* Product Table */}
       <div className="overflow-x-auto shadow-lg">
@@ -141,10 +202,13 @@ const ProductList = () => {
             {currentItems.map((product) => (
               <tr key={product._id} className="text-center">
                 <td className="py-3 px-4 border">
-                <button
-                 onClick={() => navigate(`/admin/product/${product._id}`)}
+                  <button
+                    onClick={() => navigate(`/admin/product/${product._id}`)}
                     className="text-blue-500 hover:underline"
-                  >{product.productId}</button></td>
+                  >
+                    {product.productId}
+                  </button>
+                </td>
                 <td className="py-3 px-4 border flex items-center justify-center gap-2">
                   {isEditing === product._id ? (
                     <input
@@ -204,10 +268,11 @@ const ProductList = () => {
           <button
             key={i}
             onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${currentPage === i + 1
-              ? "bg-black text-white"
-              : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-              }`}
+            className={`px-3 py-1 mx-1 rounded-md ${
+              currentPage === i + 1
+                ? "bg-black text-white"
+                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
+            }`}
           >
             {i + 1}
           </button>
@@ -215,7 +280,8 @@ const ProductList = () => {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
+          className="px-3 py-1
+        rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
         >
           Next
         </button>

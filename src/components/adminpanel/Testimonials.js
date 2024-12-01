@@ -1,43 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getTestimonialDetails, saveTestimonials } from "../../api/admin";
 
-const testimonialsData = [
-  { id: 1, customerName: "Alice", review: "Great product! Highly recommend." },
-  {
-    id: 2,
-    customerName: "Bob",
-    review: "Excellent customer service and fast shipping.",
-  },
-  {
-    id: 3,
-    customerName: "Charlie",
-    review: "The quality is outstanding! Will buy again.",
-  },
-  { id: 4, customerName: "David", review: "Very satisfied with my purchase." },
-  {
-    id: 5,
-    customerName: "Eva",
-    review: "Amazing experience! Will definitely recommend.",
-  },
-  { id: 6, customerName: "Alice", review: "Great product! Highly recommend." },
-  {
-    id: 7,
-    customerName: "Bob",
-    review: "Excellent customer service and fast shipping.",
-  },
-  {
-    id: 8,
-    customerName: "Charlie",
-    review: "The quality is outstanding! Will buy again.",
-  },
-  { id: 9, customerName: "David", review: "Very satisfied with my purchase." },
-  {
-    id: 10,
-    customerName: "Eva",
-    review: "Amazing experience! Will definitely recommend.",
-  },
-  // Add more testimonials as needed
-];
+const testimonialsData = [];
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -50,14 +14,14 @@ const Testimonials = () => {
   const totalItems = testimonials.length;
 
   useEffect(() => {
-    //API: Handled initial testimonial load, copy paste the same code when pagination required
+    // API: Fetch initial testimonials
     getTestimonialDetails(1, 50).then((res) => {
       if (res.status === 200) {
         const data = res?.data?.detail?.data;
-        setTestimonials([...data])
+        setTestimonials([...data]);
       }
-    })
-  }, [])
+    });
+  }, []);
 
   const handleNext = () => {
     if (currentIndex < Math.floor(totalItems / itemsPerPage)) {
@@ -79,16 +43,25 @@ const Testimonials = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (newTestimonial.customerName && newTestimonial.review) {
-      //API: Call made to save api, make sure to handle state properly post call
+      // API: Save the new testimonial
       saveTestimonials(newTestimonial).then((res) => {
         console.log(res);
-      })
+      });
+
       setTestimonials((prevTestimonials) => [
         ...prevTestimonials,
-        { id: prevTestimonials.length + 1, ...newTestimonial },
+        { id: Date.now(), ...newTestimonial }, // Unique ID for the testimonial
       ]);
+
       setNewTestimonial({ customerName: "", review: "" }); // Reset form
     }
+  };
+
+  const handleDelete = (id) => {
+    // API: Add delete call if required
+    setTestimonials((prevTestimonials) =>
+      prevTestimonials.filter((testimonial) => testimonial.id !== id)
+    );
   };
 
   const displayedTestimonials = testimonials.slice(
@@ -99,11 +72,22 @@ const Testimonials = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
       <h1 className="text-2xl font-bold mb-6">Customer Testimonials</h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {displayedTestimonials.map((testimonial) => (
-          <div key={testimonial.id} className="bg-white p-4 border rounded">
+          <div
+            key={testimonial.id}
+            className="bg-white p-4 border rounded relative"
+          >
             <h3 className="font-semibold">{testimonial.customerName}</h3>
             <p className="text-gray-600">{testimonial.review}</p>
+            {/* Delete Button */}
+            <button
+              onClick={() => handleDelete(testimonial.id)}
+              className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+            >
+              ✕
+            </button>
           </div>
         ))}
       </div>
@@ -113,18 +97,20 @@ const Testimonials = () => {
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className={`px-4 py-2 rounded ${currentIndex === 0 ? "bg-gray-300" : "bg-black text-white"
-            } `}
+          className={`px-4 py-2 rounded ${
+            currentIndex === 0 ? "bg-gray-300" : "bg-black text-white"
+          } `}
         >
           Prev
         </button>
         <button
           onClick={handleNext}
           disabled={currentIndex >= Math.floor(totalItems / itemsPerPage)}
-          className={`px-4 py-2 rounded ${currentIndex >= Math.floor(totalItems / itemsPerPage)
-            ? "bg-gray-300"
-            : "bg-black text-white"
-            }`}
+          className={`px-4 py-2 rounded ${
+            currentIndex >= Math.floor(totalItems / itemsPerPage)
+              ? "bg-gray-300"
+              : "bg-black text-white"
+          }`}
         >
           Next
         </button>

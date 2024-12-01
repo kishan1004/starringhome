@@ -1,5 +1,8 @@
 import React from "react";
 import Productphoto from "../../images/product1.jpeg";
+import { Link } from "react-router-dom";
+import LoginImg from "../../images/loginimage.jpeg";
+import LoginImgsm from "../../images/loginimagesmall.jpeg";
 
 const orders = [
   {
@@ -27,55 +30,71 @@ const orders = [
 
 const YourOrders = () => {
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Your Orders</h2>
-
-        <div className="grid xl:grid-cols-3 grid-cols-1 lg:grid-cols-2 gap-5">
-          {orders.map((order) => (
-            <div
-              key={order.id}
-              className="rounded-lg shadow-md overflow-hidden flex items-center p-4"
-            >
-              {/* Product Image */}
-              <img
-                src={order.photo}
-                alt={order.name}
-                className="w-32 h-32 object-contain rounded-md mr-4"
-              />
-
-              {/* Product Details */}
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {order.name}
-                </h3>
-                <p className="text-sm text-gray-600 mt-1">Size: {order.size}</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Price: {order.price}
-                </p>
-                <div className="flex justify-start gap-4 mt-4">
-                  {/* Track Order Button */}
-                  <button
-                    onClick={() => alert("Tracking order...")}
-                    className="bg-blue-500 text-white text-sm py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  >
-                    Track Order
-                  </button>
-
-                  {/* Buy Again Button */}
-                  <button
-                    onClick={() => alert("Buying again...")}
-                    className="bg-green-500 text-white text-sm py-2 px-4 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                  >
-                    Buy Again
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+    <section className="font-beatrice bg-gray-100 min-h-screen">
+      <div className="m-4 overflow-hidden md:hidden">
+        <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
       </div>
-    </div>
+
+      <div className="flex md:min-h-screen">
+        {/* Left Side - Form Section */}
+        <div className="min-h-screen bg-gray-100 py-8 md:w-1/2 w-full">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">
+              Your Orders
+            </h2>
+
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+              {orders.map((order) => (
+                <div
+                  key={order.id} // Correctly placed key prop
+                  className="rounded-lg shadow-md overflow-hidden flex items-center p-4 bg-white"
+                >
+                  {/* Wrap the image and details with a link for better UX */}
+                  <Link
+                    to="/userorderdetail"
+                    className="flex items-center w-full hover:no-underline"
+                  >
+                    {/* Product Image */}
+                    <img
+                      src={order.photo}
+                      alt={order.name}
+                      className="w-32 h-32 object-contain rounded-md mr-4"
+                    />
+
+                    {/* Product Details */}
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        {order.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Size: {order.size}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Price: {order.price}
+                      </p>
+                      {/* Buy Again Button */}
+                      <div>
+                        <button
+                          className="bg-green-500 text-white text-sm py-2 px-4 mt-1 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+                          onClick={() => alert(`Buying ${order.name} again!`)}
+                        >
+                          Buy Again
+                        </button>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* Right Side - Image Section */}
+        <div
+          className="w-1/2 bg-cover bg-center m-5 rounded-lg max-sm:hidden"
+          style={{ backgroundImage: `url(${LoginImg})` }}
+        ></div>
+      </div>
+    </section>
   );
 };
 

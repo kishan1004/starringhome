@@ -7,17 +7,38 @@ const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // For displaying error messages
 
-  const loginUser = (e) => {
-    //API: Login api handled set auth state with this, using react context is prefered
+  const loginUser = async (e) => {
     e.preventDefault();
-    userLogin(username, password).then(res => {
+    setErrorMessage(""); // Clear any existing error message
+
+    try {
+      const res = await userLogin(username, password);
       if (res.status === 200 && res?.data?.detail?.token) {
-        localStorage.setItem('authToken', res?.data?.detail?.token);
-        navigate('/admin/dashboard');
+        localStorage.setItem("authToken", res?.data?.detail?.token);
+        navigate("/admin/dashboard");
+      } else {
+        setErrorMessage("Invalid username or password. Please try again.");
       }
-    })
-  }
+    } catch (error) {
+      // Handle errors from the API
+      setErrorMessage(
+        error.response?.data?.message || "An error occurred. Please try again."
+      );
+    }
+  };
+
+  //  const loginUser = (e) => {
+  //   //API: Login api handled set auth state with this, using react context is prefered
+  //   e.preventDefault();
+  //   userLogin(username, password).then(res => {
+  //     if (res.status === 200 && res?.data?.detail?.token) {
+  //       localStorage.setItem('authToken', res?.data?.detail?.token);
+  //       navigate('/admin/dashboard');
+  //     }
+  //   })
+  // }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -31,6 +52,11 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center text-gray-700">
           Admin Login
         </h2>
+        {errorMessage && (
+          <div className="p-3 text-sm text-red-600 bg-red-100 border border-red-400 rounded">
+            {errorMessage}
+          </div>
+        )}
         <form onSubmit={loginUser} className="mt-8 space-y-6">
           {/* Username Input */}
           <div>
