@@ -32,7 +32,6 @@ import Orders from "./components/adminpanel/Orders";
 import OrderDetail from "./components/adminpanel/OrderDetail";
 import Inventory from "./components/adminpanel/Inventory";
 import Testimonials from "./components/adminpanel/Testimonials";
-// import OrderReport from "./components/adminpanel/OrderReport";
 import UserManagement from "./components/adminpanel/UserManagement";
 import Settings from "./components/adminpanel/Settings";
 import Adminbar from "./components/adminpanel/Adminbar";
