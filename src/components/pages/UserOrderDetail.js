@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
+import Swal from "sweetalert2";
 
 const orderDetail = {
   orderId: "#12345",
@@ -44,9 +45,17 @@ const UserOrderDetail = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Submitted:", formData);
-    alert("The Return/Exchange request has been sent"); // Add this alert
-    setShowPopup(false); // Close popup after submission
-    setFormData({ action: "Return", reason: "" }); // Reset form
+
+    Swal.fire({
+      icon: "success",
+      title: "Request Sent",
+      text: "The Return/Exchange request has been sent successfully!",
+      timer: 5000,
+      timerProgressBar: true,
+    }).then(() => {
+      setShowPopup(false); // Close popup after submission
+      setFormData({ action: "Return", reason: "" }); // Reset form
+    });
   };
 
   return (

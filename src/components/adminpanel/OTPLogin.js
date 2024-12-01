@@ -3,10 +3,11 @@ import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { getOtp, otpVerification, userSignup } from "../../api/user";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const OTPLogin = () => {
-  const [step, setStep] = useState(1); 
-  const [loginType, setLoginType] = useState("phone"); 
+  const [step, setStep] = useState(1);
+  const [loginType, setLoginType] = useState("phone");
   const [inputValue, setInputValue] = useState("");
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
@@ -15,43 +16,60 @@ const OTPLogin = () => {
   const handleNext = (e) => {
     e.preventDefault();
     const data = {
-      "verificationType": "PROFILE",
-      "actionType": "SEND",
-      userName:inputValue
-    } 
+      verificationType: "PROFILE",
+      actionType: "SEND",
+      userName: inputValue,
+    };
 
-    console.log("In handle next",data);
+    console.log("In handle next", data);
 
-    getOtp(data).then((res)=>{
+    getOtp(data).then((res) => {
       console.log(res);
-      if(res.status === 200){
+      if (res.status === 200) {
         setOtp(res.data?.detail.otp);
       }
-    })
+    });
     console.log(`Sending OTP to ${loginType}: ${inputValue}`);
     setStep(2);
   };
 
   const verifyOtp = (e) => {
     e.preventDefault();
-    const res = otpVerification({ userName: inputValue, otpCode: otp ,actionType:"VERIFY",verificationType:"PROFILE"});
+    const res = otpVerification({
+      userName: inputValue,
+      otpCode: otp,
+      actionType: "VERIFY",
+      verificationType: "PROFILE",
+    });
     console.log(res);
-  }
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
-    
+
     userSignup({ userName: inputValue, password })
       .then((res) => {
         if (res.status === 201) {
-          console.log("Signup successful");
-          navigate("/user-login");
-          alert("Login Successful!");
+          Swal.fire({
+            icon: "success",
+            title: "Signup Successful",
+            text: "Your account has been created successfully.",
+            timer: 5000,
+            timerProgressBar: true,
+          }).then(() => {
+            navigate("/user-login");
+          });
         }
       })
       .catch((error) => {
         console.error("Signup failed", error);
-        alert("Signup failed. Please try again.");
+        Swal.fire({
+          icon: "error",
+          title: "Signup Failed",
+          text: "Something went wrong. Please try again.",
+          timer: 5000,
+          timerProgressBar: true,
+        });
       });
 
     console.log(`Verifying OTP: ${otp} for ${loginType}: ${inputValue}`);
@@ -120,7 +138,9 @@ const OTPLogin = () => {
                   maxLength={4}
                   required
                 />
-                <button type="submit" onClick={verifyOtp}>Verify OTP</button>
+                <button type="submit" onClick={verifyOtp}>
+                  Verify OTP
+                </button>
               </div>
 
               {step === 2 && (

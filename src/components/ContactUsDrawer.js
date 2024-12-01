@@ -57,7 +57,7 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
               text: "Your message was sent successfully.",
               icon: "success",
               confirmButtonText: "OK",
-              timer: 3000,
+              timer: 5000,
               timerProgressBar: true,
             });
             setFormData({
@@ -78,6 +78,8 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
           text: "Something went wrong. Please try again later.",
           icon: "error",
           confirmButtonText: "Try Again",
+          timer: 5000,
+          timerProgressBar: true,
         });
       } finally {
         setIsSubmitting(false);

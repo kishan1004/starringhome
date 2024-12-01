@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { editProduct, getProduct, mediaUpload, saveProduct } from "../../api/admin";
+import {
+  editProduct,
+  getProduct,
+  mediaUpload,
+  saveProduct,
+} from "../../api/admin";
 import { jwtDecode } from "jwt-decode";
+import Swal from "sweetalert2";
 
 const ProductUpload = () => {
   const { productId } = useParams();
@@ -176,7 +182,7 @@ const ProductUpload = () => {
       return;
     }
 
-    if(productId === "new"){
+    if (productId === "new") {
       const processedData = {
         ...productData,
         price: Number(productData.price),
@@ -191,17 +197,31 @@ const ProductUpload = () => {
       console.log(processedData);
       saveProduct(processedData).then((res) => {
         if (res.status === 201) {
-          alert("Product added successfully");
-          navigate("../admin/products");
+          Swal.fire({
+            icon: "success",
+            title: "Product Added",
+            text: "Product added successfully!",
+            timer: 5000,
+            timerProgressBar: true,
+          }).then(() => navigate("../admin/products"));
         } else {
-          alert("Something went wrong");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something went wrong.",
+            timer: 5000,
+            timerProgressBar: true,
+          });
         }
       });
-    }
-    else{
-      editProduct(productId,productData).then((res) => {
+    } else {
+      editProduct(productId, productData).then((res) => {
         if (res.status === 200) {
-          alert("Product updated successfully");
+          Swal.fire({
+            icon: "success",
+            title: "Product Updated",
+            text: "Product updated successfully!",
+          });
         }
       });
     }
@@ -217,7 +237,10 @@ const ProductUpload = () => {
       >
         <FaArrowLeftLong />
       </button>
-      <h1 className="text-3xl font-bold mb-6"> {productId==='new'?"Upload ":"Edit "}Product</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        {" "}
+        {productId === "new" ? "Upload " : "Edit "}Product
+      </h1>
       <div className="rounded-lg w-full gap-5 grid grid-cols-1 md:grid-cols-2">
         {/* Input Fields */}
         <div>

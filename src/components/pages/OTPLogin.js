@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
-import { forgotPassword, getOtp, otpVerification, userSignup } from "../../api/user";
+import {
+  forgotPassword,
+  getOtp,
+  otpVerification,
+  userSignup,
+} from "../../api/user";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const OTPLogin = () => {
   const { type } = useParams();
@@ -21,17 +27,17 @@ const OTPLogin = () => {
     const t = type === "new" ? "PROFILE" : "PASSWORD";
     const isAllNumbers = /^\d+$/.test(inputValue);
     const hasPrefix = inputValue.startsWith("+91");
-    
+
     const data = {
       verificationType: t,
       actionType: "SEND",
-      userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue
+      userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
     };
 
     console.log("In handle next", data);
 
     getOtp(data).then((res) => {
-      console.log('response ', res);
+      console.log("response ", res);
       if (res.status === 200) {
         setOtp(res.data?.detail.otp);
       }
@@ -39,10 +45,9 @@ const OTPLogin = () => {
       if (res.status != 422) {
         setStep(2);
       } else {
-        console.log(res.response.data.detail)
+        console.log(res.response.data.detail);
       }
-
-    })
+    });
     console.log(`Sending OTP to ${loginType}: ${inputValue}`);
   };
 
@@ -53,16 +58,33 @@ const OTPLogin = () => {
     const isAllNumbers = /^\d+$/.test(inputValue);
     const hasPrefix = inputValue.startsWith("+91");
 
-    const res = await otpVerification({ userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue, otpCode: otp, actionType: "VERIFY", verificationType: t });
-    console.log(res.data.detail[0])
+    const res = await otpVerification({
+      userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
+      otpCode: otp,
+      actionType: "VERIFY",
+      verificationType: t,
+    });
+
+    console.log(res.data.detail[0]);
+
     if (res.status === 200) {
-      alert(res.data.detail[0].msg);
-      setisOtpVerified(false);
+      Swal.fire({
+        icon: "success",
+        title: "Verification Successful",
+        text: res.data.detail[0].msg,
+        timer: 5000,
+        timerProgressBar: true,
+      }).then(() => {
+        setisOtpVerified(false);
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Verification Failed",
+        text: res.data.detail[0].msg,
+      });
     }
-    else {
-      alert(res.data.detail[0].msg);
-    }
-  }
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -71,35 +93,68 @@ const OTPLogin = () => {
     const hasPrefix = inputValue.startsWith("+91");
 
     if (type === "new") {
-      userSignup({ userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue, password })
+      userSignup({
+        userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
+        password,
+      })
         .then((res) => {
-          console.log(res)
+          console.log(res);
           if (res?.status === 201) {
-            navigate("/user-login");
-            alert(res.data.detail[0].msg);
-          }else{
-            alert(res.response.data.detail[0].msg)
+            Swal.fire({
+              icon: "success",
+              title: "Signup Successful",
+              text: res.data.detail[0].msg,
+              timer: 5000,
+              timerProgressBar: true,
+            }).then(() => {
+              navigate("/user-login");
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Signup Failed",
+              text: res.response.data.detail[0].msg,
+            });
           }
         })
         .catch((error) => {
           console.error("Signup failed", error);
-          alert("Signup failed. Please try again.");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Signup failed. Please try again.",
+          });
         });
-    }
-    else {
-      forgotPassword({ userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue })
+    } else {
+      forgotPassword({
+        userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
+      })
         .then((res) => {
           console.log(res);
-          alert("Password reset successful!");
-          navigate("/user-login");
+          Swal.fire({
+            icon: "success",
+            title: "Password Reset Successful",
+            text: "Your password has been reset successfully.",
+            timer: 5000,
+            timerProgressBar: true,
+          }).then(() => {
+            navigate("/user-login");
+          });
         })
+        .catch((error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Password reset failed. Please try again.",
+          });
+        });
     }
 
     console.log(`Verifying OTP: ${otp} for ${loginType}: ${inputValue}`);
   };
 
   function validateMobile(e) {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
   }
 
   function allowOnlyEmail(e) {
@@ -115,9 +170,10 @@ const OTPLogin = () => {
   }
 
   function validatePassword(e) {
-    const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$:;".<~>!%`^\[\]\-\'\\\({|_+=/,})*#?&]).{8,15}$/;
+    const regex =
+      /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$:;".<~>!%`^\[\]\-\'\\\({|_+=/,})*#?&]).{8,15}$/;
     const PassStatus = regex.test(e.target.value);
-    console.log(PassStatus)
+    console.log(PassStatus);
     setPasswordStatus(!PassStatus);
     setPassword(e.target.value);
   }
@@ -134,8 +190,9 @@ const OTPLogin = () => {
           </h2>
           <p className="text-center text-gray-500 mt-2">
             {step === 1
-              ? `Enter your ${loginType === "phone" ? "Phone Number" : "Email ID"
-              }`
+              ? `Enter your ${
+                  loginType === "phone" ? "Phone Number" : "Email ID"
+                }`
               : "Enter the 4-digit OTP sent to you."}
           </p>
 
@@ -146,20 +203,27 @@ const OTPLogin = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   {loginType === "phone" ? "Phone Number" : "Email Address"}
                 </label>
-                <input onInput={(e) => loginType === "phone" ? validateMobile(e) : allowOnlyEmail(e)}
+                <input
+                  onInput={(e) =>
+                    loginType === "phone"
+                      ? validateMobile(e)
+                      : allowOnlyEmail(e)
+                  }
                   type={loginType === "phone" ? "tel" : "email"}
                   maxLength={loginType === "phone" ? "10" : ""}
                   placeholder={
-                    loginType === "phone"
-                      ? "+91"
-                      : "Enter email address"
+                    loginType === "phone" ? "+91" : "Enter email address"
                   }
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
-                {loginType != "phone" && <p style={{color:"red"}}>{emailErr ? "Invalid Email" : ""}</p>}
+                {loginType != "phone" && (
+                  <p style={{ color: "red" }}>
+                    {emailErr ? "Invalid Email" : ""}
+                  </p>
+                )}
               </div>
 
               <button
@@ -186,7 +250,9 @@ const OTPLogin = () => {
                   maxLength={4}
                   required
                 />
-                <button type="submit" onClick={verifyOtp}>Verify OTP</button>
+                <button type="submit" onClick={verifyOtp}>
+                  Verify OTP
+                </button>
               </div>
 
               {step === 2 && (
@@ -205,7 +271,9 @@ const OTPLogin = () => {
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
-                  {PasswordStatus && <p style={{color:'red'}}>Invalid Password</p>}
+                  {PasswordStatus && (
+                    <p style={{ color: "red" }}>Invalid Password</p>
+                  )}
                 </div>
               )}
 

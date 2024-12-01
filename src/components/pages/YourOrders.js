@@ -76,7 +76,7 @@ const YourOrders = () => {
                       <div>
                         <button
                           className="bg-green-500 text-white text-sm py-2 px-4 mt-1 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                          onClick={() => alert(`Buying ${order.name} again!`)}
+                          onClick={() => `Buying ${order.name} again!`}
                         >
                           Buy Again
                         </button>

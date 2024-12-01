@@ -3,6 +3,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { deleteProfile, getProfiles, saveProfile } from "../../api/admin";
+import Swal from "sweetalert2";
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -14,14 +15,14 @@ const UserManagement = () => {
     mobileNumber: "",
     password: "",
   });
+  const [errors, setErrors] = useState({});
   const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
-    //API: Profiles api call made further state management should be handled during pagination
     getProfiles(1, 50).then((res) => {
       const data = res?.data?.detail?.data;
       if (data) {
-        setUsers([...data]);
+        setUsers(data);
       }
     });
   }, []);
@@ -30,40 +31,58 @@ const UserManagement = () => {
     return `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
   };
 
-  const handleAddUser = () => {
-    if (
-      newUser.firstName &&
-      newUser.lastName &&
-      newUser.email &&
-      newUser.mobileNumber &&
-      newUser.password
-    ) {
-      //API: SaveProfile call made here, further state management should be done bellow line 45
-      saveProfile(newUser)
-        .then((res) => {
-          const newUserId = users.length
-            ? Math.max(users.map((user) => user.id)) + 1
-            : 1;
-          const username = generateUsername(
-            newUser.firstName,
-            newUser.lastName
-          );
+  const validateFields = () => {
+    const newErrors = {};
 
-          setUsers([...users, { id: newUserId, username, ...newUser }]);
-          setNewUser({
-            firstName: "",
-            lastName: "",
-            email: "",
-            mobileNumber: "",
-            password: "",
-          });
-        })
-        .catch((err) => {
-          alert("Error saving Profile");
+    if (!newUser.firstName) newErrors.firstName = "First Name is required.";
+    if (!newUser.lastName) newErrors.lastName = "Last Name is required.";
+    if (!newUser.email) newErrors.email = "Email is required.";
+    if (!newUser.mobileNumber)
+      newErrors.mobileNumber = "Mobile Number is required.";
+    if (!newUser.password && !editingUser)
+      newErrors.password = "Password is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleAddUser = () => {
+    if (!validateFields()) return;
+
+    saveProfile(newUser)
+      .then(() => {
+        const newUserId = users.length
+          ? Math.max(...users.map((user) => user.id)) + 1
+          : 1;
+        const username = generateUsername(newUser.firstName, newUser.lastName);
+
+        setUsers([...users, { id: newUserId, username, ...newUser }]);
+        setNewUser({
+          firstName: "",
+          lastName: "",
+          email: "",
+          mobileNumber: "",
+          password: "",
         });
-    } else {
-      alert("Please fill in all fields.");
-    }
+        setErrors({});
+
+        Swal.fire({
+          icon: "success",
+          title: "Profile Saved",
+          text: "Profile saved successfully!",
+          timer: 5000,
+          timerProgressBar: true,
+        });
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error saving profile. Please try again.",
+          timer: 5000,
+          timerProgressBar: true,
+        });
+      });
   };
 
   const handleEditUser = (user) => {
@@ -72,41 +91,56 @@ const UserManagement = () => {
   };
 
   const handleSaveEdit = () => {
-    // Edit api not provided, using existing save api throws server side validation errors
-    if (
-      newUser.firstName &&
-      newUser.lastName &&
-      newUser.email &&
-      newUser.mobileNumber
-    ) {
-      const username = generateUsername(newUser.firstName, newUser.lastName);
-      setUsers(
-        users.map((user) =>
-          user.id === editingUser.id ? { ...user, username, ...newUser } : user
-        )
-      );
-      setEditingUser(null);
-      setNewUser({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        password: "",
-      });
-    } else {
-      alert("Please fill in all fields.");
-    }
+    if (!validateFields()) return;
+
+    const username = generateUsername(newUser.firstName, newUser.lastName);
+
+    setUsers(
+      users.map((user) =>
+        user.id === editingUser.id ? { ...user, username, ...newUser } : user
+      )
+    );
+    setEditingUser(null);
+    setNewUser({
+      firstName: "",
+      lastName: "",
+      email: "",
+      mobileNumber: "",
+      password: "",
+    });
+
+    Swal.fire({
+      icon: "success",
+      title: "Changes Saved",
+      text: "User details updated successfully!",
+      timer: 5000,
+      timerProgressBar: true,
+    });
   };
 
   const handleDeleteUser = (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      //API: store id state from details api response, and pass it during delete after line 102
-      deleteProfile(id).then((res) => {
-        if (res.status === 200) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteProfile(id).then(() => {
           setUsers(users.filter((user) => user.id !== id));
-        }
-      });
-    }
+
+          Swal.fire({
+            icon: "success",
+            title: "Deleted",
+            text: "User has been deleted.",
+            timer: 5000,
+            timerProgressBar: true,
+          });
+        });
+      }
+    });
   };
 
   return (
@@ -124,49 +158,28 @@ const UserManagement = () => {
           {editingUser ? "Edit User" : "Add New User"}
         </h2>
         <div className="flex flex-col gap-2">
-          <input
-            type="text"
-            placeholder="First Name"
-            className="border border-gray-300 p-2 rounded"
-            value={newUser.firstName}
-            onChange={(e) =>
-              setNewUser({ ...newUser, firstName: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            className="border border-gray-300 p-2 rounded"
-            value={newUser.lastName}
-            onChange={(e) =>
-              setNewUser({ ...newUser, lastName: e.target.value })
-            }
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            className="border border-gray-300 p-2 rounded"
-            value={newUser.email}
-            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Phone"
-            className="border border-gray-300 p-2 rounded"
-            value={newUser.mobileNumber}
-            onChange={(e) =>
-              setNewUser({ ...newUser, mobileNumber: e.target.value })
-            }
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="border border-gray-300 p-2 rounded"
-            value={newUser.password}
-            onChange={(e) =>
-              setNewUser({ ...newUser, password: e.target.value })
-            }
-          />
+          {["firstName", "lastName", "email", "mobileNumber", "password"].map(
+            (field) => (
+              <div key={field}>
+                <input
+                  type={field === "password" ? "password" : "text"}
+                  placeholder={field
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^./, (str) => str.toUpperCase())}
+                  className={`w-full border ${
+                    errors[field] ? "border-red-500" : "border-gray-300"
+                  } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  value={newUser[field]}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, [field]: e.target.value })
+                  }
+                />
+                {errors[field] && (
+                  <span className="text-red-500 text-sm">{errors[field]}</span>
+                )}
+              </div>
+            )
+          )}
           <button
             className={`${
               editingUser ? "bg-yellow-500" : "bg-black"

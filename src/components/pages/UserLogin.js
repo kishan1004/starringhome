@@ -3,15 +3,15 @@ import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword, userLogin } from "../../api/user";
+import Swal from "sweetalert2";
 
 const UserLogin = () => {
   //show error in UI
   const [error, setError] = useState();
   const [userName, setUserName] = useState();
   const [password, setPassword] = useState();
-  const [isForgotPassword,setIsForgotPassword] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const navigate = useNavigate();
-
 
   const onLogin = (e) => {
     e.preventDefault();
@@ -37,36 +37,49 @@ const UserLogin = () => {
     userLogin(userName, password).then((res) => {
       if (res.status === 200) {
         localStorage.setItem("userToken", res?.data?.detail?.token);
-        window.location.href = '/';
+        window.location.href = "/";
       }
       console.log(res);
-    })
-  }
+    });
+  };
 
-  const handleForgotPassword = async()=>{
-    navigate('/otp-login/forgot-password');
+  const handleForgotPassword = async () => {
+    navigate("/otp-login/forgot-password");
     // setIsForgotPassword(true);
-    setPassword('')
-    setUserName('');
-  }
+    setPassword("");
+    setUserName("");
+  };
 
-
-  const updatePassword = async(e)=>{
+  const updatePassword = async (e) => {
     e.preventDefault();
-    console.log(userName,password);
-    const res = await forgotPassword(userName,password);
+    console.log(userName, password);
 
-    if(res.status===200)
-    {
-      alert('password changed');
-      navigate('/user-login')
+    const res = await forgotPassword(userName, password);
+
+    if (res.status === 200) {
+      Swal.fire({
+        icon: "success",
+        title: "Password Changed",
+        text: "Your password has been successfully changed.",
+        timer: 5000,
+        timerProgressBar: true,
+      }).then(() => {
+        navigate("/user-login");
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "There was an issue changing your password. Please try again.",
+      });
     }
-    setIsForgotPassword(false);
-  }
 
-  const handleBack = ()=>{
     setIsForgotPassword(false);
-  }
+  };
+
+  const handleBack = () => {
+    setIsForgotPassword(false);
+  };
 
   return (
     <section className="font-beatrice bg-gray-100 h-screen">
@@ -87,112 +100,110 @@ const UserLogin = () => {
             Today is a new day. It's your day. You shape it. Sign in to start
             managing your projects.
           </p>
-          {isForgotPassword && 
-          (
+          {isForgotPassword && (
             <div>
-               <form className="w-full max-w-sm" onSubmit={updatePassword}>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="emailOrPhone"
-              >
-                Email or Phone Number
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="emailOrPhone"
-                type="text"
-                placeholder="Enter Email id or Phone Number"
-                onChange={(e) => setUserName(e.target.value)}
-                value={userName}
-              />
+              <form className="w-full max-w-sm" onSubmit={updatePassword}>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="emailOrPhone"
+                  >
+                    Email or Phone Number
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="emailOrPhone"
+                    type="text"
+                    placeholder="Enter Email id or Phone Number"
+                    onChange={(e) => setUserName(e.target.value)}
+                    value={userName}
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="password"
+                  >
+                    Password
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                    id="password"
+                    type="password"
+                    placeholder="At least 10 characters"
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                  />
+                </div>
+                {error && <p className="text-red-500">{error}</p>}
+                <div className="flex items-center justify-between mb-6">
+                  <button
+                    className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800"
+                    onClick={handleBack}
+                  >
+                    back
+                  </button>
+                </div>
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
+                  type="submit"
+                >
+                  Update Password
+                </button>
+              </form>
             </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="password"
-              >
-                Password
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                id="password"
-                type="password"
-                placeholder="At least 10 characters"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-              />
-            </div>
-            {error && <p className="text-red-500">{error}</p>}
-            <div className="flex items-center justify-between mb-6">
-              <button
-                className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800"
-                onClick={handleBack}
-              >
-                back
-              </button>
-            </div>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Update Password
-            </button>
-          </form>
-            </div>
-          )
-          }
+          )}
           {!isForgotPassword && (
-          <form className="w-full max-w-sm" onSubmit={onLogin}>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="emailOrPhone"
-              >
-                Email or Phone Number
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="emailOrPhone"
-                type="text"
-                placeholder="Enter Email id or Phone Number"
-                onChange={(e) => setUserName(e.target.value)}
-                value={userName}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="password"
-              >
-                Password
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                id="password"
-                type="password"
-                placeholder="At least 10 characters"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-              />
-            </div>
-            {error && <p className="text-red-500">{error}</p>}
-            <div className="flex items-center justify-between mb-6">
+            <form className="w-full max-w-sm" onSubmit={onLogin}>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="emailOrPhone"
+                >
+                  Email or Phone Number
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="emailOrPhone"
+                  type="text"
+                  placeholder="Enter Email id or Phone Number"
+                  onChange={(e) => setUserName(e.target.value)}
+                  value={userName}
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="password"
+                >
+                  Password
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                  id="password"
+                  type="password"
+                  placeholder="At least 10 characters"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                />
+              </div>
+              {error && <p className="text-red-500">{error}</p>}
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800"
+                  onClick={handleForgotPassword}
+                >
+                  Forgot Password?
+                </button>
+              </div>
               <button
-                className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-800"
-                onClick={handleForgotPassword}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
+                type="submit"
               >
-                Forgot Password?
+                Sign in
               </button>
-            </div>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Sign in
-            </button>
-          </form>
-            )}
+            </form>
+          )}
           <p className="pt-4">
             Don't you have an account?{" "}
             <span className="underline text-blue-500">

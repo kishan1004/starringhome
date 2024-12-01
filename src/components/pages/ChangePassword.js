@@ -3,6 +3,7 @@ import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { updatePassword } from "../../api/user";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -12,22 +13,46 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(currentPassword,newPassword);
+    console.log(currentPassword, newPassword);
+
     if (newPassword !== reenterPassword) {
-      alert("New password and reentered password do not match!");
-    }
-    else
-    {
-      const res =await updatePassword(currentPassword,newPassword);
-      if(res.status===200)
-      {
-        console.log("Updated");
-        alert("Password updated successfully!");
-        navigate('/')
-      }
-      else
-      {
-        console.log(res);
+      Swal.fire({
+        icon: "error",
+        title: "Password Mismatch",
+        text: "New password and reentered password do not match!",
+      });
+    } else {
+      try {
+        const res = await updatePassword(currentPassword, newPassword);
+        if (res.status === 200) {
+          Swal.fire({
+            icon: "success",
+            title: "Password Updated",
+            text: "Your password has been updated successfully!",
+            timer: 5000,
+            timerProgressBar: true,
+          }).then(() => {
+            navigate("/");
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Update Failed",
+            text: "Failed to update the password. Please try again.",
+            timer: 5000,
+            timerProgressBar: true,
+          });
+          console.log(res);
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An unexpected error occurred. Please try again.",
+          timer: 5000,
+          timerProgressBar: true,
+        });
+        console.error("Update failed:", error);
       }
     }
   };

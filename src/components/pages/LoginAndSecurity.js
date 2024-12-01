@@ -11,7 +11,7 @@ const LoginAndSecurity = () => {
   const handleSave = () => {
     if (isEditing) {
       // Redirect to another route upon saving new username
-      navigate("/otp-login");
+      navigate("/otp-login/:type");
     }
     setIsEditing(!isEditing);
   };

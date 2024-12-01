@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { getTestimonialDetails, saveTestimonials } from "../../api/admin";
-
-const testimonialsData = [];
+import Swal from "sweetalert2";
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [testimonials, setTestimonials] = useState(testimonialsData);
+  const [testimonials, setTestimonials] = useState([]);
   const [newTestimonial, setNewTestimonial] = useState({
     customerName: "",
     review: "",
   });
+  const [errors, setErrors] = useState({});
   const itemsPerPage = 8;
   const totalItems = testimonials.length;
 
@@ -38,30 +38,70 @@ const Testimonials = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTestimonial({ ...newTestimonial, [name]: value });
+    setErrors({ ...errors, [name]: "" }); // Clear error for the field
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (newTestimonial.customerName && newTestimonial.review) {
-      // API: Save the new testimonial
-      saveTestimonials(newTestimonial).then((res) => {
-        console.log(res);
-      });
+    const validationErrors = {};
 
-      setTestimonials((prevTestimonials) => [
-        ...prevTestimonials,
-        { id: Date.now(), ...newTestimonial }, // Unique ID for the testimonial
-      ]);
-
-      setNewTestimonial({ customerName: "", review: "" }); // Reset form
+    if (!newTestimonial.customerName) {
+      validationErrors.customerName = "Customer name is required.";
     }
+    if (!newTestimonial.review) {
+      validationErrors.review = "Review is required.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    // API: Save the new testimonial
+    saveTestimonials(newTestimonial)
+      .then(() => {
+        setTestimonials((prevTestimonials) => [
+          ...prevTestimonials,
+          { id: Date.now(), ...newTestimonial },
+        ]);
+
+        setNewTestimonial({ customerName: "", review: "" }); // Reset form
+
+        Swal.fire({
+          icon: "success",
+          title: "Testimonial Added",
+          text: "Your testimonial has been successfully added.",
+          timer: 5000,
+          timerProgressBar: true,
+        });
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Something went wrong. Please try again.",
+        });
+      });
   };
 
   const handleDelete = (id) => {
-    // API: Add delete call if required
-    setTestimonials((prevTestimonials) =>
-      prevTestimonials.filter((testimonial) => testimonial.id !== id)
-    );
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // API: Add delete call if required
+        setTestimonials((prevTestimonials) =>
+          prevTestimonials.filter((testimonial) => testimonial.id !== id)
+        );
+        Swal.fire("Deleted!", "The testimonial has been deleted.", "success");
+      }
+    });
   };
 
   const displayedTestimonials = testimonials.slice(
@@ -132,9 +172,13 @@ const Testimonials = () => {
             name="customerName"
             value={newTestimonial.customerName}
             onChange={handleInputChange}
-            className="w-full border p-2 rounded"
-            required
+            className={`w-full border ${
+              errors.customerName ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
+          {errors.customerName && (
+            <p className="text-red-500 text-sm mt-1">{errors.customerName}</p>
+          )}
         </div>
         <div className="mb-4">
           <label className="block mb-2 font-medium" htmlFor="review">
@@ -145,9 +189,13 @@ const Testimonials = () => {
             name="review"
             value={newTestimonial.review}
             onChange={handleInputChange}
-            className="w-full border p-2 rounded"
-            required
+            className={`w-full border ${
+              errors.review ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           ></textarea>
+          {errors.review && (
+            <p className="text-red-500 text-sm mt-1">{errors.review}</p>
+          )}
         </div>
         <button
           type="submit"

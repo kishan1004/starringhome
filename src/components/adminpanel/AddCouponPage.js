@@ -52,7 +52,7 @@ const AddCouponPage = () => {
           text: "Coupon code created successfully.",
           icon: "success",
           confirmButtonText: "OK",
-          timer: 3000,
+          timer: 5000,
           timerProgressBar: true,
         });
         setTimeout(() => {
@@ -64,6 +64,8 @@ const AddCouponPage = () => {
           text: "Coupon Code already Exist",
           icon: "error",
           confirmButtonText: "close",
+          timer: 5000,
+          timerProgressBar: true,
         });
       }
       console.log("RES>>>", res);
@@ -72,8 +74,7 @@ const AddCouponPage = () => {
     }
 
     // Simulating API call or state update for new coupon
-    // alert(`Coupon "${code}" added successfully!`);
-    // navigate("/admin-coupons"); // Navigate back to the coupon table page
+    navigate("/admin/coupons"); // Navigate back to the coupon table page
   };
 
   return (
