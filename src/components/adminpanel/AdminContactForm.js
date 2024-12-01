@@ -1,29 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
+import { getContactUs, deleteContactUs } from "../../api/admin";
 
 const AdminContactForm = () => {
-  const [contacts, setContacts] = useState([
-    {
-      id: 1,
-      name: "kishan",
-      email: "kishan@example.com",
-      mobile: "1234567890",
-      query: "How to exchange the product?",
-    },
-    {
-      id: 2,
-      name: "Deva",
-      email: "deva@example.com",
-      mobile: "9876543210",
-      query: "Is there a mobile app?",
-    },
-    // Add more contacts as needed
-  ]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const fetchContactUs = async () => {
+    setLoading(true);
+    const res = await getContactUs(page, limit);
+    if (res.status === 200) {
+      console.log(res.data.detail.data);
+      setContacts(res.data.detail.data);
+      setLoading(false);
+      setError(false);
+    } else {
+      setError(true);
+      console.log(res);
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchContactUs();
+  }, []);
 
-  const handleDelete = (id) => {
-    setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== id)
-    );
+  const handleDelete = async (id) => {
+    const res = await deleteContactUs(id);
+    if (res.status === 200) {
+      console.log(res);
+      fetchContactUs();
+    } else {
+    }
   };
 
   return (
@@ -47,27 +56,47 @@ const AdminContactForm = () => {
                 Query
               </th>
               <th scope="col" className="px-6 py-3">
+                Created Time
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Action
               </th>
             </tr>
           </thead>
           <tbody>
-            {contacts.map((contact) => (
-              <tr key={contact.id} className="border">
-                <td className="px-6 py-4 border">{contact.name}</td>
-                <td className="px-6 py-4 border">{contact.email}</td>
-                <td className="px-6 py-4 border">{contact.mobile}</td>
-                <td className="px-6 py-4 border">{contact.query}</td>
-                <td className="px-6 py-4 text-red-500 cursor-pointer">
-                  <button
-                    onClick={() => handleDelete(contact.id)}
-                    className="text-red-600 hover:text-red-800 flex "
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
+            {error && (
+              <tr className="border">
+                <td className="px-6 py-4 border">Something went wrong</td>
               </tr>
-            ))}
+            )}
+            {loading && (
+              <tr className="border">
+                <td className="px-6 py-4 border">Loading...</td>
+              </tr>
+            )}
+            {!loading &&
+              !error &&
+              contacts.map((contact) => (
+                <tr key={contact._id} className="border">
+                  <td className="px-6 py-4 border">{contact.name}</td>
+                  <td className="px-6 py-4 border">{contact.email}</td>
+                  <td className="px-6 py-4 border">{contact.mobileNumber}</td>
+                  <td className="px-6 py-4 border">{contact.passage}</td>
+                  <td className="px-6 py-4 border">
+                    {new Date(contact.createdTime).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 text-red-500 cursor-pointer">
+                    <button
+                      onClick={() => {
+                        handleDelete(contact._id);
+                      }}
+                      className="text-red-600 hover:text-red-800 flex "
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const ContactDrawer = ({ isOpen, closeDrawer }) => {
   const [formData, setFormData] = useState({
@@ -10,11 +11,6 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -33,6 +29,10 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
 
     return newErrors;
   };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,15 +43,53 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
       setIsSubmitting(true);
       try {
         // Replace with your actual API endpoint
-        await axios.post("/api/contact", formData);
-        alert("Message sent successfully!");
-        closeDrawer();
+        await axios
+          .post("https://3.14.249.42:9004/api/v1/users/profiles/contact/us", {
+            name: formData.name,
+            email: formData.email,
+            mobileNumber: "+91" + formData.phone,
+            passage: formData.message,
+          })
+          .then(() => {
+            // Success popup
+            Swal.fire({
+              title: "Success!",
+              text: "Your message was sent successfully.",
+              icon: "success",
+              confirmButtonText: "OK",
+              timer: 3000,
+              timerProgressBar: true,
+            });
+            setFormData({
+              name: "",
+              email: "",
+              phone: "",
+              message: "",
+            });
+            setErrors({});
+            closeDrawer();
+          });
       } catch (error) {
         console.error("Error sending message:", error);
-        alert("Something went wrong.");
+
+        // Error popup
+        Swal.fire({
+          title: "Error!",
+          text: "Something went wrong. Please try again later.",
+          icon: "error",
+          confirmButtonText: "Try Again",
+        });
       } finally {
         setIsSubmitting(false);
       }
+    } else {
+      // Validation error popup
+      // Swal.fire({
+      //   title: "Validation Error",
+      //   text: "Please correct the highlighted errors in the form.",
+      //   icon: "warning",
+      //   confirmButtonText: "OK",
+      // });
     }
   };
 
@@ -76,7 +114,6 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
             value={formData.name}
             onChange={handleChange}
             className="w-full mt-1 p-2 border border-gray-300 rounded"
-            required
           />
           {errors.name && (
             <span className="text-red-500 text-sm">{errors.name}</span>
@@ -93,7 +130,6 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
             value={formData.email}
             onChange={handleChange}
             className="w-full mt-1 p-2 border border-gray-300 rounded"
-            required
           />
           {errors.email && (
             <span className="text-red-500 text-sm">{errors.email}</span>
@@ -110,7 +146,6 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
             value={formData.phone}
             onChange={handleChange}
             className="w-full mt-1 p-2 border border-gray-300 rounded"
-            required
           />
           {errors.phone && (
             <span className="text-red-500 text-sm">{errors.phone}</span>
@@ -119,7 +154,7 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Message
+            What can we help you with?
           </label>
           <textarea
             name="message"
@@ -128,7 +163,6 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
             className="w-full mt-1 p-2 border border-gray-300 rounded"
             rows="4"
             maxLength={255}
-            required
           />
           {errors.message && (
             <span className="text-red-500 text-sm">{errors.message}</span>
