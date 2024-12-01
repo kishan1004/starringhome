@@ -78,7 +78,7 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
   };
 
   return (
-    <div className="w-[1440px] fixed h-[60px] bg-gray-100 flex items-center justify-between p-2 sm:p-4">
+    <div className="max-w-[1440px] w-full fixed h-[60px] bg-gray-100 flex items-center justify-between p-2 sm:p-4">
       <div className="flex items-center">
         <GiHamburgerMenu
           onClick={toggleSidebar}

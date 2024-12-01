@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { addCoupon } from "../../api/admin";
+import moment from "moment";
+import Swal from "sweetalert2";
 
 const AddCouponPage = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +21,7 @@ const AddCouponPage = () => {
     setErrors({ ...errors, [name]: "" }); // Clear error on change
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     const { code, discount, description, startDate, endDate } = formData;
     const newErrors = {};
 
@@ -34,10 +37,43 @@ const AddCouponPage = () => {
       setErrors(newErrors);
       return;
     }
+    try {
+      const res = await addCoupon({
+        code: code,
+        description: description,
+        discoutAmount: discount,
+        startDate: moment(startDate).format("DD/MM/YYYY"),
+        endDate: moment(endDate).format("DD/MM/YYYY"),
+      });
+      console.log(res);
+      if (res.status === 201) {
+        Swal.fire({
+          title: "Success!",
+          text: "Coupon code created successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
+          timer: 3000,
+          timerProgressBar: true,
+        });
+        setTimeout(() => {
+          navigate("/admin/coupons");
+        }, 4000);
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: "Coupon Code already Exist",
+          icon: "error",
+          confirmButtonText: "close",
+        });
+      }
+      console.log("RES>>>", res);
+    } catch (err) {
+      console.log("ERRR", err);
+    }
 
     // Simulating API call or state update for new coupon
-    alert(`Coupon "${code}" added successfully!`);
-    navigate("/admin-coupons"); // Navigate back to the coupon table page
+    // alert(`Coupon "${code}" added successfully!`);
+    // navigate("/admin-coupons"); // Navigate back to the coupon table page
   };
 
   return (
