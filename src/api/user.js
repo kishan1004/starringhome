@@ -158,7 +158,7 @@ export const getCartDetails = (page, limit = 20) => {
 export const proceedToPay = (orderID, amt) => {
     return axiosInstance.post('/payments/proceed/to/pay', {
         orderId: orderID,
-        amt: amt*100
+        amount: amt*100
     })
 }
 
