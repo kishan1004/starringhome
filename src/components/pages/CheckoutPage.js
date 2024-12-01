@@ -1,7 +1,7 @@
             import React, { useEffect, useState } from "react";
             import Product1 from "../../images/product1.jpeg";
             import Product2 from "../../images/product2.jpeg";
-            import { Link } from "react-router-dom";
+            import { Link, useNavigate } from "react-router-dom";
             import { RiArrowDropDownLine } from "react-icons/ri";
             import { buyProducts, getAddresses, getCartDetails, getCartProducts, getProductById } from "../../api/user";
 
@@ -70,6 +70,7 @@
                 }
               ]);
               
+              const navigate = useNavigate();
 
               useEffect(() => {
                 const fetchCartDetails = async () => {
@@ -89,7 +90,6 @@
 
               useEffect(() => {
                 const productIds = orders.map((product) => product._id);
-                let t = 0;
                 const fetchProductDetails = async () => {
                   const productDetails = await Promise.all(
                     productIds.map(async (id) => {
@@ -98,7 +98,7 @@
                     })
                   );
                   console.log("all products", productDetails);
-                  t = productDetails.reduce((acc, product) => acc + product.price, 0);
+                  const t = productDetails.reduce((acc, product) => acc + product.price, 0);
                   setTotal(t);
                   setCartProducts(productDetails);
                 };
@@ -145,14 +145,13 @@
                   state: addressDetails.state,
                   address: addressDetails.address,
                   city: addressDetails.city,
-
                   landmark: '', // Add landmark if available
                   postalCode: addressDetails.postalCode,
                 },
                 amount: total,
                 couponId: '', // Assuming you have a way to get this
                 shipping: total >3000?0:100, // Assuming a fixed shipping cost
-                total: total + (total >3000?0:100), // Calculate total
+                total: 300 // Calculate total
               });
 
               const handleIncrease = (productIndex) => {
@@ -198,6 +197,8 @@
                     ...prevOrderData,
                     addressDetails: {
                       ...addressDetails,
+                    amount: total,
+                    total: total + (total > 3000 ? 0 : 100), 
                     },
                   }));
 
@@ -205,13 +206,11 @@
                     ...prevOrderData,
                     products: products,
                   }));
-                  
-                  // console.log("Products", products);
-
-                    // Log the updated orderData after setting it
-                  // setTimeout(() => console.log("order data", orderData), 0);
                   const res = await buyProducts(orderData);
-                   console.log("res", res);
+                  if(res.status===201){
+                    navigate(`/payment-confirmation/${res?.data?.detail?.orderId}`);
+                    console.log("res", res);
+                  }
                   // const response = await axios.post('/api/checkout', orderData); // Replace with your actual API endpoint
                   // console.log('Order posted successfully:', response.data);
                   // Handle success (e.g., navigate to a confirmation page)

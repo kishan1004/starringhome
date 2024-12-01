@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Product1 from "../../images/product1.jpeg";
 import Product2 from "../../images/product2.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { verifyPayment, proceedToPay } from "../../api/user";
+import { verifyPayment, proceedToPay, getCartProducts, proceedPaymentApi } from "../../api/user";
 
 const SavedAddress = ({ savedAddress }) => {
   const [isAddressVisible, setIsAddressVisible] = useState(false);
@@ -42,6 +42,7 @@ const SavedAddress = ({ savedAddress }) => {
 };
 
 const PaymentConfirmation = () => {
+  const {orderId} = useParams();
   const savedAddress = {
     firstName: "John",
     lastName: "Doe",
@@ -53,28 +54,39 @@ const PaymentConfirmation = () => {
     city: "Los Angeles",
     postalCode: "90001",
   };
-  const [order] = useState([
-    {
-      name: "Basic Heavy T-Shirt",
-      size: "L",
-      price: 199,
-      img: Product1,
-      count: 2,
-    },
-    {
-      name: "Basic Fit T-Shirt",
-      size: "L",
 
-      price: 199,
-      img: Product2,
-      count: 1,
-    },
-  ]);
-  const subtotal = order.reduce(
-    (acc, item) => acc + item.price * item.count,
-    0
-  );
-  const shipping = subtotal >= 3000 ? 0 : 100;
+  const [order, setOrder] = useState();
+  const [prices,setPrices] = useState({
+    total:0,
+    subtotal:0,
+    shipping:0,
+  });
+  useEffect(() => {
+    const fetchCartProducts = async () => {
+      try {
+        const res = await getCartProducts();
+        console.log("res", res);
+        const data = res?.data?.detail?.data;
+        const order = data.filter((item) => item._id === orderId);
+        console.log("order", order);
+        setOrder(order);
+       
+      } catch (error) {
+        console.error("Error fetching cart products:", error);
+      }
+    };
+
+    fetchCartProducts();
+  }, [orderId]);
+
+  useEffect(()=>{
+    console.log("within second order",order[0].total);
+    setPrices({
+      total: order[0].total,
+      subtotal: order[0].subtotal,
+      shipping: order[0].shipping,
+    });
+  },[order]);
   const [couponDiscount, setCouponDiscount] = useState(0); // Discount value
   const [showCouponModal, setShowCouponModal] = useState(false); // Modal visibility state
   const [selectedCoupon, setSelectedCoupon] = useState(null); // Selected coupon
@@ -118,13 +130,13 @@ const PaymentConfirmation = () => {
     if (selectedCoupon) {
       setCouponDiscount(selectedCoupon.discount);
       setShowCouponModal(false);
-      //   alert(`Coupon ${selectedCoupon.code} applied successfully!`);
+      //   alert(Coupon ${selectedCoupon.code} applied successfully!);
       // } else {
       //   alert("Please select or check a valid coupon first.");
     }
   };
 
-  const total = subtotal + shipping - couponDiscount;
+  const total = prices.total - couponDiscount;
 
   const [isRed, setIsRed] = useState(false);
 
@@ -145,7 +157,9 @@ const PaymentConfirmation = () => {
     });
   }
 
+
   const proceedPayment = async (orderID, amt, data) => {
+    await proceedToPay(orderId, prices.total);
     const result = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
@@ -177,7 +191,7 @@ const PaymentConfirmation = () => {
 
     data = { ...testData };
 
-    proceedToPay(orderID, amt).then((res) => {
+    proceedToPay(orderID, prices.total).then((res) => {
       if (res.status === 200) {
         rOrderID = res?.data?.detail?.data?.id;
         rAmt = res?.data?.detail?.data?.amt;
@@ -277,7 +291,7 @@ const PaymentConfirmation = () => {
 
           <div className="border-t border-dotted border-gray-500 lg:w-2/3 my-6"></div>
           <div className="md:flex space-x-2">
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 md:w-2/3 gap-4">
+            {/* <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 md:w-2/3 gap-4">
               {order.map((item, index) => (
                 <div key={index}>
                   <div className="relative">
@@ -304,7 +318,7 @@ const PaymentConfirmation = () => {
                       </svg>
                     </button>
 
-                    <Link to="/one-product">
+                    <Link to="/one-product/">
                       <img
                         src={item.img}
                         alt={item.name}
@@ -329,7 +343,7 @@ const PaymentConfirmation = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             <div className="border-t border-dotted border-gray-500 my-6 lg:hidden"></div>
 
@@ -341,11 +355,11 @@ const PaymentConfirmation = () => {
                 <h2 className="text-lg font-medium mb-4">ORDER SUMMARY</h2>
                 <div className="flex justify-between mb-2">
                   <p className="text-sm">Subtotal</p>
-                  <p>Rs.{subtotal.toFixed(2)}</p>
+                  <p>Rs.{prices.subtotal}</p>
                 </div>
                 <div className="flex justify-between mb-2">
                   <p className="text-sm">Shipping</p>
-                  <p>Rs.{shipping.toFixed(2)}</p>
+                  <p>Rs.{prices.shipping}</p>
                 </div>
                 <div className="flex justify-between mb-2">
                   <p className="text-sm">Coupon Discount</p>
@@ -364,7 +378,7 @@ const PaymentConfirmation = () => {
                 <div className="border-t border-dotted border-gray-500 w-full my-6"></div>
                 <div className="flex justify-between font-bold mb-12">
                   <p>TOTAL (TAX INCL.)</p>
-                  <p>Rs.{total.toFixed(2)}</p>
+                  <p>Rs.{total}</p>
                 </div>
                 <div className="mb-4">
                   <label className="flex items-center">

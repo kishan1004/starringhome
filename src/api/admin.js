@@ -102,22 +102,11 @@ export const saveProduct = (data) => {
   console.log("whole data", data);
   const token = localStorage.getItem("token");
   const { name, brand, price, tag, collection } = data;
-<<<<<<< HEAD
   const transformedStockCount = data.stockCount ? transformStockCount(data.stockCount) : [];
   data.export = false;
   data.stockCount = transformedStockCount;
   console.log('name, brand, prize, tag, collection photos:', name, brand, price, tag, collection,data.photos);
-=======
-  console.log(
-    "name, brand, prize, tag, collection photos:",
-    name,
-    brand,
-    price,
-    tag,
-    collection,
-    data.photos
-  );
->>>>>>> origin/main
+
   if (!name || !brand || !price || !tag || !collection) {
     throw new Error("Missing required parameters");
   }
@@ -149,14 +138,11 @@ export const editProduct = (id, data) => {
   if (!id) {
     console.error("Product id is requried");
   }
-<<<<<<< HEAD
   console.log(id," ",data);
   const transformedStockCount = data.stockCount ? transformStockCount(data.stockCount) : [];
   data.export = false;
   data.stockCount = transformedStockCount;
-=======
-  console.log(id, " ", data);
->>>>>>> origin/main
+
 
   return axiosInstance.patch(`/admin/products/${id}/modify`, data);
 };
@@ -208,21 +194,11 @@ export const getNotifications = () => {
 };
 
 export const getOrderStats = (day_filter) => {
-<<<<<<< HEAD
-const token = localStorage.getItem("authToken");
-console.log(day_filter);
-const d = day_filter.toLowerCase();
-
-  return axiosInstance.get("/dashboard/admin/user/orders/stats", {
-    params:{
-      day_filter:d
-=======
   const token = localStorage.getItem("authToken");
 
   return axiosInstance.get("/dashboard/admin/user/orders/stats", {
     params: {
       day_filter: day_filter,
->>>>>>> origin/main
     },
     headers: {
       Authorization: `Bearer ${token}`,
@@ -257,7 +233,6 @@ export const mediaUpload = async (filesObject) => {
   return axiosInstance.post("/admin/media/upload", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-<<<<<<< HEAD
     }
   });
 }
@@ -267,20 +242,7 @@ export const mediaUpload = async (filesObject) => {
 //admin orders 
 
 
-export const getOrders = async(page,limit)=>{
-const token = localStorage.getItem("authToken");
-  return axiosInstance.get('/admin/orders/details',{
-    params:{
-      export:false,
-      page:page,
-      limit:limit
-=======
->>>>>>> origin/main
-    },
-  });
-};
 
-//admin orders
 
 export const getOrders = async (page, limit) => {
   const token = localStorage.getItem("authToken");

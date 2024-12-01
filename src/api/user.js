@@ -136,7 +136,13 @@ export const addToCart = (data) => {
     return axiosInstance.put('/users/orders/products/add/to/cart', {
         productId,
         action
-    })
+    },
+    {
+        headers:{
+            'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+        }
+    }
+)
 
 }
 
@@ -151,7 +157,7 @@ export const getCartDetails = (page, limit = 20) => {
 
 export const proceedToPay = (orderID, amt) => {
     return axiosInstance.post('/payments/proceed/to/pay', {
-        orderID,
+        orderId: orderID,
         amt: amt*100
     })
 }
@@ -269,6 +275,14 @@ export const getOtp =async(data)=>{
 export const buyProducts =async (orderData) => {
     console.log("order data", orderData);
     orderData.addressDetails.country= "India";
+    // orderData.amount= 200;
     return await axiosInstance.post('/users/orders/buy', orderData);
     
+}
+
+export const proceedPaymentApi =async (orderId, amt) => {
+    return axiosInstance.post('/payments/proceed/to/pay', {
+        orderID: orderId,
+        amt: amt*100
+    });
 }

@@ -16,20 +16,12 @@ const HeroSection = (props) => {
   const [activeItem, setActiveItem] = useState("Home");
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
-<<<<<<< HEAD
   const [notifications, setNotifications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef(null);
 
-=======
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
->>>>>>> origin/main
   const handleScroll = (id) => {
     const section = document.getElementById(id);
     if (section) {
@@ -147,7 +139,6 @@ const HeroSection = (props) => {
                   />
                 )}
               </div>
-<<<<<<< HEAD
               <div className="relative" ref={notificationRef}>
                 <IoNotifications
                   onClick={toggleNotificationDropdown}
@@ -184,46 +175,7 @@ const HeroSection = (props) => {
                           </li>
                         )}
                       </ul>
-=======
-              <div className="relative">
-                {/* Notification Icon */}
-                <button
-                  onClick={toggleDropdown}
-                  className="focus:outline-none flex items-center"
-                >
-                  <IoNotifications className="text-white" size={32} />
-                </button>
 
-                {/* Dropdown */}
-                {isOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md z-10">
-                    <div className="px-4 py-2 border-b">
-                      <h3 className="font-medium text-gray-700">
-                        Notifications
-                      </h3>
-                    </div>
-                    <ul className="max-h-48 overflow-y-auto">
-                      <li className="px-4 py-2 hover:bg-gray-100">
-                        <p className="text-sm text-gray-700">
-                          New message received
-                        </p>
-                      </li>
-                      <li className="px-4 py-2 hover:bg-gray-100">
-                        <p className="text-sm text-gray-700">
-                          Server maintenance scheduled
-                        </p>
-                      </li>
-                      <li className="px-4 py-2 hover:bg-gray-100">
-                        <p className="text-sm text-gray-700">
-                          New user registered
-                        </p>
-                      </li>
-                    </ul>
-                    <div className="px-4 py-2 text-center border-t">
-                      <button className="text-sm text-[#263238] hover:underline">
-                        View all notifications
-                      </button>
->>>>>>> origin/main
                     </div>
                   </div>
                 )}
