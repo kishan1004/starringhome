@@ -133,7 +133,7 @@ function App() {
               }
             />
             <Route
-              path="/payment-confirmation"
+              path="/payment-confirmation/:orderId"
               element={
                 <>
                   <Topbar />

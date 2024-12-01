@@ -177,7 +177,19 @@ const ProductUpload = () => {
     }
 
     if(productId === "new"){
-      saveProduct(productData).then((res) => {
+      const processedData = {
+        ...productData,
+        price: Number(productData.price),
+        offerPrice: Number(productData.offerPrice),
+        offerPercentage: Number(productData.offerPercentage),
+        stockCount: Object.keys(productData.stockCount).reduce((acc, size) => {
+          acc[size] = Number(productData.stockCount[size]);
+          return acc;
+        }, {}),
+      };
+
+      console.log(processedData);
+      saveProduct(processedData).then((res) => {
         if (res.status === 201) {
           alert("Product added successfully");
           navigate("../admin/products");
