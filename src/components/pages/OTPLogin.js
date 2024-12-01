@@ -6,75 +6,121 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const OTPLogin = () => {
   const { type } = useParams();
-  const [step, setStep] = useState(1); 
-  const [loginType, setLoginType] = useState("phone"); 
+  const [step, setStep] = useState(1);
+  const [loginType, setLoginType] = useState("phone");
   const [inputValue, setInputValue] = useState("");
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
+  const [emailErr, SetEmailErr] = useState(false);
+  const [PasswordStatus, setPasswordStatus] = useState(false);
+  const [isOtpVerified, setisOtpVerified] = useState(true);
   const navigate = useNavigate();
 
   const handleNext = (e) => {
     e.preventDefault();
     const t = type === "new" ? "PROFILE" : "PASSWORD";
+    const isAllNumbers = /^\d+$/.test(inputValue);
+    const hasPrefix = inputValue.startsWith("+91");
+    
     const data = {
-      "verificationType": t,
-      "actionType": "SEND",
-      userName:inputValue
-    } 
+      verificationType: t,
+      actionType: "SEND",
+      userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue
+    };
 
-    console.log("In handle next",data);
+    console.log("In handle next", data);
 
-    getOtp(data).then((res)=>{
-      console.log(res);
-      if(res.status === 200){
+    getOtp(data).then((res) => {
+      console.log('response ', res);
+      if (res.status === 200) {
         setOtp(res.data?.detail.otp);
       }
+
+      if (res.status != 422) {
+        setStep(2);
+      } else {
+        console.log(res.response.data.detail)
+      }
+
     })
     console.log(`Sending OTP to ${loginType}: ${inputValue}`);
-    setStep(2);
   };
 
-  const verifyOtp =async (e) => {
+  const verifyOtp = async (e) => {
     e.preventDefault();
     const t = type === "new" ? "PROFILE" : "PASSWORD";
-    const res = await otpVerification({ userName: inputValue, otpCode: otp ,actionType:"VERIFY",verificationType:t});
-    if(res.status === 200){
-      alert("OTP verified successfully!");
+
+    const isAllNumbers = /^\d+$/.test(inputValue);
+    const hasPrefix = inputValue.startsWith("+91");
+
+    const res = await otpVerification({ userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue, otpCode: otp, actionType: "VERIFY", verificationType: t });
+    console.log(res.data.detail[0])
+    if (res.status === 200) {
+      alert(res.data.detail[0].msg);
+      setisOtpVerified(false);
     }
-    else{
-      alert("OTP verification failed!",res.data.detail.message);
+    else {
+      alert(res.data.detail[0].msg);
     }
-    console.log(res);
   }
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    if(type === "new"){
-      userSignup({ userName: inputValue, password })
-      .then((res) => {
-        if (res.status === 201) {
-          console.log("Signup successful");
-          navigate("/user-login");
-          alert("Signup Successful!");
-        }
-      })
-      .catch((error) => {
-        console.error("Signup failed", error);
+    const isAllNumbers = /^\d+$/.test(inputValue);
+    const hasPrefix = inputValue.startsWith("+91");
+
+    if (type === "new") {
+      userSignup({ userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue, password })
+        .then((res) => {
+          console.log(res)
+          if (res?.status === 201) {
+            navigate("/user-login");
+            alert(res.data.detail[0].msg);
+          }else{
+            alert(res.response.data.detail[0].msg)
+          }
+        })
+        .catch((error) => {
+          console.error("Signup failed", error);
           alert("Signup failed. Please try again.");
         });
     }
-    else{
-      forgotPassword({ userName: inputValue })
-      .then((res) => {
-        console.log(res);
-        alert("Password reset successful!");
-        navigate("/user-login");
-      })  
+    else {
+      forgotPassword({ userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue })
+        .then((res) => {
+          console.log(res);
+          alert("Password reset successful!");
+          navigate("/user-login");
+        })
     }
 
     console.log(`Verifying OTP: ${otp} for ${loginType}: ${inputValue}`);
   };
+
+  function validateMobile(e) {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+  }
+
+  function allowOnlyEmail(e) {
+    // Regular expression for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Test the input against the regex
+    if (emailRegex.test(e.target.value)) {
+      SetEmailErr(false);
+    } else {
+      SetEmailErr(true);
+    }
+  }
+
+  function validatePassword(e) {
+    const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$:;".<~>!%`^\[\]\-\'\\\({|_+=/,})*#?&]).{8,15}$/;
+    const PassStatus = regex.test(e.target.value);
+    console.log(PassStatus)
+    setPasswordStatus(!PassStatus);
+    setPassword(e.target.value);
+  }
 
   return (
     <section className="font-beatrice bg-gray-100 h-screen">
@@ -88,9 +134,8 @@ const OTPLogin = () => {
           </h2>
           <p className="text-center text-gray-500 mt-2">
             {step === 1
-              ? `Enter your ${
-                  loginType === "phone" ? "Phone Number" : "Email ID"
-                }`
+              ? `Enter your ${loginType === "phone" ? "Phone Number" : "Email ID"
+              }`
               : "Enter the 4-digit OTP sent to you."}
           </p>
 
@@ -101,11 +146,12 @@ const OTPLogin = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   {loginType === "phone" ? "Phone Number" : "Email Address"}
                 </label>
-                <input
+                <input onInput={(e) => loginType === "phone" ? validateMobile(e) : allowOnlyEmail(e)}
                   type={loginType === "phone" ? "tel" : "email"}
+                  maxLength={loginType === "phone" ? "10" : ""}
                   placeholder={
                     loginType === "phone"
-                      ? "Enter phone number"
+                      ? "+91"
                       : "Enter email address"
                   }
                   value={inputValue}
@@ -113,6 +159,7 @@ const OTPLogin = () => {
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
+                {loginType != "phone" && <p style={{color:"red"}}>{emailErr ? "Invalid Email" : ""}</p>}
               </div>
 
               <button
@@ -148,18 +195,23 @@ const OTPLogin = () => {
                     Password
                   </label>
                   <input
+                    readOnly={isOtpVerified}
                     type="password"
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onInput={(e) => validatePassword(e)}
+                    maxLength="15"
+                    minLength="8"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
+                  {PasswordStatus && <p style={{color:'red'}}>Invalid Password</p>}
                 </div>
               )}
 
               <button
                 type="submit"
+                disabled={isOtpVerified}
                 className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
                 {type === "new" ? "Sign Up" : "Reset Password"}

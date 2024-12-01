@@ -5,6 +5,7 @@ import {
   Route,
   Routes,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import HeroSection from "./components/HeroSection";
@@ -59,6 +60,8 @@ function App() {
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const queryClient = new QueryClient();
 
+  const navigate = useNavigate();
+
   const toggleSidebar = () => {
     if (!isLargeScreen) {
       setIsSidebarOpen(!isSidebarOpen);
@@ -87,12 +90,12 @@ function App() {
     userLogout().then((res) => {
       localStorage.removeItem("authToken");
       setIsAuthenticated(false); // Update state on logout
+      navigate('/admin/login');
     });
   };
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
         <ScrollToTop />
         <div className="App bg-[#FAFAFA] ">
           <Routes>
@@ -245,7 +248,6 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
-      </Router>
     </QueryClientProvider>
   );
 }

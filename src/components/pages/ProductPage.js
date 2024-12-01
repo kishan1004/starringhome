@@ -35,10 +35,9 @@ const ProductPage = () => {
   const handleClick = (id) => {
     setIsRed((prev) => !prev);
     addFavouriteProduct([id], "ADD").then((res) => {
-      if (res?.status == 401) {
+      console.log(res)
+      if (res?.status == 403) {
         navigate('/user-login');
-      } else {
-        console.log(res);
       }
     });
   };
@@ -50,7 +49,9 @@ const ProductPage = () => {
     };
 
     addToCart(data).then((res) => {
-      console.log(data);
+      if(res?.status==403){
+        navigate('/user-login');
+      }
     });
   };
 
