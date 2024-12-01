@@ -72,7 +72,7 @@ const Dashboard = () => {
       try {
         const res = await getOrderStats(timeRange); 
         if (res.status === 200) {
-          console.log("Success", res.data);
+          console.log("Order Stats Data:", res.data.detail);
           setOrderStats(res.data.detail);
         } else {
           console.log(res);
@@ -90,13 +90,13 @@ const Dashboard = () => {
       try {
         const res = await getSalesDetails(); 
         if (res.status === 200) {
-          console.log("Success", res.data);
+          console.log("Sales Details Data:", res.data.detail);
           setSalesDetails(res.data.detail);
         } else {
           console.log(res);
         }
       } catch (error) {
-        console.error("Error fetching order stats:", error);
+        console.error("Error fetching sales details:", error);
       }
     };
   
@@ -111,13 +111,13 @@ const Dashboard = () => {
       totalUsers: 150,
       totalOrders: 45,
       completedOrders: 20,
-      pendingOrders: 23,
+      dispatchedOrders: 23,
       canceledOrders: 12,
       returns: 4,
       earnings: "Rs.1,200",
-      ordersOverTime: [10, 20, 15, 5, 23], // Orders every 6 hours
+      ordersOverTime: [10, 20, 15, 5, 23],
       completedOrdersOverTime: [5, 14, 34, 8, 14],
-      pendingOrdersOverTime: [5, 9, 3, 4, 1],
+      dispatchedOrdersOverTime: [5, 9, 3, 4, 1],
       timeLabels: ["0h", "6h", "12h", "18h", "24h"],
       trafficData: {
         organicSearch: 120,
@@ -242,32 +242,38 @@ const Dashboard = () => {
     },
   };
 
-  const stats = statsData[timeRange];
+  const stats = {
+    ...statsData[timeRange],
+    dispatchedOrders: orderStats.dispatchedOrders,
+    completedOrders: orderStats.completedOrders,
+    totalOrders: orderStats.totalOrders,
+    totalUsers: orderStats.totalUsers,
+    earnings: orderStats.totalEarnings,
+  };
 
-  // Prepare data for the chart
   const lineChartData = {
     labels: stats.timeLabels,
     datasets: [
       {
         label: "Total Orders",
-        data: stats.ordersOverTime,
+        data: stats.totalOrders,
         borderColor: "green",
-        backgroundColor: "rgba(0, 255, 0, 0.6)", // Green with more opacity
-        stack: "Stack 0", // Ensures stacking starts from base
+        backgroundColor: "rgba(0, 255, 0, 0.6)",
+        stack: "Stack 0",
       },
       {
         label: "Completed Orders",
-        data: stats.completedOrdersOverTime,
+        data: stats.completedOrders,
         borderColor: "purple",
-        backgroundColor: "rgba(128, 0, 128, 0.6)", // Purple with more opacity
-        stack: "Stack 1", // Complements stack
+        backgroundColor: "rgba(128, 0, 128, 0.6)",
+        stack: "Stack 1",
       },
       {
-        label: "Pending Orders",
-        data: stats.pendingOrdersOverTime,
+        label: "Dispatched Orders",
+        data: stats.dispatchedOrders,
         borderColor: "orange",
-        backgroundColor: "rgba(255, 165, 0, 0.6)", // Orange with more opacity
-        stack: "Stack 2", // Complements stack
+        backgroundColor: "rgba(255, 165, 0, 0.6)",
+        stack: "Stack 2",
       },
     ],
   };
@@ -282,7 +288,7 @@ const Dashboard = () => {
             size: 14,
             weight: "500",
           },
-          color: "#021526", // Dark blue for legend text
+          color: "#021526", 
         },
       },
       title: {
@@ -384,27 +390,21 @@ const Dashboard = () => {
   };
 
   const pieChartData = {
-    labels: ["Completed", "Pending"],
+    labels: ["Completed", "Dispatched"],
     datasets: [
       {
         label: "Order Status Distribution",
         data: [
           stats.completedOrders,
-          stats.pendingOrders,
-          // stats.canceledOrders,
-          // stats.returns,
+          stats.dispatchedOrders,
         ],
         backgroundColor: [
           "rgba(75,192,192,1)",
           "rgba(255,205,86,1)",
-          // "rgba(255,99,132,1)",
-          // "rgba(153,102,255,1)",
         ],
         hoverBackgroundColor: [
           "rgba(75,192,192,0.8)",
           "rgba(255,205,86,0.8)",
-          // "rgba(255,99,132,0.8)",
-          // "rgba(153,102,255,0.8)",
         ],
       },
     ],
@@ -460,8 +460,8 @@ const Dashboard = () => {
         <div className="bg-white p-4 rounded-lg shadow-md flex items-center">
           <FaClock className="text-yellow-500 text-3xl mr-4" />
           <div>
-            <p className="text-gray-500">Orders Pending</p>
-            <h3 className="text-2xl font-semibold">{stats.pendingOrders}</h3>
+            <p className="text-gray-500">Dispatched Orders</p>
+            <h3 className="text-2xl font-semibold">{orderStats.dispatchedOrders}</h3>
           </div>
         </div>
 

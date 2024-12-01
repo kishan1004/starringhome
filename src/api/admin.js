@@ -184,10 +184,12 @@ const token = localStorage.getItem("authToken");
 
 export const getOrderStats = (day_filter) => {
 const token = localStorage.getItem("authToken");
+console.log(day_filter);
+const d = day_filter.toLowerCase();
 
   return axiosInstance.get("/dashboard/admin/user/orders/stats", {
     params:{
-      day_filter:day_filter
+      day_filter:d
     },
     headers: {
       Authorization: `Bearer ${token}`
