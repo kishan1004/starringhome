@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ReturnExchangePage = () => {
   const [requests, setRequests] = useState([
     {
       orderId: "12345",
-      type: "Refund",
+      type: "Return",
       reason: "Defective Item",
       status: "Accepted",
       date: "2024-11-01",
@@ -18,7 +19,7 @@ const ReturnExchangePage = () => {
     },
     {
       orderId: "11223",
-      type: "Refund",
+      type: "Return",
       reason: "Late delivery",
       status: "Pending",
       date: "2024-11-15",
@@ -27,7 +28,7 @@ const ReturnExchangePage = () => {
       orderId: "99887",
       type: "Exchange",
       reason: "Color mismatch",
-      status: "Pending",
+      status: "Shipping",
       date: "2024-11-20",
     },
   ]);
@@ -68,10 +69,12 @@ const ReturnExchangePage = () => {
     setRequests(updatedRequests);
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-[60px]">
       <div>
-        <h1 className="text-2xl font-bold mb-6">Refund or Exchange Requests</h1>
+        <h1 className="text-2xl font-bold mb-6">Return or Exchange Requests</h1>
 
         {/* Date Filters */}
         <div className="mb-6 flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0">
@@ -99,7 +102,7 @@ const ReturnExchangePage = () => {
             <thead>
               <tr className="bg-gray-200">
                 <th className="p-2 text-left border">Order ID</th>
-                <th className="p-2 text-left border">Refund/Exchange</th>
+                <th className="p-2 text-left border">Return/Exchange</th>
                 <th className="p-2 text-left border">Reason</th>
                 <th className="p-2 text-left border">Date</th>
                 <th className="p-2 text-left border">Status</th>
@@ -108,7 +111,14 @@ const ReturnExchangePage = () => {
             <tbody>
               {currentRequests.map((request, index) => (
                 <tr key={index} className="bg-white border">
-                  <td className="p-2 border">{request.orderId}</td>
+                  <td className="p-2 border">
+                    <button
+                      onClick={() => navigate(`../orderdetail/${request._id}`)}
+                      className="text-blue-500 hover:underline"
+                    >
+                      {request.orderId}
+                    </button>
+                  </td>
                   <td className="p-2 border">{request.type}</td>
                   <td className="p-2 border">{request.reason}</td>
                   <td className="p-2 border">{request.date}</td>
@@ -123,6 +133,7 @@ const ReturnExchangePage = () => {
                       <option value="Accepted">Accepted</option>
                       <option value="Declined">Declined</option>
                       <option value="Pending">Pending</option>
+                      <option value="Shipping">Shipping</option>
                     </select>
                   </td>
                 </tr>

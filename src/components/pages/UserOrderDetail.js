@@ -30,6 +30,7 @@ const UserOrderDetail = () => {
   const [formData, setFormData] = useState({
     action: "Return", // Default action
     reason: "",
+    product: "product 1",
     size: "s",
   });
 
@@ -163,27 +164,92 @@ const UserOrderDetail = () => {
                       <option value="Exchange">Exchange</option>
                     </select>
                   </div>
-
                   {formData?.action === "Exchange" && (
                     <div className="mb-4">
                       <label className="block font-medium mb-2">
-                        Choose New Size:
+                        Choose Products:
                       </label>
-                      <select
-                        name="size"
-                        value={formData.size}
-                        onChange={handleInputChange}
-                        className="w-full border p-2 rounded"
-                      >
-                        <option value="xs">XS</option>
-                        <option value="s">S</option>
-                        <option value="m">M</option>
-                        <option value="l">L</option>
-                        <option value="xl">XL</option>
-                        <option value="2xl">2XL</option>
-                      </select>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          "Product 1",
+                          "Product 2",
+                          "Product 3",
+                          "Product 4",
+                        ].map((product) => (
+                          <label
+                            key={product}
+                            className="flex items-center space-x-2"
+                          >
+                            <input
+                              type="checkbox"
+                              value={product}
+                              checked={formData.selectedProducts?.some(
+                                (item) => item.product === product
+                              )}
+                              onChange={(e) => {
+                                const newSelectedProducts = e.target.checked
+                                  ? [
+                                      ...(formData.selectedProducts || []),
+                                      { product, size: "XS" }, // Default size for new product
+                                    ]
+                                  : (formData.selectedProducts || []).filter(
+                                      (item) => item.product !== product
+                                    );
+
+                                handleInputChange({
+                                  target: {
+                                    name: "selectedProducts",
+                                    value: newSelectedProducts,
+                                  },
+                                });
+                              }}
+                              className="form-checkbox"
+                            />
+                            <span>{product}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                   )}
+
+                  {formData?.action === "Exchange" &&
+                    formData.selectedProducts?.map(
+                      ({ product, size }, index) => (
+                        <div key={index} className="mb-4">
+                          <label className="block font-medium mb-2">
+                            Choose Size for {product}:
+                          </label>
+                          <select
+                            name="size"
+                            value={size}
+                            onChange={(e) => {
+                              const newSelectedProducts = [
+                                ...formData.selectedProducts,
+                              ];
+                              newSelectedProducts[index] = {
+                                ...newSelectedProducts[index],
+                                size: e.target.value,
+                              };
+                              handleInputChange({
+                                target: {
+                                  name: "selectedProducts",
+                                  value: newSelectedProducts,
+                                },
+                              });
+                            }}
+                            className="w-full border p-2 rounded"
+                          >
+                            <option value="xs">XS</option>
+                            <option value="s">S</option>
+                            <option value="m">M</option>
+                            <option value="l">L</option>
+                            <option value="xl">XL</option>
+                            <option value="2xl">2XL</option>
+                          </select>
+                        </div>
+                      )
+                    )}
+
                   {/* Reason Input */}
                   <div className="mb-4">
                     <label className="block font-medium mb-2">Reason:</label>
