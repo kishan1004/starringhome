@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { getProduct, mediaUpload, saveProduct } from "../../api/admin";
+import { editProduct, getProduct, mediaUpload, saveProduct } from "../../api/admin";
 import { jwtDecode } from "jwt-decode";
 
 const ProductUpload = () => {
@@ -13,7 +13,7 @@ const ProductUpload = () => {
     tag: "",
     category: "",
     price: "",
-    stockCount: {},
+    stockCount: [],
     rating: 5,
     description: "",
     sizes: [],
@@ -107,7 +107,7 @@ const ProductUpload = () => {
       ...prevData,
       stockCount: {
         ...prevData.stockCount,
-        [size]: value,
+        [size]: Number(value),
       },
     }));
   };
@@ -158,8 +158,8 @@ const ProductUpload = () => {
     if (!offerPercentage)
       newErrors.offerPercentage = "Offer percentage is required.";
     if (!description) newErrors.description = "Description is required.";
-    if (!photos || photos.length === 0)
-      newErrors.photos = "At least one photo is required.";
+    // if (!photos || photos.length === 0)
+    //   newErrors.photos = "At least one photo is required.";
     if (sizes.length === 0) newErrors.sizes = "At least one size is required.";
     if (sizes.length > 0) {
       sizes.forEach((size) => {
@@ -176,14 +176,23 @@ const ProductUpload = () => {
       return;
     }
 
-    saveProduct(productData).then((res) => {
-      if (res.status === 201) {
-        alert("Product added successfully");
-        navigate("../admin/products");
-      } else {
-        alert("Something went wrong");
-      }
-    });
+    if(productId === "new"){
+      saveProduct(productData).then((res) => {
+        if (res.status === 201) {
+          alert("Product added successfully");
+          navigate("../admin/products");
+        } else {
+          alert("Something went wrong");
+        }
+      });
+    }
+    else{
+      editProduct(productId,productData).then((res) => {
+        if (res.status === 200) {
+          alert("Product updated successfully");
+        }
+      });
+    }
   };
 
   const navigate = useNavigate();
@@ -196,7 +205,7 @@ const ProductUpload = () => {
       >
         <FaArrowLeftLong />
       </button>
-      <h1 className="text-3xl font-bold mb-6">Product Upload</h1>
+      <h1 className="text-3xl font-bold mb-6"> {productId==='new'?"Upload ":"Edit "}Product</h1>
       <div className="rounded-lg w-full gap-5 grid grid-cols-1 md:grid-cols-2">
         {/* Input Fields */}
         <div>

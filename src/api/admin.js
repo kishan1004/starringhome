@@ -91,19 +91,21 @@ export const getProductList = (page, limit = 50) => {
   });
 };
 
+const transformStockCount = (stockCount) => {
+  return Object.entries(stockCount).map(([size, count]) => ({
+    size: size.toLowerCase(),
+    count: parseInt(count, 10),
+  }));
+};
+
 export const saveProduct = (data) => {
   console.log("whole data", data);
   const token = localStorage.getItem("token");
   const { name, brand, price, tag, collection } = data;
-  console.log(
-    "name, brand, prize, tag, collection photos:",
-    name,
-    brand,
-    price,
-    tag,
-    collection,
-    data.photos
-  );
+  const transformedStockCount = data.stockCount ? transformStockCount(data.stockCount) : [];
+  data.export = false;
+  data.stockCount = transformedStockCount;
+  console.log('name, brand, prize, tag, collection photos:', name, brand, price, tag, collection,data.photos);
   if (!name || !brand || !price || !tag || !collection) {
     throw new Error("Missing required parameters");
   }
@@ -135,7 +137,10 @@ export const editProduct = (id, data) => {
   if (!id) {
     console.error("Product id is requried");
   }
-  console.log(id, " ", data);
+  console.log(id," ",data);
+  const transformedStockCount = data.stockCount ? transformStockCount(data.stockCount) : [];
+  data.export = false;
+  data.stockCount = transformedStockCount;
 
   return axiosInstance.patch(`/admin/products/${id}/modify`, data);
 };
@@ -187,11 +192,13 @@ export const getNotifications = () => {
 };
 
 export const getOrderStats = (day_filter) => {
-  const token = localStorage.getItem("authToken");
+const token = localStorage.getItem("authToken");
+console.log(day_filter);
+const d = day_filter.toLowerCase();
 
   return axiosInstance.get("/dashboard/admin/user/orders/stats", {
     params: {
-      day_filter: day_filter,
+      day_filter: d,
     },
     headers: {
       Authorization: `Bearer ${token}`,
@@ -238,6 +245,14 @@ export const getOrders = async (page, limit) => {
     params: {
       page: page,
       limit: limit,
+
+export const getOrders = async(page,limit)=>{
+const token = localStorage.getItem("authToken");
+  return axiosInstance.get('/admin/orders/details',{
+    params:{
+      export:false,
+      page:page,
+      limit:limit
     },
     headers: {
       Authorization: `Bearer ${token}`,

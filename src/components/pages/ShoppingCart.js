@@ -5,24 +5,7 @@ import Product2 from "../../images/product2.jpeg";
 import { getCartDetails } from "../../api/user";
 
 const ShoppingCart = () => {
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      image: Product1,
-      name: "Cotton T-Shirt",
-      description: "T-Shirt",
-      originalPrice: 180,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      image: Product2,
-      name: "Sweatshirt",
-      description: "Full Sleeve Zipper",
-      originalPrice: 200,
-      quantity: 3,
-    },
-  ]);
+  const [products, setProducts] = useState([]);
 
   const increaseQuantity = (id) => {
     setProducts((prevProducts) =>
@@ -57,6 +40,7 @@ const ShoppingCart = () => {
       if (res.status === 200) {
         setProducts([...data])
       }
+      console.log(products);
     })
   }, [])
 
@@ -99,7 +83,7 @@ const ShoppingCart = () => {
             {/* Product Image */}
             <Link to="/one-product">
               <img
-                src={product.image}
+                src={product.photos[0]}
                 alt={product.name}
                 className="w-24 h-24 object-contain rounded"
               />
@@ -111,7 +95,7 @@ const ShoppingCart = () => {
                   <h2 className="text-md font-medium">{product.name}</h2>
                 </Link>
                 <p className="text-gray-800 font-bold">
-                  ₹{product.originalPrice}
+                  ₹{product.price}
                 </p>
               </div>
               <p className="text-gray-600 text-sm my-2">

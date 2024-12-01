@@ -44,7 +44,8 @@ const UserLogin = () => {
   }
 
   const handleForgotPassword = async()=>{
-    setIsForgotPassword(true);
+    navigate('/otp-login/forgot-password');
+    // setIsForgotPassword(true);
     setPassword('')
     setUserName('');
   }
@@ -195,7 +196,7 @@ const UserLogin = () => {
           <p className="pt-4">
             Don't you have an account?{" "}
             <span className="underline text-blue-500">
-              <Link to="/otp-login">Sign up </Link>
+              <Link to="/otp-login/new">Sign up </Link>
             </span>
           </p>
         </div>

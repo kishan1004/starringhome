@@ -119,6 +119,7 @@ const ProductList = () => {
     getProductList(currentPage, 50).then((res) => {
       if (res.status === 200) {
         const data = res?.data?.detail?.data;
+        setProducts(data);
         console.log("Products", data);
       }
     });
@@ -236,7 +237,7 @@ const ProductList = () => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => handleEditClick(product)}
+                    onClick={() => navigate(`/admin/product/${product._id}`)}
                       className="text-blue-500 hover:text-blue-700"
                     >
                       <FaEdit />

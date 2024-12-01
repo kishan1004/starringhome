@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Product1 from "../images/product1.jpeg";
 import Product2 from "../images/product2.jpeg";
 import Product3 from "../images/product3.jpeg";
@@ -6,6 +6,8 @@ import "aos/dist/aos.css";
 import Aos from "aos";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { getProductList } from "../api/admin";
+import { userProductsList } from "../api/user";
 
 // Component for Star Ratings
 const StarRating = () => {
@@ -54,16 +56,17 @@ const ProductCard = ({ image, title, price }) => {
 
 // Main Component
 const NewArrivalsSection = (props) => {
+
+  const [products,setProducts] = useState([]);
+
+
   useEffect(() => {
-    Aos.init({ duration: 1000 });
+    userProductsList({page:1,limit:4}).then((res)=>{
+      console.log(res);
+      setProducts(res.data.detail.data);
+    })
   }, []);
 
-  const products = [
-    { image: Product1, title: "Cras convallis lacus", price: "₹90.00" },
-    { image: Product2, title: "Cras convallis lacus", price: "₹90.00" },
-    { image: Product3, title: "Cras convallis lacus", price: "₹90.00" },
-    { image: Product1, title: "Cras convallis lacus", price: "₹90.00" },
-  ];
 
   return (
     <section
@@ -89,9 +92,9 @@ const NewArrivalsSection = (props) => {
       <div className="w-full grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2">
         {products.map((product, index) => (
           <ProductCard
-            key={index}
-            image={product.image}
-            title={product.title}
+            key={product._id}
+            image={product.photos[0]}
+            title={product.name}
             price={product.price}
           />
         ))}

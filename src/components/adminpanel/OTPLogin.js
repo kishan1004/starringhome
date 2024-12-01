@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
-import { forgotPassword, getOtp, otpVerification, userSignup } from "../../api/user";
-import { useNavigate, useParams } from "react-router-dom";
+import { getOtp, otpVerification, userSignup } from "../../api/user";
+import { useNavigate } from "react-router-dom";
 
 const OTPLogin = () => {
-  const { type } = useParams();
   const [step, setStep] = useState(1); 
   const [loginType, setLoginType] = useState("phone"); 
   const [inputValue, setInputValue] = useState("");
@@ -15,9 +14,8 @@ const OTPLogin = () => {
 
   const handleNext = (e) => {
     e.preventDefault();
-    const t = type === "new" ? "PROFILE" : "PASSWORD";
     const data = {
-      "verificationType": t,
+      "verificationType": "PROFILE",
       "actionType": "SEND",
       userName:inputValue
     } 
@@ -34,44 +32,27 @@ const OTPLogin = () => {
     setStep(2);
   };
 
-  const verifyOtp =async (e) => {
+  const verifyOtp = (e) => {
     e.preventDefault();
-    const t = type === "new" ? "PROFILE" : "PASSWORD";
-    const res = await otpVerification({ userName: inputValue, otpCode: otp ,actionType:"VERIFY",verificationType:t});
-    if(res.status === 200){
-      alert("OTP verified successfully!");
-    }
-    else{
-      alert("OTP verification failed!",res.data.detail.message);
-    }
+    const res = otpVerification({ userName: inputValue, otpCode: otp ,actionType:"VERIFY",verificationType:"PROFILE"});
     console.log(res);
   }
 
   const handleLogin = (e) => {
     e.preventDefault();
-
-    if(type === "new"){
-      userSignup({ userName: inputValue, password })
+    
+    userSignup({ userName: inputValue, password })
       .then((res) => {
         if (res.status === 201) {
           console.log("Signup successful");
           navigate("/user-login");
-          alert("Signup Successful!");
+          alert("Login Successful!");
         }
       })
       .catch((error) => {
         console.error("Signup failed", error);
-          alert("Signup failed. Please try again.");
-        });
-    }
-    else{
-      forgotPassword({ userName: inputValue })
-      .then((res) => {
-        console.log(res);
-        alert("Password reset successful!");
-        navigate("/user-login");
-      })  
-    }
+        alert("Signup failed. Please try again.");
+      });
 
     console.log(`Verifying OTP: ${otp} for ${loginType}: ${inputValue}`);
   };
@@ -84,7 +65,7 @@ const OTPLogin = () => {
       <div className="md:flex md:min-h-screen">
         <div className="flex flex-col justify-center items-center md:w-1/2 md:p-8 p-4">
           <h2 className="text-2xl font-semibold text-center text-gray-800">
-            {type === "new" ? "Sign Up" : "Reset Password"}
+            Sign Up
           </h2>
           <p className="text-center text-gray-500 mt-2">
             {step === 1
@@ -162,7 +143,7 @@ const OTPLogin = () => {
                 type="submit"
                 className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
-                {type === "new" ? "Sign Up" : "Reset Password"}
+                Sign Up
               </button>
             </form>
           )}
