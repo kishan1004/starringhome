@@ -79,14 +79,16 @@ const PaymentConfirmation = () => {
     fetchCartProducts();
   }, [orderId]);
 
-  useEffect(()=>{
-    console.log("within second order",order[0].total);
-    setPrices({
-      total: order[0].total,
-      subtotal: order[0].subtotal,
-      shipping: order[0].shipping,
-    });
-  },[order]);
+  useEffect(() => {
+    if (order && order.length > 0) {
+      console.log("within second order", order[0].total);
+      setPrices({
+        total: order[0].total,
+        subtotal: order[0].amount,
+        shipping: order[0].shipping,
+      });
+    }
+  }, [order]);
   const [couponDiscount, setCouponDiscount] = useState(0); // Discount value
   const [showCouponModal, setShowCouponModal] = useState(false); // Modal visibility state
   const [selectedCoupon, setSelectedCoupon] = useState(null); // Selected coupon
@@ -291,8 +293,8 @@ const PaymentConfirmation = () => {
 
           <div className="border-t border-dotted border-gray-500 lg:w-2/3 my-6"></div>
           <div className="md:flex space-x-2">
-            {/* <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 md:w-2/3 gap-4">
-              {order.map((item, index) => (
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 md:w-2/3 gap-4">
+              {order && order.map((item, index) => (
                 <div key={index}>
                   <div className="relative">
                     <button
@@ -317,33 +319,39 @@ const PaymentConfirmation = () => {
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                       </svg>
                     </button>
+                      {item.products.map((product) => (
+                        <div key={product._id}>
+                          <Link to={`/one-product/${product._id}`}>
+                            <img
+                              src={product.img}
+                              alt={product.name}
+                              className="object-cover border-2 rounded-md"
+                            />
+                          </Link>
+                          </div>
+                      ))}
+                      {item.products.map((product) => (
+                          <div className="mt-2">
+                            <Link to={`/one-product/${product._id}`}>
+                              <h2 className="text-sm font-medium">{product.name}</h2>
+                            </Link>
+                            <div className="flex space-x-3">
+                              <p>Count: {product.count}</p>
+                              <p>Size: {product.size}</p>
+                            </div>
+                            <div className="flex justify-between">
+                              <p className="text-sm text-gray-600">
+                                Full Sleeve Zipper
+                              </p>
+                              <p className="text-sm font-semibold">Rs. {item.amount}</p>
+                            </div>
+                          </div>
+                      ))}
+                        </div>
 
-                    <Link to="/one-product/">
-                      <img
-                        src={item.img}
-                        alt={item.name}
-                        className="object-cover border-2 rounded-md"
-                      />
-                    </Link>
-                  </div>
-                  <div className="mt-2">
-                    <Link to="/one-product">
-                      <h2 className="text-sm font-medium">{item.name}</h2>
-                    </Link>
-                    <div className="flex space-x-3">
-                      <p>Count: {item.count}</p>
-                      <p>Size: {item.size}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <p className="text-sm text-gray-600">
-                        Full Sleeve Zipper
-                      </p>
-                      <p className="text-sm font-semibold">Rs. {item.price}</p>
-                    </div>
-                  </div>
                 </div>
               ))}
-            </div> */}
+            </div>
 
             <div className="border-t border-dotted border-gray-500 my-6 lg:hidden"></div>
 
