@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { userProductsList } from "../../api/user";
 
 const AllProductsPage = () => {
-  const [allItems, setAllItems] = useState();
+  const [allItems, setAllItems] = useState([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   // const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
 
@@ -23,6 +23,13 @@ const AllProductsPage = () => {
   //     [name]: checked,
   //   }));
   // };
+
+  // useEffect(()=>{
+  //   userProductsList({page:1,limit:10}).then((res)=>{
+  //     console.log(res);
+  //     setAllItems(res.data.detail.data);
+  //   })
+  // },[])
 
   const [selectedSize, setSelectedSize] = useState(null);
   const sizes = ["XS", "S", "M", "L", "XL", "2X"];
@@ -292,7 +299,7 @@ const AllProductsPage = () => {
     //  setSelectedFilter("ALL"); Automatically set filter to "ALL" when typing in search
   };
 
-  const filteredItems = items.filter((item) =>
+  const filteredItems = allItems.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -862,18 +869,18 @@ const AllProductsPage = () => {
           {/* Display Filtered Products */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-6 pt-10">
             {filteredItems.length > 0 ? (
-              filteredItems.map(({ id, name, image, price, offerPrice }) => {
+              filteredItems.map(({ _id, name, photos, price, offerPrice }) => {
                 // Find the item to calculate max rating and offer percentage
-                const item = items.find((item) => item.id === id);
-                const maxRating = Math.max(...item.ratings);
+                const item = items.find((item) => item.id === _id);
+                // const maxRating = Math.max(...item.ratings);
                 const offerPercentage = Math.round(
                   ((price - offerPrice) / price) * 100
                 );
                 return (
-                  <Link to={`/one-product?id=${id}`}>
+                  <Link to={`/one-product?id=${_id}`}>
                     <div className="border rounded-md p-4">
                       <img
-                        src={image}
+                        src={photos[0]}
                         alt={name}
                         className="h-80 w-full object-contain"
                       />
@@ -882,7 +889,7 @@ const AllProductsPage = () => {
                           {name}
                         </p>
                         <p className="font-medium text-xs text-gray-600">
-                          ({maxRating} ratings)
+                          {/* ({maxRating} ratings) */}
                         </p>
                       </div>
                       <div className="flex items-center justify-between pt-2">

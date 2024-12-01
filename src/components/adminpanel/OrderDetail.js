@@ -48,15 +48,16 @@ const OrderDetail = () => {
 
   const statusOptions = ["Dispatched", "Shipped", "Delivered"]; 
 
-  const handleStatusChange = (event) => {
+  const handleStatusChange = (value) => {
     setOrderDetails((prevDetails) => ({
       ...prevDetails,
-      orderStatus: event.target.value,
+      orderStatus: value,
     }));
   };
 
   const handleStatus = async()=>{
-    const res = await statusToShipping(orderId,"Shipping");
+    const status = orderDetails.orderStatus==="Shipped"?"Shipping":"Delivered";
+    const res = await statusToShipping(orderId,status);
     if(res.status===200)
     {
       console.log(res.data);

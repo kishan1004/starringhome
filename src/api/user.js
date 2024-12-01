@@ -89,6 +89,7 @@ export const userProductsList = (data) => {
 }
 
 export const getProductById = (id) => {
+    console.log("In api",id)
     if (!id) {
         console.error("Id is missing");
         return;
@@ -96,6 +97,16 @@ export const getProductById = (id) => {
     return axiosInstance.get(`/users/orders/products/${id}/view`);
 }
 
+
+export const getCartProducts = () => {
+    return axiosInstance.get('/users/orders/details',
+        {
+            headers:{
+                'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+            }
+        }
+    );
+}
 export const addFavouriteProduct = (id, action) => {
     if (!id) {
         console.error("Id required");
@@ -162,12 +173,19 @@ export const updatePassword = (currentPassword,newPassword)=>{
 }
 
 
-export const forgotPassword = (userName,newPassword) => {
-    console.log(userName,newPassword)
-    return axiosInstance.post('/users/profiles/password/forgot',{
-        userName,
-        newPassword
-    })
+export const forgotPassword = (userName) => {
+    console.log("In forgot password",userName)
+    return axiosInstance.post('/users/profiles/pasword/forgot',{
+        userName:userName.userName,
+        newPassword:userName.newPassword
+    },
+    {
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+        }
+    }
+)
 }
 
 
@@ -230,4 +248,27 @@ export const deleteAddress = async(addressId)=>{
                 r
             }
     )
+}
+
+
+export const getUserNotifications =async ()=>{
+    return axiosInstance.get('/users/profiles/notifications');
+}
+
+export const getOtp =async(data)=>{
+    console.log("In api",data);
+    return axiosInstance.put('/users/profiles/otp/verification',data,{
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+        }
+    });
+}
+
+
+export const buyProducts =async (orderData) => {
+    console.log("order data", orderData);
+    orderData.addressDetails.country= "India";
+    return await axiosInstance.post('/users/orders/buy', orderData);
+    
 }

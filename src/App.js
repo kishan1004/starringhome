@@ -179,7 +179,7 @@ function App() {
                 </>
               }
             />
-            <Route path="/otp-login" element={<OTPLogin />} />
+            <Route path="/otp-login/:type" element={<OTPLogin />} />
 
             {/* Admin Routes */}
             <Route path="/admin/login" element={<Login />} />
@@ -242,7 +242,6 @@ function App() {
                 )
               }
             />
-
             {/* Redirect 404 */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

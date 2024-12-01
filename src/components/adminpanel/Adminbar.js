@@ -7,12 +7,11 @@ import { FaUserCog } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { getNotifications } from "../../api/admin";
 
-const initialRecentOrders = [];
 
 const Adminbar = ({ toggleSidebar, onLogout }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const [recentOrders, setRecentOrders] = useState(initialRecentOrders);
+  const [recentOrders, setRecentOrders] = useState([]);
   const [clickedOrderIds, setClickedOrderIds] = useState([]);
   const notificationRef = useRef(null);
   const accountRef = useRef(null);
@@ -22,6 +21,7 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
       const res = await getNotifications();
       if (res.status === 200) {
         console.log("Success", res.data);
+        setRecentOrders(res.data.detail.data);
       } else {
         console.log(res);
       }
@@ -46,9 +46,7 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
   };
 
   const getNotificationText = (order) => {
-    const paymentMethod =
-      order.paymentStatus === "Success" ? "online payment" : "COD";
-    return `[${order.id}] ${order.customer} ordered ${order.count} of product ID ${order.productId} through ${paymentMethod}`;
+    return order.message;
   };
 
   const handleClickOutside = (event) => {
@@ -78,7 +76,7 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
   };
 
   return (
-    <div className="w-[1440px] fixed h-[60px] bg-gray-100 flex items-center justify-between p-2 sm:p-4">
+    <div className="w-[screen] fixed h-[60px] bg-gray-100 flex items-center justify-between p-2 sm:p-4">
       <div className="flex items-center">
         <GiHamburgerMenu
           onClick={toggleSidebar}
@@ -90,7 +88,9 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
         {/* Notification Icon */}
 
         <div className="relative" ref={notificationRef}>
+          <button onClick={toggleNotificationDropdown}>
           <IoNotifications className="text-xl sm:text-2xl cursor-pointer" />
+          </button>
           {recentOrders.length > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-3 h-3 flex items-center justify-center text-xs">
               {recentOrders.length}
@@ -112,16 +112,16 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
                   {recentOrders.length > 0 ? (
                     recentOrders.map((order) => (
                       <li
-                        key={order.id}
+                        key={order._id}
                         className={`px-4 py-6 cursor-pointer border-b border-gray-300 ${
-                          clickedOrderIds.includes(order.id)
+                          clickedOrderIds.includes(order._id)
                             ? "bg-gray-200"
                             : "hover:bg-gray-100"
                         }`}
                       >
                         <Link
                           to="orderdetail"
-                          onClick={() => handleLinkClick(order.id)}
+                          onClick={() => handleLinkClick(order._id)}
                         >
                           {getNotificationText(order)}
                         </Link>

@@ -91,10 +91,20 @@ export const getProductList = (page, limit = 50) => {
   });
 };
 
+const transformStockCount = (stockCount) => {
+  return Object.entries(stockCount).map(([size, count]) => ({
+    size: size.toLowerCase(),
+    count: parseInt(count, 10),
+  }));
+};
+
 export const saveProduct = (data) => {
   console.log("whole data",data);
   const token = localStorage.getItem('token');
   const { name, brand, price, tag, collection } = data;
+  const transformedStockCount = data.stockCount ? transformStockCount(data.stockCount) : [];
+  data.export = false;
+  data.stockCount = transformedStockCount;
   console.log('name, brand, prize, tag, collection photos:', name, brand, price, tag, collection,data.photos);
   if (!name || !brand || !price || !tag || !collection) {
     throw new Error("Missing required parameters");
@@ -130,6 +140,9 @@ export const editProduct = (id, data) => {
     console.error("Product id is requried");
   }
   console.log(id," ",data);
+  const transformedStockCount = data.stockCount ? transformStockCount(data.stockCount) : [];
+  data.export = false;
+  data.stockCount = transformedStockCount;
 
   return axiosInstance.patch(`/admin/products/${id}/modify`, data);
 };
@@ -237,6 +250,7 @@ export const getOrders = async(page,limit)=>{
 const token = localStorage.getItem("authToken");
   return axiosInstance.get('/admin/orders/details',{
     params:{
+      export:false,
       page:page,
       limit:limit
     },
