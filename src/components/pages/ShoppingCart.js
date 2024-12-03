@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Product1 from "../../images/product1.jpeg";
-import Product2 from "../../images/product2.jpeg";
-import { getCartDetails } from "../../api/user";
+import { Link, useNavigate } from "react-router-dom";
+import { getCartDetails, addToCart } from "../../api/user";
 
 const ShoppingCart = () => {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   const increaseQuantity = (id) => {
     setProducts((prevProducts) =>
       prevProducts.map((product) =>
-        product.id === id
+        product._id === id
           ? { ...product, quantity: product.quantity + 1 }
           : product
       )
@@ -20,7 +19,7 @@ const ShoppingCart = () => {
   const decreaseQuantity = (id) => {
     setProducts((prevProducts) =>
       prevProducts.map((product) =>
-        product.id === id && product.quantity > 1
+        product._id === id && product.quantity > 1
           ? { ...product, quantity: product.quantity - 1 }
           : product
       )
@@ -28,24 +27,41 @@ const ShoppingCart = () => {
   };
 
   const handleDelete = (id) => {
+    const data = {
+      productId: [id],
+      action: "REMOVE",
+    };
+
+    addToCart(data).then((res) => {
+      if (res?.status === 403) {
+        navigate("/user-login");
+      }
+      getCartData();
+    });
+
     setProducts((prevProducts) =>
-      prevProducts.filter((product) => product.id !== id)
+      prevProducts.filter((product) => product._id !== id)
     );
   };
 
   useEffect(() => {
-    //API: Cart info is retrived here
+    getCartData();
+  }, []);
+
+  function getCartData() {
     getCartDetails(1, 20).then((res) => {
-      const data = res?.data?.detail?.data
       if (res.status === 200) {
-        setProducts([...data])
+        const data = res.data.detail.data.map((product) => ({
+          ...product,
+          quantity: product.quantity || 1, // Ensure quantity is initialized
+        }));
+        setProducts(data);
       }
-      console.log(products);
-    })
-  }, [])
+    });
+  }
 
   return (
-    <section className="bg-gray-100 font-sans min-h-screen ">
+    <section className="bg-gray-100 font-sans min-h-screen">
       {/* Top Navigation */}
       <div className="w-full px-4 pb-5">
         <Link to="/all-products">
@@ -77,7 +93,7 @@ const ShoppingCart = () => {
       <div className="px-4 md:px-10 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
         {products.map((product) => (
           <div
-            key={product.id}
+            key={product._id}
             className="flex items-center p-4 bg-white shadow-md mb-4 rounded-lg"
           >
             {/* Product Image */}
@@ -94,19 +110,15 @@ const ShoppingCart = () => {
                 <Link to="/one-product">
                   <h2 className="text-md font-medium">{product.name}</h2>
                 </Link>
-                <p className="text-gray-800 font-bold">
-                  ₹{product.price}
-                </p>
+                <p className="text-gray-800 font-bold">₹{product.price}</p>
               </div>
-              <p className="text-gray-600 text-sm my-2">
-                {product.description}
-              </p>
+              <p className="text-gray-600 text-sm my-2">{product.description}</p>
 
               {/* Quantity Controls */}
               <div className="flex items-center space-x-2">
                 <button
                   className="px-3 py-1 bg-gray-300 rounded text-black"
-                  onClick={() => decreaseQuantity(product.id)}
+                  onClick={() => decreaseQuantity(product._id)}
                 >
                   -
                 </button>
@@ -115,19 +127,17 @@ const ShoppingCart = () => {
                 </span>
                 <button
                   className="px-3 py-1 bg-gray-300 rounded text-black"
-                  onClick={() => increaseQuantity(product.id)}
+                  onClick={() => increaseQuantity(product._id)}
                 >
                   +
                 </button>
                 <button
                   className="text-red-500 hover:text-red-700"
-                  onClick={() => handleDelete(product.id)}
+                  onClick={() => handleDelete(product._id)}
                 >
                   X
                 </button>
               </div>
-
-              {/* Delete Button */}
             </div>
           </div>
         ))}

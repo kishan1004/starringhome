@@ -48,7 +48,7 @@ const ProductCard = ({ image, title, price }) => {
       <StarRating />
       <Link to="/all-products">
         <p className="mt-2">{title}</p>
-        <p className="font-bold">{price}</p>
+        <p className="font-bold">Rs. {price}</p>
       </Link>
     </div>
   );

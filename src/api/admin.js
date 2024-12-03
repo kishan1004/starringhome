@@ -93,7 +93,7 @@ export const getProductList = (page, limit = 50) => {
 
 const transformStockCount = (stockCount) => {
   return Object.entries(stockCount).map(([size, count]) => ({
-    size: size.toLowerCase(),
+    size: size,
     count: parseInt(count, 10),
   }));
 };

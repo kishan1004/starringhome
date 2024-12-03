@@ -6,29 +6,7 @@ import { FaTrash } from "react-icons/fa";
 const AdminCouponTablePage = () => {
   const navigate = useNavigate();
 
-  const [coupons, setCoupons] = useState([
-    {
-      code: "SAVE100",
-      discount: 100,
-      description: "Get ₹100 off on orders above ₹999.",
-      startDate: "2024-11-01",
-      endDate: "2024-12-31",
-    },
-    {
-      code: "NEWYEAR50",
-      discount: 50,
-      description: "Flat ₹50 off on all products.",
-      startDate: "2024-12-01",
-      endDate: "2025-01-15",
-    },
-    {
-      code: "FREESHIP",
-      discount: 0,
-      description: "Free shipping on orders above ₹500.",
-      startDate: "2024-11-15",
-      endDate: "2024-12-15",
-    },
-  ]);
+  const [coupons, setCoupons] = useState([]);
   const [total, setTotal] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);

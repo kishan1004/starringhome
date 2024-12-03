@@ -4,60 +4,11 @@ import SimilarProduct2 from "../../images/imgproduct4.jpeg";
 import SimilarProduct3 from "../../images/imgproduct5.jpeg";
 import SimilarProduct4 from "../../images/imgproduct6.jpeg";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllFavourites } from "../../api/user";
+import { getAllFavourites,addFavouriteProduct } from "../../api/user";
 
 const Favourites = () => {
   const navigate = useNavigate()
   const [similarProducts, setSimilarProducts] = useState([
-    {
-      id: 1,
-      image: SimilarProduct1,
-      name: "Similar Product 1",
-      originalPrice: 180,
-      offerPrice: 129,
-    },
-    {
-      id: 2,
-      image: SimilarProduct2,
-      name: "Similar Product 2",
-      originalPrice: 200,
-      offerPrice: 149,
-    },
-    {
-      id: 3,
-      image: SimilarProduct3,
-      name: "Similar Product 3",
-      originalPrice: 160,
-      offerPrice: 119,
-    },
-    {
-      id: 4,
-      image: SimilarProduct4,
-      name: "Similar Product 4",
-      originalPrice: 170,
-      offerPrice: 139,
-    },
-    {
-      id: 5,
-      image: SimilarProduct1,
-      name: "Similar Product 5",
-      originalPrice: 190,
-      offerPrice: 139,
-    },
-    {
-      id: 6,
-      image: SimilarProduct2,
-      name: "Similar Product 6",
-      originalPrice: 210,
-      offerPrice: 159,
-    },
-    {
-      id: 7,
-      image: SimilarProduct3,
-      name: "Similar Product 7",
-      originalPrice: 150,
-      offerPrice: 109,
-    },
   ]);
 
   // useEffect(async () => {
@@ -66,6 +17,12 @@ const Favourites = () => {
   // }, []);
 
   const handleDelete = (id) => {
+    console.log([id])
+
+    addFavouriteProduct([id], "REMOVE").then((res)=>{
+      getFavItems();
+    })
+
     setSimilarProducts((prevProducts) =>
       prevProducts.filter((product) => product.id !== id)
     );
@@ -76,15 +33,20 @@ const Favourites = () => {
   // }
 
   useEffect(() => {
+    getFavItems();
+  }, [])
+
+  function getFavItems(){
     getAllFavourites().then(res=> {
       if(res.status === 401) {
         navigate('/user-login');
       } else if(res.status === 200) {
         const allProducts = res?.data?.detail?.data;
+        setSimilarProducts(allProducts)
         console.log('all', allProducts);
       }
     })
-  }, [])
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 font-beatrice">
@@ -123,14 +85,14 @@ const Favourites = () => {
                   className="border p-4 rounded-lg shadow-md relative"
                 >
                   <button
-                    onClick={() => handleDelete(product.id)}
+                    onClick={() => handleDelete(product._id)}
                     className="absolute right-0 top-0 w-5 h-5 text-gray-600 hover:text-red-600 focus:outline-none"
                   >
                     x
                   </button>
                   <Link to={`/one-product?id=${product.id}`}>
                     <img
-                      src={product.image}
+                      src={product.photos[0]}
                       alt={product.name}
                       className="w-full h-52 object-contain mb-4"
                     />

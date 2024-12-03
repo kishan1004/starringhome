@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getTestimonialDetails, saveTestimonials } from "../../api/admin";
+import { getTestimonialDetails, saveTestimonials, deleteTestimonial } from "../../api/admin";
 import Swal from "sweetalert2";
 
 const Testimonials = () => {
@@ -15,13 +15,17 @@ const Testimonials = () => {
 
   useEffect(() => {
     // API: Fetch initial testimonials
+    getTestimonialsData();
+  }, []);
+
+  function getTestimonialsData(){
     getTestimonialDetails(1, 50).then((res) => {
       if (res.status === 200) {
         const data = res?.data?.detail?.data;
         setTestimonials([...data]);
       }
     });
-  }, []);
+  }
 
   const handleNext = () => {
     if (currentIndex < Math.floor(totalItems / itemsPerPage)) {
@@ -85,6 +89,7 @@ const Testimonials = () => {
   };
 
   const handleDelete = (id) => {
+   
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -96,10 +101,18 @@ const Testimonials = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         // API: Add delete call if required
+        deleteTestimonial(id).then((res)=>{
+          if(res.status==200){
+            Swal.fire("Deleted !", res.data.detail[0].msg, "success");
+            getTestimonialsData();
+          }else{
+            Swal.fire("Error !", res.data.detail[0].msg, "error");
+          }
+
+        })
         setTestimonials((prevTestimonials) =>
           prevTestimonials.filter((testimonial) => testimonial.id !== id)
         );
-        Swal.fire("Deleted!", "The testimonial has been deleted.", "success");
       }
     });
   };
@@ -116,14 +129,14 @@ const Testimonials = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {displayedTestimonials.map((testimonial) => (
           <div
-            key={testimonial.id}
+            key={testimonial._id}
             className="bg-white p-4 border rounded relative"
           >
-            <h3 className="font-semibold">{testimonial.customerName}</h3>
+            <h3 className="font-semibold">{testimonial.name}</h3>
             <p className="text-gray-600">{testimonial.review}</p>
             {/* Delete Button */}
             <button
-              onClick={() => handleDelete(testimonial.id)}
+              onClick={() => handleDelete(testimonial._id)}
               className="absolute top-2 right-2 text-red-600 hover:text-red-800"
             >
               ✕

@@ -4,14 +4,21 @@ import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword, userLogin } from "../../api/user";
 import Swal from "sweetalert2";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const UserLogin = () => {
   //show error in UI
   const [error, setError] = useState();
   const [userName, setUserName] = useState();
   const [password, setPassword] = useState();
+  const [showPassword, setShowPassword] = useState(false);
+
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const navigate = useNavigate();
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const onLogin = (e) => {
     e.preventDefault();
@@ -119,7 +126,7 @@ const UserLogin = () => {
                     value={userName}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 relative">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="password"
@@ -129,11 +136,18 @@ const UserLogin = () => {
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="At least 10 characters"
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
                   />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-9 text-gray-600 hover:text-gray-800 focus:outline-none"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
                 </div>
                 {error && <p className="text-red-500">{error}</p>}
                 <div className="flex items-center justify-between mb-6">
@@ -171,7 +185,7 @@ const UserLogin = () => {
                   value={userName}
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-4 relative">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="password"
@@ -181,11 +195,18 @@ const UserLogin = () => {
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="At least 10 characters"
                   onChange={(e) => setPassword(e.target.value)}
                   value={password}
                 />
+                <button
+                  type="button"
+                  className="absolute right-3 top-9 text-gray-600 hover:text-gray-800 focus:outline-none"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
               {error && <p className="text-red-500">{error}</p>}
               <div className="flex items-center justify-between mb-6">
