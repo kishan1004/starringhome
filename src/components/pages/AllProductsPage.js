@@ -5,112 +5,13 @@ import Product5img from "../../images/imgproduct5.jpeg";
 import Product6img from "../../images/imgproduct6.jpeg";
 import { Link } from "react-router-dom";
 import { userProductsList } from "../../api/user";
+import { useQuery } from "react-query";
+import {Pagination} from 'antd'
+import {getCategoryApi} from '../../api/user'
 
-const AllProductsPage = () => {
-  const [allItems, setAllItems] = useState([]);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  // const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
 
-  // const [availabilityFilters, setAvailabilityFilters] = useState({
-  //   available: false,
-  //   outOfStock: false,
-  // });
-
-  // const handleAvailabilityChange = (e) => {
-  //   const { name, checked } = e.target;
-  //   setAvailabilityFilters((prevFilters) => ({
-  //     ...prevFilters,
-  //     [name]: checked,
-  //   }));
-  // };
-
-  // useEffect(()=>{
-  //   userProductsList({page:1,limit:10}).then((res)=>{
-  //     console.log(res);
-  //     setAllItems(res.data.detail.data);
-  //   })
-  // },[])
-
-  const [selectedSize, setSelectedSize] = useState(null);
   const sizes = ["XS", "S", "M", "L", "XL", "2X"];
-
-  const handleSizeSelect = (size) => {
-    setSelectedSize(size);
-  };
-
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(5000);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleMinPriceChange = (e) => {
-    const value = Math.min(Number(e.target.value), maxPrice - 1);
-    setMinPrice(value);
-  };
-
-  const handleMaxPriceChange = (e) => {
-    const value = Math.max(Number(e.target.value), minPrice + 1);
-    setMaxPrice(value);
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const [selectedRatings, setSelectedRatings] = useState([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const handleRatingSelect = (rating) => {
-    setSelectedRatings((prevSelectedRatings) =>
-      prevSelectedRatings.includes(rating)
-        ? prevSelectedRatings.filter((r) => r !== rating)
-        : [...prevSelectedRatings, rating]
-    );
-  };
-
-  const toggleDropdown2 = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-
-  const categories = [
-    "SHIRT",
-    "SHORTS",
-    "SUITS",
-    "T-SHIRTS",
-    "JEANS",
-    "JACKETS",
-    "COATS",
-  ];
-
-  const handleCategoryToggle = (category) => {
-    setSelectedCategories(
-      (prevCategories) =>
-        prevCategories.includes(category)
-          ? prevCategories.filter((item) => item !== category) // Remove if already selected
-          : [...prevCategories, category] // Add if not selected
-    );
-  };
-
-  const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useState([]);
-
-  const tags = ["Top Rated", "Best Seller", "New Trend", "Classic"];
-
-  const handleTagToggle = (tag) => {
-    setSelectedTags(
-      (prevTags) =>
-        prevTags.includes(tag)
-          ? prevTags.filter((item) => item !== tag) // Remove if already selected
-          : [...prevTags, tag] // Add if not selected
-    );
-  };
-
-  const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] =
-    useState(false);
-  const [selectedCollections, setSelectedCollections] = useState([]);
-
+  const tags = ["Top Rated", "BestSeller", "NewTrend", "Classic"];
   const collections = [
     "Summer",
     "Winter",
@@ -121,202 +22,65 @@ const AllProductsPage = () => {
     "Coords",
   ];
 
-  const handleCollectionToggle = (collection) => {
-    setSelectedCollections((prevCollections) =>
-      prevCollections.includes(collection)
-        ? prevCollections.filter((item) => item !== collection)
-        : [...prevCollections, collection]
-    );
+const initialFilter = {
+  sizes:"L",
+  categories:[],
+  tags:[],
+  collections:[],
+  ratings:[],
+  pricegt:0,
+  pricelt:5000
+
+}
+
+const AllProductsPage = () => {
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [currentPage,setCurrentPage] = useState(1);
+  const [searchText,setSearchText] = useState('')
+  const[filterData,setFilterData] = useState(initialFilter)
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
+  const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] =
+    useState(false);
+  const [categories,setCategories] = useState([])
+
+
+    const {data:products,isLoading,isError,refetch} = useQuery({
+      queryKey:['allproductrs',{currentPage,searchText}],
+      queryFn:()=>userProductsList(currentPage,searchText,filterData)
+    })
+
+     const {data:category} = useQuery({
+      queryKey:['category'],
+      queryFn:()=> getCategoryApi()
+    })
+
+    useEffect(()=>{
+     if(category){
+      const categorynames = category.data.detail.data.map((list)=>{
+        return list.name
+      })
+      setCategories(categorynames)
+     }
+  },[category])
+
+   
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
   };
 
-  const handleClearAll = () => {
-    // setAvailabilityFilters({ available: false, outOfStock: false });
-    setSelectedSize(null);
-    setMinPrice(0);
-    setMaxPrice(5000);
-    setSelectedRatings([]);
 
-    setSelectedCategories([]);
-    setSelectedTags([]);
-    setSelectedCollections([]);
+  const toggleDropdown2 = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
-
-  const handleApply = () => {
-    console.log("Filters applied:", {
-      // availability: availabilityFilters,
-      selectedSize,
-      minPrice,
-      maxPrice,
-      selectedRatings,
-
-      selectedCategories,
-      selectedTags,
-      selectedCollections,
-    });
-  };
-
-  // const [selectedFilter, setSelectedFilter] = useState("ALL");
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const items = [
-    {
-      id: 1,
-      type: "SHIRT",
-      name: "Cool Shirt",
-      image: Product2img,
-      price: 199,
-      offerPrice: 150,
-      availability: "available",
-      sizes: ["S", "M", "L"],
-      ratings: [4, 5],
-
-      tags: ["Top Rated", "New Trend"],
-      collections: ["Summer", "Beach"],
-    },
-    {
-      id: 2,
-      type: "SHORTS",
-      name: "Summer Shorts",
-      image: Product4img,
-      price: 99,
-      offerPrice: 50,
-      availability: "available",
-      sizes: ["M", "L"],
-      ratings: [3, 4],
-
-      tags: ["Best Seller"],
-      collections: ["Summer"],
-    },
-    {
-      id: 3,
-      type: "SUITS",
-      name: "Formal Suit",
-      image: Product5img,
-      price: 399,
-      offerPrice: 150,
-      availability: "outOfStock",
-      sizes: ["M", "L", "XL"],
-      ratings: [5],
-
-      tags: ["Classic"],
-      collections: ["Winter"],
-    },
-    {
-      id: 4,
-      type: "T-SHIRTS",
-      name: "Graphic Tee",
-      image: Product6img,
-      price: 299,
-      offerPrice: 150,
-      availability: "available",
-      sizes: ["XS", "S"],
-      ratings: [4],
-
-      tags: ["New Trend"],
-      collections: ["Festival"],
-    },
-    {
-      id: 5,
-      type: "JEANS",
-      name: "Blue Jeans",
-      image: Product2img,
-      price: 149,
-      offerPrice: 100,
-      availability: "available",
-      sizes: ["M", "L", "XL"],
-      ratings: [3, 4],
-
-      tags: ["Top Rated"],
-      collections: ["Trekking"],
-    },
-    {
-      id: 6,
-      type: "JACKETS",
-      name: "Winter Jacket",
-      image: Product4img,
-      price: 249,
-      offerPrice: 150,
-      availability: "available",
-      sizes: ["L", "XL"],
-      ratings: [5],
-
-      tags: ["Classic"],
-      collections: ["Winter"],
-    },
-    {
-      id: 7,
-      type: "COATS",
-      name: "Classic Coat",
-      image: Product5img,
-      price: 299,
-      offerPrice: 150,
-      availability: "available",
-      sizes: ["M", "L"],
-      ratings: [4, 5],
-
-      tags: ["Top Rated"],
-      collections: ["Winter"],
-    },
-    {
-      id: 8,
-      type: "NEW",
-      name: "New Arrival",
-      image: Product6img,
-      price: 199,
-      offerPrice: 150,
-      availability: "available",
-      sizes: ["S", "M"],
-      ratings: [4],
-
-      tags: ["New Trend"],
-      collections: ["Festival"],
-    },
-  ];
-
-  // const filters = [
-  //   "ALL",
-  //   "NEW",
-  //   "SHIRT",
-  //   "SHORTS",
-  //   "SUITS",
-  //   "T-SHIRTS",
-  //   "JEANS",
-  //   "JACKETS",
-  //   "COATS",
-  // ];
-
-  // const filteredItems = items.filter((item) => {
-  //   const matchesFilter =
-  //     selectedFilter === "ALL" || item.type === selectedFilter;
-  //   const matchesSearch = item.name
-  //     .toLowerCase()
-  //     .includes(searchTerm.toLowerCase());
-  //   return matchesFilter && matchesSearch;
-  // });
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    //  setSelectedFilter("ALL"); Automatically set filter to "ALL" when typing in search
+    setSearchText(e.target.value);
   };
-
-  const filteredItems = allItems.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  useEffect(() => {
-    // call this api whenever thre is a change in data object, pass it as dependency to useEffect
-    //  const data = {
-    //     page: 1,
-    //     limit: 20,
-    //     sizes : ['s', 'xs'],
-    //     categories: [],
-    //   }
-    userProductsList().then((res) => {
-      if (res.status === 200) {
-        setAllItems([...res?.data?.detail?.data]);
-      }
-    });
-  }, []);
 
   return (
     <section className="bg-gray-100 font-beatrice min-h-screen">
@@ -390,9 +154,9 @@ const AllProductsPage = () => {
                 {sizes.map((size) => (
                   <button
                     key={size}
-                    onClick={() => handleSizeSelect(size)}
+                    onClick={() => setFilterData({...filterData, sizes:size})}
                     className={`border w-10 h-10 font-medium text-sm ${
-                      selectedSize === size
+                      filterData.sizes === size
                         ? "border-gray-900 text-gray-900 bg-gray-300"
                         : "border-gray-500 text-gray-600 hover:bg-gray-300"
                     }`}
@@ -401,9 +165,9 @@ const AllProductsPage = () => {
                   </button>
                 ))}
               </div>
-              {selectedSize && (
+              {filterData.sizes && (
                 <p className="mt-2 text-sm text-gray-700">
-                  Selected size: {selectedSize}
+                  Selected size: {filterData.sizes}
                 </p>
               )}
             </div>
@@ -446,13 +210,17 @@ const AllProductsPage = () => {
                     >
                       <input
                         type="checkbox"
-                        checked={selectedCategories.includes(category)}
-                        onChange={() => handleCategoryToggle(category)}
+                        checked={filterData.categories.includes(category)}
+                        onChange={(value) => {
+                          setFilterData({...filterData, categories:filterData.categories.includes(category) ? filterData.categories.filter((item)=> item !== category) :
+                            [...filterData.categories,category]
+                          })
+                        }}
                         className="form-checkbox text-blue-500"
                       />
                       <span
                         className={`text-sm font-bold ${
-                          selectedCategories.includes(category)
+                          filterData.categories.includes(category)
                             ? "font-bold"
                             : "text-black"
                         }`}
@@ -466,62 +234,6 @@ const AllProductsPage = () => {
             </div>
 
             <div className="border-t border-dotted border-gray-500 w-full my-4"></div>
-
-            {/* <div className="my-4">
-              <div
-                className="my-4 flex items-center justify-between cursor-pointer"
-                onClick={() => setIsAvailabilityOpen(!isAvailabilityOpen)}
-              >
-                <h4 className="font-bold text-sm">Availability</h4>
-
-                <svg
-                  width="7"
-                  height="11"
-                  viewBox="0 0 7 11"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${
-                    isAvailabilityOpen ? "rotate-90" : "rotate-0"
-                  }`}
-                >
-                  <path
-                    d="M1 10L6 5.5L1 1"
-                    stroke="black"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-
-              {isAvailabilityOpen && (
-                <div className="flex flex-col space-y-4">
-                  <label className="flex items-center font-bold">
-                    <input
-                      type="checkbox"
-                      name="available"
-                      checked={availabilityFilters.available}
-                      onChange={handleAvailabilityChange}
-                      className="mr-2 w-5 h-5"
-                    />
-                    Available
-                    <span className="text-blue-700 ml-5">(450)</span>
-                  </label>
-                  <label className="flex items-center font-bold">
-                    <input
-                      type="checkbox"
-                      name="outOfStock"
-                      checked={availabilityFilters.outOfStock}
-                      onChange={handleAvailabilityChange}
-                      className="mr-2 w-5 h-5"
-                    />
-                    Out of Stock
-                    <span className="text-blue-700 ml-5"> (18)</span>
-                  </label>
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-dotted border-gray-500 w-full my-4"></div> */}
 
             <div className="my-4">
               <div
@@ -554,8 +266,10 @@ const AllProductsPage = () => {
                   <div className="flex space-x-2 mb-4">
                     <input
                       type="number"
-                      value={minPrice}
-                      onChange={handleMinPriceChange}
+                      value={filterData.pricegt}
+                      onChange={(e)=>{
+                          setFilterData({...filterData,pricegt:e.target.value})
+                      }}
                       className="w-20 p-2 border border-gray-300 rounded text-center text-sm"
                       min="0"
                       max="5000"
@@ -563,8 +277,10 @@ const AllProductsPage = () => {
                     <span className="text-gray-500">-</span>
                     <input
                       type="number"
-                      value={maxPrice}
-                      onChange={handleMaxPriceChange}
+                        value={filterData.pricelt}
+                      onChange={(e)=>{
+                          setFilterData({...filterData,pricelt:e.target.value})
+                      }}
                       className="w-20 p-2 border border-gray-300 rounded text-center text-sm"
                       min="0"
                       max="5000"
@@ -575,21 +291,25 @@ const AllProductsPage = () => {
                       type="range"
                       min="0"
                       max="5000"
-                      value={minPrice}
-                      onChange={handleMinPriceChange}
+                      value={filterData.pricegt}
+                      onChange={(e)=>{
+                          setFilterData({...filterData,pricegt:e.target.value})
+                      }}
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                     />
                     <input
                       type="range"
                       min="0"
                       max="5000"
-                      value={maxPrice}
-                      onChange={handleMaxPriceChange}
+                      value={filterData.pricelt}
+                      onChange={(e)=>{
+                          setFilterData({...filterData,pricelt:e.target.value})
+                      }}
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                     />
                   </div>
                   <p className="mt-2 text-sm font-bold">
-                    Selected range: ${minPrice} - ${maxPrice}
+                    Selected range: ${filterData.pricegt} - ${filterData.pricelt}
                   </p>
                 </div>
               )}
@@ -632,13 +352,17 @@ const AllProductsPage = () => {
                     >
                       <input
                         type="checkbox"
-                        checked={selectedCollections.includes(collection)}
-                        onChange={() => handleCollectionToggle(collection)}
+                        checked={filterData.collections.includes(collection)}
+                        onChange={() => {
+                            setFilterData({...filterData, collections:filterData.collections.includes(collection) ? filterData.collections.filter((item)=> item !== collection) :
+                            [...filterData.collections,collection]
+                          })
+                        }}
                         className="form-checkbox text-blue-500"
                       />
                       <span
                         className={`text-sm font-bold ${
-                          selectedCollections.includes(collection)
+                          filterData.collections.includes(collection)
                             ? "font-bold"
                             : "text-black"
                         }`}
@@ -684,13 +408,16 @@ const AllProductsPage = () => {
                     <label key={tag} className="flex items-center space-x-2">
                       <input
                         type="checkbox"
-                        checked={selectedTags.includes(tag)}
-                        onChange={() => handleTagToggle(tag)}
+                        checked={filterData.tags.includes(tag)}
+                        onChange={() => {
+                            setFilterData({...filterData, tags:filterData.tags.includes(tag) ? filterData.tags.filter((item)=> item !== tag) :
+                            [...filterData.tags,tag]})
+                        }}
                         className="form-checkbox text-blue-500"
                       />
                       <span
                         className={`text-sm font-bold ${
-                          selectedTags.includes(tag)
+                         filterData.tags.includes(tag)
                             ? "font-bold"
                             : "text-black"
                         }`}
@@ -739,13 +466,16 @@ const AllProductsPage = () => {
                     >
                       <input
                         type="checkbox"
-                        checked={selectedRatings.includes(rating)}
-                        onChange={() => handleRatingSelect(rating)}
+                        checked={filterData.ratings.includes(rating)}
+                        onChange={() => {
+                            setFilterData({...filterData, ratings:filterData.ratings.includes(rating) ? filterData.ratings.filter((item)=> item !== rating) :
+                            [...filterData.ratings,rating]})
+                        }}
                         className="form-checkbox h-4 w-4 text-yellow-400 border-gray-300 rounded"
                       />
                       <div
                         className={`flex items-center ml-2 ${
-                          selectedRatings.includes(rating)
+                          filterData.ratings.includes(rating)
                             ? "text-yellow-400"
                             : "text-gray-400"
                         }`}
@@ -775,13 +505,20 @@ const AllProductsPage = () => {
 
             <div className="flex space-x-4 my-6">
               <button
-                onClick={handleClearAll}
+                onClick={()=>{
+                  setFilterData(initialFilter)
+                  setTimeout(() => {
+                    refetch()
+                  }, 500);
+                }}
                 className="w-full py-2 bg-black hover:text-[#D9D9D9] text-white font-semibold rounded"
               >
                 Clear All
               </button>
               <button
-                onClick={handleApply}
+                onClick={()=>{
+                  refetch()
+                }}
                 className="w-full py-2 bg-[#D9D9D9] text-black hover:text-white font-semibold rounded"
               >
                 Apply
@@ -833,14 +570,14 @@ const AllProductsPage = () => {
                 id="searchInput"
                 className="w-full pl-10 pr-8 bg-[#D9D9D9] rounded-sm p-2 text-sm text-gray-700 focus:outline-none"
                 placeholder="Search"
-                value={searchTerm}
+                value={searchText}
                 onChange={handleSearchChange}
               />
 
               {/* Clear (X) button */}
-              {searchTerm && (
+              {searchText && (
                 <button
-                  onClick={() => setSearchTerm("")}
+                  onClick={() => setSearchText("")}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 focus:outline-none"
                 >
                   &times;
@@ -868,16 +605,18 @@ const AllProductsPage = () => {
 
           {/* Display Filtered Products */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-6 pt-10">
-            {filteredItems.length > 0 ? (
-              filteredItems.map(({ _id, name, photos, price, offerPrice }) => {
+            {products ?
+            products?.data.detail.total === 0 ? (
+              <p className="text-gray-500">No items found for this filter.</p>
+            ):
+             products.data.detail.data.map(({ _id, name, photos, price, offerPrice }) => {
                 // Find the item to calculate max rating and offer percentage
-                const item = items.find((item) => item.id === _id);
                 // const maxRating = Math.max(...item.ratings);
                 const offerPercentage = Math.round(
                   ((price - offerPrice) / price) * 100
                 );
                 return (
-                  <Link to={`/one-product?id=${_id}`}>
+                  <div key={_id}> <Link to={`/one-product?id=${_id}`}>
                     <div className="border rounded-md p-4">
                       <img
                         src={photos[0]}
@@ -902,12 +641,16 @@ const AllProductsPage = () => {
                       </div>
                     </div>
                   </Link>
+                  </div>
+                 
                 );
               })
-            ) : (
-              <p className="text-gray-500">No items found for this filter.</p>
-            )}
+             : isError && <p className="text-gray-500">Products not found Something went wrong</p> }
           </div>
+          <div className=" flex justify-center pt-10 pb-5 px-5">
+             <Pagination value={currentPage} onChange={(value)=>{setCurrentPage(value)}} total={products?.data?.detail.total} hideOnSinglePage />
+          </div>
+         
         </div>
       </div>
     </section>

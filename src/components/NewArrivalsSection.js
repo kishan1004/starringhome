@@ -7,7 +7,7 @@ import Aos from "aos";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getProductList } from "../api/admin";
-import { userProductsList } from "../api/user";
+import { newarrivalProducts } from "../api/user";
 
 // Component for Star Ratings
 const StarRating = () => {
@@ -61,8 +61,7 @@ const NewArrivalsSection = (props) => {
 
 
   useEffect(() => {
-    userProductsList({page:1,limit:4}).then((res)=>{
-      console.log(res);
+   newarrivalProducts().then((res)=>{
       setProducts(res.data.detail.data);
     })
   }, []);
