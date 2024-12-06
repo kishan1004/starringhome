@@ -43,48 +43,43 @@ export const userSignup = (data) => {
         password
     });
 }
+//get category
+export const getCategoryApi = () =>{
+    return axiosInstance.get('/admin/category/names')
+}
 
 //Orders Management
-export const userProductsList = (data) => {
-    let queryParams = [];
-    if (data?.page) {
-        queryParams.push(`page=${data.page}`);
+export const newarrivalProducts = ()=>{
+    return axiosInstance.get(`/users/orders/products?page=1&limit=4`)
+}
+export const userProductsList = (currentPage,searchText,filterData) => {
+    let url = `/users/orders/products?page=${currentPage}&limit=20&sizes=${filterData.sizes}&price_gt=${filterData.pricegt}&price_lt=${filterData.pricelt}`
+    if(searchText !== ''){
+        url = url + `&name=${searchText}`
     }
-    if (data?.page && data?.limit) {
-        queryParams.push(`limit=${data.limit}`);
-    }
-    if (data?.sizes?.length > 0) {
-        const temp = data.sizes.join('&sizes=')
-        queryParams.push(`sizes=${temp}`);
-    }
-    if (data?.category?.length > 0) {
-        const temp = data.category.join('&category=');
-        queryParams.push(`category=${temp}`);
-    }
-    if (data?.price_gt) {
-        queryParams.push(`price_gt=${data.price_gt}`);
-    }
-    if (data?.price_lt) {
-        queryParams.push(`price_lt=${data.price_lt}`);
-    }
-    if (data?.collections?.length > 0) {
-        const temp = data.collections.join('&collections=');
-        queryParams.push(`collections=${temp}`);
-    }
-    if (data?.tags?.length > 0) {
-        const temp = data.tags.join('&tags=');
-        queryParams.push(`tags=${temp}`);
-    }
-    if (data?.ratings?.length > 0) {
-        const temp = data.ratings.join('&ratings=');
-        queryParams.push(`ratings=${temp}`);
+    if(filterData.categories.length > 0){
+      url = url + filterData.categories.map((list)=>{
+            return `&category=${list}`
+        }).join('')
     }
 
-    const allParams = queryParams.length > 0 ? queryParams.join('&') : null;
-    let url = 'users/orders/products';
-    if (allParams) {
-        url += `?${allParams}`;
+    if(filterData.tags.length > 0){
+          url = url + filterData.tags.map((list)=>{
+            return `&tags=${list}`
+        }).join('')
     }
+   
+      if(filterData.collections.length > 0){
+          url = url + filterData.collections.map((list)=>{
+            return `&collections=${list}`
+        }).join('')
+    }
+
+    if(filterData.ratings.length > 0){
+          url = url + filterData.ratings.map((list)=>{
+            return `&ratings=${list}`
+        }).join('')
+    } 
     return axiosInstance.get(url);
 }
 
