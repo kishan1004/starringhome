@@ -20,34 +20,42 @@ const UserLogin = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const onLogin = (e) => {
-    e.preventDefault();
-    //email validation
+  const onLogin = async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    setError(""); // Clear any existing errors
+
+    //Email validation
     if (isNaN(userName)) {
-      const patt = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!patt.test(userName)) {
-        setError("Invalid email");
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailPattern.test(userName)) {
+        setError("Invalid email address");
         return;
       }
     } else {
-      // can have 10 numbers
-      // 11 if first number is 0
-      // 12 if first 2 numbers is 91
-      let patt = new RegExp(/(0|91)?[6-9][0-9]{9}/);
-      if (!patt.test(userName)) {
-        setError("Invalid Phone Number");
+      // Phone number validation
+      const phonePattern = /^(0|91)?[6-9][0-9]{9}$/;
+      if (!phonePattern.test(userName)) {
+        setError("Invalid phone number");
         return;
       }
     }
 
-    // api call: do route here
-    userLogin(userName, password).then((res) => {
+    // API call for login
+    try {
+      const res = await userLogin(userName, password);
+      console.log(res, "Response");
+
       if (res.status === 200) {
         localStorage.setItem("userToken", res?.data?.detail?.token);
-        window.location.href = "/";
+        // Navigate to home
+        navigate("/", { replace: true });
+      } else {
+        setError("Login failed. Please check your credentials.");
       }
-      console.log(res);
-    });
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError("An error occurred during login. Please try again.");
+    }
   };
 
   const handleForgotPassword = async () => {
@@ -168,7 +176,7 @@ const UserLogin = () => {
             </div>
           )}
           {!isForgotPassword && (
-            <form className="w-full max-w-sm" onSubmit={onLogin}>
+            <form className="w-full max-w-sm">
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -219,7 +227,8 @@ const UserLogin = () => {
               </div>
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
-                type="submit"
+                type="button"
+                onClick={onLogin}
               >
                 Sign in
               </button>
@@ -228,7 +237,7 @@ const UserLogin = () => {
           <p className="pt-4">
             Don't you have an account?{" "}
             <span className="underline text-blue-500">
-              <Link to="/otp-login/new">Sign up </Link>
+              {/* <Link to="/otp-login/new">Sign up</Link> */}
             </span>
           </p>
         </div>

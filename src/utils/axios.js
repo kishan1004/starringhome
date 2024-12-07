@@ -42,10 +42,14 @@ axiosInstance.interceptors.response.use(
     console.error("error", error);
     if (error?.response?.status === 403 || error?.response?.status === 401) {
       let url = error?.config?.url;
-      if (url.includes('/user/auth') || url.includes('/admin')) {
-        window.location.href = '/admin/login';
+      if (url.includes("/user/auth") || url.includes("/admin")) {
+        window.location.href = "/admin/login";
       } else {
-        window.location.href = '/user-login';
+        if (url.includes("/user-login")) {
+          return;
+        } else {
+          window.location.href = "/user-login";
+        }
       }
     }
     return error;

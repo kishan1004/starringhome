@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Blacklogo from "../../images/starringblack.png";
 import { userLogin } from "../../api/admin";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -9,10 +10,17 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // For displaying error messages
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   const loginUser = async (e) => {
     e.preventDefault();
     setErrorMessage(""); // Clear any existing error message
-
+    setIsLoading(true);
     try {
       const res = await userLogin(username, password);
       if (res.status === 200 && res?.data?.detail?.token) {
@@ -26,8 +34,14 @@ const Login = () => {
       setErrorMessage(
         error.response?.data?.message || "An error occurred. Please try again."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    setErrorMessage("");
+  }, [username, password]);
 
   //  const loginUser = (e) => {
   //   //API: Login api handled set auth state with this, using react context is prefered
@@ -75,12 +89,12 @@ const Login = () => {
           </div>
 
           {/* Password Input */}
-          <div>
+          <div className="mb-3 relative">
             <label htmlFor="password" className="block text-sm text-gray-600">
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -88,14 +102,22 @@ const Login = () => {
               placeholder="Enter your password"
               required
             />
+            <button
+              type="button"
+              className="absolute right-3 top-10 text-gray-600 hover:text-gray-800 focus:outline-none"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
 
           {/* Login Button */}
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full px-4 py-2 font-semibold text-white bg-black rounded-lg focus:outline-none focus:bg-gray-800"
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

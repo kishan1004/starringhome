@@ -16,3 +16,16 @@ html {
 body {
   font-family: "Roboto", sans-serif;
 }
+
+input[type="password"]::-ms-reveal {
+  display: none;
+}
+
+input[type="password"]::-webkit-clear-button,
+input[type="password"]::-webkit-password-toggle {
+  display: none;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}

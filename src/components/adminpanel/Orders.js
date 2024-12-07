@@ -1,72 +1,92 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getOrders } from "../../api/admin";
-
-// Sample order data
-const orderData = [];
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(2);
-
-  useEffect(()=>{
-    const fetchOrders = async()=>{
-      const res = await getOrders(currentPage,itemsPerPage);
-      if(res.status===200)
-      {
-        console.log(res.data.detail.data);
-        setOrders(res.data.detail.data);
-      }
-      else
-      {
-        console.log(res);
-      }
-    }
-    fetchOrders();
-  },[])
-
-  // Filtering states
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [isExcelExportingInProgress, setIsExcelExportingInProgress] =
+    useState(false);
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState("");
   const [selectedOrderStatus, setSelectedOrderStatus] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
-  // Filtered orders based on criteria
-  const filteredOrders = orders.filter((order) => {
-    const orderDate = new Date(order.orderDate);
-    const matchesDate =
-      (!startDate || orderDate >= new Date(startDate + "T00:00:00")) &&
-      (!endDate || orderDate <= new Date(endDate + "T23:59:59"));
-
-    return (
-      (!selectedPaymentStatus ||
-        order.paymentStatus === selectedPaymentStatus) &&
-      (!selectedOrderStatus || order.orderStatus === selectedOrderStatus) &&
-      matchesDate
-    );
-  });
-
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentOrders = filteredOrders.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  const [dateRange, setDateRange] = useState({ startDate: "", endDate: "" });
+  const itemsPerPage = 20; // as of now it is given statically
 
   const navigate = useNavigate();
 
-  // Handle order status change
-  const handleOrderStatusChange = (id, newStatus) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === id ? { ...order, orderStatus: newStatus } : order
-      )
-    );
+  useEffect(() => {
+    fetchOrders();
+  }, [currentPage, selectedOrderStatus, selectedPaymentStatus]);
+
+  useEffect(() => {
+    if (
+      (dateRange.startDate && dateRange.endDate) ||
+      (!dateRange.startDate && !dateRange.endDate)
+    ) {
+      fetchOrders();
+    }
+  }, [dateRange]);
+
+  // Fetch orders data
+  const fetchOrders = async () => {
+    setIsLoading(true);
+    const { startDate, endDate } = dateRange;
+
+    try {
+      const params = {
+        page: currentPage,
+        limit: itemsPerPage,
+        payment_status: selectedPaymentStatus || undefined,
+        order_status: selectedOrderStatus || undefined,
+        start_date: startDate || undefined,
+        end_date: endDate || undefined,
+      };
+
+      const res = await getOrders(params);
+      if (res.status === 200) {
+        setOrders(res.data.detail.data);
+        setError(false);
+      } else {
+        setError(true);
+      }
+    } catch (error) {
+      setError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Export orders to Excel
+  const excelExportOrders = async () => {
+    setIsExcelExportingInProgress(true);
+    try {
+      const res = await getOrders({ export: true, export_type: "excel" });
+      if (res.status === 200) {
+        const blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "orders.xlsx";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        console.error("Failed to export orders:", res.statusText);
+      }
+    } catch (error) {
+      console.error("Error exporting orders:", error);
+    } finally {
+      setIsExcelExportingInProgress(false);
+    }
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 1) setCurrentPage(page);
+  };
+
+  const handleDateChange = (field, value) => {
+    setDateRange((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -74,7 +94,7 @@ const Orders = () => {
       <h1 className="text-2xl font-bold mb-6">Orders</h1>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+      <div className="mb-6 flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0">
         <select
           value={selectedPaymentStatus}
           onChange={(e) => setSelectedPaymentStatus(e.target.value)}
@@ -98,21 +118,25 @@ const Orders = () => {
           <label className="font-medium">From:</label>
           <input
             type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            value={dateRange.startDate}
+            onChange={(e) => handleDateChange("startDate", e.target.value)}
             className="px-3 py-2 border rounded w-full md:w-auto"
           />
           <label className="font-medium">To:</label>
           <input
             type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            value={dateRange.endDate}
+            onChange={(e) => handleDateChange("endDate", e.target.value)}
             className="px-3 py-2 border rounded w-full md:w-auto"
           />
         </div>
         <div>
-          <button className="bg-black text-white px-2 py-2 rounded">
-            Export in Excel
+          <button
+            onClick={excelExportOrders}
+            disabled={isExcelExportingInProgress || orders.length < 1}
+            className="bg-black text-white px-2 py-2 rounded"
+          >
+            {isExcelExportingInProgress ? "Exporting..." : "Export in Excel"}
           </button>
         </div>
       </div>
@@ -132,51 +156,66 @@ const Orders = () => {
             </tr>
           </thead>
           <tbody>
-            {currentOrders.map((order) => (
-              <tr key={order.id} className="text-center">
-                <td className="py-3 px-4 border">
-                  <button
-                    onClick={() => navigate(`../orderdetail/${order._id}`)}
-                    className="text-blue-500 hover:underline"
-                  >
-                    {order.orderId}
-                  </button>
-                </td>
-                <td className="py-3 px-4 border">{new Date(order.orderDate).toLocaleDateString()}</td>
-                <td className="py-3 px-4 border">{order.userName}</td>
-                <td className="py-3 px-4 border">Rs.{order.total}</td>
-                <td
-                  className={`py-3 px-4 border ${
-                    order.paymentStatus === "Success"
-                      ? "text-green-500"
-                      : "text-yellow-500"
-                  }`}
-                >
-                  {order.paymentStatus}
-                </td>
-                <td className="py-3 px-4 border">
-                  <select
-                    value={order.orderStatus}
-                    onChange={(e) =>
-                      handleOrderStatusChange(order.id, e.target.value)
-                    }
-                    className="border rounded px-2 py-1"
-                  >
-                    <option value="Completed">Completed</option>
-                    <option value="In Transit">In Transit</option>
-                    <option value="Dispatch">Dispatch</option>
-                  </select>
-                </td>
-                <td className="py-3 px-4 border">
-                  <button title="Download">📄</button>
+            {error && (
+              <tr>
+                <td colSpan="7" className="text-center py-4">
+                  Something went wrong
                 </td>
               </tr>
-            ))}
+            )}
+            {isLoading && (
+              <tr>
+                <td colSpan="7" className="text-center py-4">
+                  Loading...
+                </td>
+              </tr>
+            )}
+            {!error && !isLoading && orders.length > 0
+              ? orders.map((order) => (
+                  <tr key={order.id}>
+                    <td>
+                      <button
+                        onClick={() => navigate(`../orderdetail/${order.id}`)}
+                        className="text-blue-500 hover:underline"
+                      >
+                        {order.orderId}
+                      </button>
+                    </td>
+                    <td>{new Date(order.orderDate).toLocaleDateString()}</td>
+                    <td>{order.userName}</td>
+                    <td>{order.total}</td>
+                    <td>{order.paymentStatus}</td>
+                    <td>
+                      <select
+                        value={order.orderStatus}
+                        onChange={
+                          (e) => setSelectedOrderStatus(e.target.value)
+                          // handleOrderStatusChange(order.id, e.target.value)
+                        }
+                      >
+                        <option value="Completed">Completed</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Dispatch">Dispatch</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button>📄</button>
+                    </td>
+                  </tr>
+                ))
+              : !error &&
+                !isLoading && (
+                  <tr>
+                    <td colSpan="7" className="text-center py-4">
+                      No orders found.
+                    </td>
+                  </tr>
+                )}
           </tbody>
         </table>
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       <div className="flex justify-center items-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
@@ -185,24 +224,15 @@ const Orders = () => {
         >
           Previous
         </button>
-
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${
-              currentPage === i + 1
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
+        <span
+          className={`px-3 py-1 mx-1 rounded-md hover:bg-gray-400 bg-black text-white`}
+        >
+          {currentPage}
+        </span>
 
         <button
           onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={orders.length < 20}
           className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
         >
           Next

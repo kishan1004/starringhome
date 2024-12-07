@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getTestimonialDetails, saveTestimonials, deleteTestimonial } from "../../api/admin";
+import {
+  getTestimonialDetails,
+  saveTestimonials,
+  deleteTestimonial,
+} from "../../api/admin";
 import Swal from "sweetalert2";
 
 const Testimonials = () => {
@@ -18,7 +22,7 @@ const Testimonials = () => {
     getTestimonialsData();
   }, []);
 
-  function getTestimonialsData(){
+  function getTestimonialsData() {
     getTestimonialDetails(1, 50).then((res) => {
       if (res.status === 200) {
         const data = res?.data?.detail?.data;
@@ -64,13 +68,8 @@ const Testimonials = () => {
     // API: Save the new testimonial
     saveTestimonials(newTestimonial)
       .then(() => {
-        setTestimonials((prevTestimonials) => [
-          ...prevTestimonials,
-          { id: Date.now(), ...newTestimonial },
-        ]);
-
+        getTestimonialsData(); // calling testimonials API
         setNewTestimonial({ customerName: "", review: "" }); // Reset form
-
         Swal.fire({
           icon: "success",
           title: "Testimonial Added",
@@ -89,7 +88,6 @@ const Testimonials = () => {
   };
 
   const handleDelete = (id) => {
-   
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -101,15 +99,14 @@ const Testimonials = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         // API: Add delete call if required
-        deleteTestimonial(id).then((res)=>{
-          if(res.status==200){
-            Swal.fire("Deleted !", res.data.detail[0].msg, "success");
+        deleteTestimonial(id).then((res) => {
+          if (res.status == 200) {
+            Swal.fire("Deleted !", res.data?.detail[0].msg, "success");
             getTestimonialsData();
-          }else{
-            Swal.fire("Error !", res.data.detail[0].msg, "error");
+          } else {
+            Swal.fire("Error !", res.data?.detail[0].msg, "error");
           }
-
-        })
+        });
         setTestimonials((prevTestimonials) =>
           prevTestimonials.filter((testimonial) => testimonial.id !== id)
         );

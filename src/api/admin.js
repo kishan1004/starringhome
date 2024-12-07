@@ -251,14 +251,60 @@ export const mediaUpload = async (filesObject) => {
 
 //admin orders
 
-export const getOrders = async (page, limit) => {
+export const getOrders = async (args) => {
+  const {
+    export: isExport = false,
+    export_type = "excel",
+    page = 1,
+    limit = 20,
+    payment_status,
+    order_status,
+    start_date,
+    end_date,
+  } = args;
+
   const token = localStorage.getItem("authToken");
-  return axiosInstance.get("/admin/orders/details", {
-    params: {
-      export: false,
-      page: page,
-      limit: limit,
-    },
+
+  // Base URL
+  let url = `/admin/orders/details?export=${isExport}`;
+
+  // Add export_type if isExport is true
+  if (isExport) {
+    url += `&export_type=${export_type}`;
+  }
+
+  // Add pagination parameters
+  url += `&page=${page}&limit=${limit}`;
+
+  // Format dates
+  const formatDate = (date) => {
+    if (!date) return null;
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  const formattedStartDate = formatDate(start_date);
+  const formattedEndDate = formatDate(end_date);
+
+  // Add date filters
+  if (formattedStartDate && formattedEndDate) {
+    url += `&start_date=${encodeURIComponent(
+      formattedStartDate
+    )}&end_date=${encodeURIComponent(formattedEndDate)}`;
+  }
+
+  // Add payment_status filter if provided
+  if (payment_status) {
+    url += `&payment_status=${encodeURIComponent(payment_status)}`;
+  }
+
+  // Add order_status filter if provided
+  if (order_status) {
+    url += `&order_status=${encodeURIComponent(order_status)}`;
+  }
+
+  // Make the API call
+  return axiosInstance.get(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -326,7 +372,6 @@ export const getOrder = async (order_id) => {
 
 export const statusToShipping = async (orderId, status) => {
   const token = localStorage.getItem("authToken");
-  console.log(jwtDecode(token));
   return axiosInstance.patch(
     "admin/orders/shipping/confirmation",
     {
@@ -339,4 +384,45 @@ export const statusToShipping = async (orderId, status) => {
       },
     }
   );
+};
+
+export const getInventoryDetailsandExport = async (args) => {
+  const {
+    export: isExport = false,
+    export_type = "excel",
+    start_date,
+    end_date,
+  } = args;
+
+  const token = localStorage.getItem("authToken");
+
+  // Base URL
+  let url = `/inventory/management/details?export=${isExport}`;
+
+  // Add export_type if isExport is true
+  if (isExport) {
+    url += `&export_type=${export_type}`;
+  }
+
+  const formatDate = (date) => {
+    if (!date) return null;
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  // Format dates if provided
+  const formattedStartDate = formatDate(start_date);
+  const formattedEndDate = formatDate(end_date);
+  // Add start_date and end_date if available
+  if (formattedStartDate && formattedEndDate) {
+    url += `&start_date=${encodeURIComponent(
+      formattedStartDate
+    )}&end_date=${encodeURIComponent(formattedEndDate)}`;
+  }
+
+  return axiosInstance.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };

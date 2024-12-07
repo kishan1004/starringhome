@@ -1,6 +1,6 @@
 // Sidebar.js
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaBox,
@@ -14,6 +14,13 @@ import { FaExchangeAlt } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
 
 function AdminSidebar({ toggleSidebar }) {
+  const { pathname } = useLocation();
+  const [currentPath, setCurrentPath] = useState(pathname);
+
+  useEffect(() => {
+    setCurrentPath(pathname);
+  }, [pathname]);
+
   return (
     <aside className="w-64 min-h-screen mt-[60px] bg-gray-100 text-black flex flex-col p-4 space-y-4">
       <nav className="flex flex-col space-y-3">
@@ -45,13 +52,13 @@ function AdminSidebar({ toggleSidebar }) {
         </NavLink>
         <NavLink
           to="coupons"
-          className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded ${
-              isActive
+          className={({ isActive }) => {
+            return `flex items-center px-3 py-2 rounded ${
+              isActive || currentPath.includes("coupon")
                 ? "bg-black text-white"
                 : "hover:bg-black hover:text-white"
-            }`
-          }
+            }`;
+          }}
           onClick={toggleSidebar} // Close sidebar on link click
         >
           <RiCoupon2Fill className="mr-3" /> Coupons

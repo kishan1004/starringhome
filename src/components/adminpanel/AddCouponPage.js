@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { addCoupon } from "../../api/admin";
 import moment from "moment";
 import Swal from "sweetalert2";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 const AddCouponPage = () => {
   const [formData, setFormData] = useState({
@@ -45,7 +46,6 @@ const AddCouponPage = () => {
         startDate: moment(startDate).format("DD/MM/YYYY"),
         endDate: moment(endDate).format("DD/MM/YYYY"),
       });
-      console.log(res);
       if (res.status === 201) {
         Swal.fire({
           title: "Success!",
@@ -79,6 +79,14 @@ const AddCouponPage = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
+      <div className="mb-5">
+        <button
+          onClick={() => navigate("/admin/coupons")}
+          className="mb-4 flex items-center"
+        >
+          <FaArrowLeftLong />
+        </button>
+      </div>
       <h2 className="text-2xl font-semibold mb-6">Add New Coupon</h2>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
