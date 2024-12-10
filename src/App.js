@@ -16,6 +16,7 @@ import FeatureSection from "./components/FeatureSection";
 import FooterSection from "./components/FooterSection";
 import AllProductsPage from "./components/pages/AllProductsPage";
 import ScrollToTop from "./components/ScrollToTop";
+import CursorBlur from "./components/CursorBlur";
 import Favourites from "./components/pages/Favourites";
 import ProductPage from "./components/pages/ProductPage";
 import SizeChart from "./components/pages/SizeChart";
@@ -52,6 +53,8 @@ import AdminCouponPage from "./components/adminpanel/AdminCouponPage";
 import RefundPolicyPage from "./components/pages/RefundPolicyPage";
 import ReturnExchangePage from "./components/adminpanel/ReturnExchangePage";
 import AddCouponPage from "./components/adminpanel/AddCouponPage";
+import AdminComboProductsPage from "./components/adminpanel/AdminComboProductsPage";
+import AddComboPage from "./components/adminpanel/AddComboPage";
 import AdminContactForm from "./components/adminpanel/AdminContactForm";
 
 function App() {
@@ -90,164 +93,165 @@ function App() {
     userLogout().then((res) => {
       localStorage.removeItem("authToken");
       setIsAuthenticated(false); // Update state on logout
-      navigate('/admin/login');
+      navigate("/admin/login");
     });
   };
 
   return (
     <QueryClientProvider client={queryClient}>
-        <ScrollToTop />
-        <div className="App bg-[#FAFAFA] ">
-          <Routes>
-            {/* Public Routes */}
-            <Route
-              path="/"
-              element={
-                <>
-                  <HeroSection id="hero" />
-                  <NewArrivalsSection id="new-arrivals" />
-                  <TrendingSection id="trending" />
-                  <BannerSection id="banner" />
-                  <FeatureSection id="features" />
-                  <FooterSection id="footer" />
-                </>
-              }
-            />
+      <ScrollToTop />
+      <div className="App bg-[#FAFAFA] ">
+        <CursorBlur />
+        <Routes>
+          {/* Public Routes */}
+          <Route
+            path="/"
+            element={
+              <>
+                <HeroSection id="hero" />
+                <NewArrivalsSection id="new-arrivals" />
+                <TrendingSection id="trending" />
+                <BannerSection id="banner" />
+                <FeatureSection id="features" />
+                <FooterSection id="footer" />
+              </>
+            }
+          />
 
-            <Route
-              path="/all-products"
-              element={
-                <>
-                  <Topbar />
-                  <AllProductsPage />
-                </>
-              }
-            />
-            <Route
-              path="/one-product"
-              element={
-                <>
-                  <Topbar />
-                  <ProductPage />
-                </>
-              }
-            />
-            <Route
-              path="/payment-confirmation/:orderId"
-              element={
-                <>
-                  <Topbar />
-                  <PaymentConfirmation />
-                </>
-              }
-            />
-            <Route
-              path="/favourites"
-              element={
-                <>
-                  <Topbar />
-                  <Favourites />
-                </>
-              }
-            />
-            <Route path="/size-chart" element={<SizeChart />} />
-            <Route
-              path="/checkout"
-              element={
-                <>
-                  <Topbar />
-                  <CheckoutPage />
-                </>
-              }
-            />
+          <Route
+            path="/all-products"
+            element={
+              <>
+                <Topbar />
+                <AllProductsPage />
+              </>
+            }
+          />
+          <Route
+            path="/one-product"
+            element={
+              <>
+                <Topbar />
+                <ProductPage />
+              </>
+            }
+          />
+          <Route
+            path="/payment-confirmation/:orderId"
+            element={
+              <>
+                <Topbar />
+                <PaymentConfirmation />
+              </>
+            }
+          />
+          <Route
+            path="/favourites"
+            element={
+              <>
+                <Topbar />
+                <Favourites />
+              </>
+            }
+          />
+          <Route path="/size-chart" element={<SizeChart />} />
+          <Route
+            path="/checkout"
+            element={
+              <>
+                <Topbar />
+                <CheckoutPage />
+              </>
+            }
+          />
 
-            <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/user-login" element={<UserLogin />} />
-            <Route path="/user-account" element={<UserAccountPage />} />
-            <Route path="/addresses" element={<YourAddresses />} />
-            <Route path="/add-address/:id" element={<AddAddress />} />
-            <Route path="/login-security" element={<LoginAndSecurity />} />
-            <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="/your-orders" element={<YourOrders />} />
-            <Route path="/refund-policy" element={<RefundPolicyPage />} />
-            <Route path="/userorderdetail" element={<UserOrderDetail />} />
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/user-login" element={<UserLogin />} />
+          <Route path="/user-account" element={<UserAccountPage />} />
+          <Route path="/addresses" element={<YourAddresses />} />
+          <Route path="/add-address/:id" element={<AddAddress />} />
+          <Route path="/login-security" element={<LoginAndSecurity />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/your-orders" element={<YourOrders />} />
+          <Route path="/refund-policy" element={<RefundPolicyPage />} />
+          <Route path="/userorderdetail" element={<UserOrderDetail />} />
 
-            <Route
-              path="/shopping-cart"
-              element={
+          <Route
+            path="/shopping-cart"
+            element={
+              <>
+                <Topbar />
+                <ShoppingCart />
+              </>
+            }
+          />
+          <Route path="/otp-login/:type" element={<OTPLogin />} />
+
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<Login />} />
+
+          <Route
+            path="/admin/*"
+            element={
+              isAuthenticated || localStorage.getItem("authToken") ? (
                 <>
-                  <Topbar />
-                  <ShoppingCart />
-                </>
-              }
-            />
-            <Route path="/otp-login/:type" element={<OTPLogin />} />
+                  <Adminbar
+                    toggleSidebar={toggleSidebar}
+                    onLogout={handleLogout}
+                  />
+                  <div className="flex flex-col lg:flex-row">
+                    {isSidebarOpen && (
+                      <AdminSidebar toggleSidebar={toggleSidebar} />
+                    )}
+                    <div className="flex-grow">
+                      <Routes>
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="products" element={<ProductList />} />
+                        <Route
+                          path="product/:productId"
+                          element={<ProductUpload />}
+                        />
+                        <Route path="orders" element={<Orders />} />
+                        <Route
+                          path="orderdetail/:orderId"
+                          element={<OrderDetail />}
+                        />
+                        <Route path="coupons" element={<AdminCouponPage />} />
+                        <Route path="add-coupon" element={<AddCouponPage />} />
+                        <Route
+                          path="comboproducts"
+                          element={<AdminComboProductsPage />}
+                        />
+                        <Route path="add-combo" element={<AddComboPage />} />
 
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<Login />} />
-
-            <Route
-              path="/admin/*"
-              element={
-                isAuthenticated || localStorage.getItem("authToken") ? (
-                  <>
-                    <Adminbar
-                      toggleSidebar={toggleSidebar}
-                      onLogout={handleLogout}
-                    />
-                    <div className="flex flex-col lg:flex-row">
-                      {isSidebarOpen && (
-                        <AdminSidebar toggleSidebar={toggleSidebar} />
-                      )}
-                      <div className="flex-grow">
-                        <Routes>
-                          <Route path="dashboard" element={<Dashboard />} />
-                          <Route path="products" element={<ProductList />} />
-                          <Route
-                            path="product/:productId"
-                            element={<ProductUpload />}
-                          />
-                          <Route path="orders" element={<Orders />} />
-                          <Route
-                            path="orderdetail/:orderId"
-                            element={<OrderDetail />}
-                          />
-                          <Route path="coupons" element={<AdminCouponPage />} />
-                          <Route
-                            path="add-coupon"
-                            element={<AddCouponPage />}
-                          />
-                          <Route
-                            path="returns"
-                            element={<ReturnExchangePage />}
-                          />
-                          <Route
-                            path="testimonials"
-                            element={<Testimonials />}
-                          />
-                          <Route path="settings" element={<Settings />} />
-                          <Route
-                            path="user-management"
-                            element={<UserManagement />}
-                          />
-                          <Route path="inventory" element={<Inventory />} />
-                          <Route
-                            path="admincontactform"
-                            element={<AdminContactForm />}
-                          />
-                        </Routes>
-                      </div>
+                        <Route
+                          path="returns"
+                          element={<ReturnExchangePage />}
+                        />
+                        <Route path="testimonials" element={<Testimonials />} />
+                        <Route path="settings" element={<Settings />} />
+                        <Route
+                          path="user-management"
+                          element={<UserManagement />}
+                        />
+                        <Route path="inventory" element={<Inventory />} />
+                        <Route
+                          path="admincontactform"
+                          element={<AdminContactForm />}
+                        />
+                      </Routes>
                     </div>
-                  </>
-                ) : (
-                  <Navigate to="/admin/login" />
-                )
-              }
-            />
-            {/* Redirect 404 */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </div>
+                  </div>
+                </>
+              ) : (
+                <Navigate to="/admin/login" />
+              )
+            }
+          />
+          {/* Redirect 404 */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </div>
     </QueryClientProvider>
   );
 }

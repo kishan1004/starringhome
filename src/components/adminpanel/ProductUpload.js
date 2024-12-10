@@ -5,7 +5,8 @@ import {
   editProduct,
   getProduct,
   mediaUpload,
-  saveProduct,getAllCategories
+  saveProduct,
+  getAllCategories,
 } from "../../api/admin";
 import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
@@ -76,13 +77,13 @@ const ProductUpload = () => {
     fetchProduct();
   }, [productId]);
 
-  function getCategoryName(){
-    getAllCategories().then((res)=>{
-      if(res.status==200){
+  function getCategoryName() {
+    getAllCategories().then((res) => {
+      if (res.status == 200) {
         SetCategoriesList(res.data.detail.data);
       }
-      console.log(res)
-    })
+      console.log(res);
+    });
   }
 
   useEffect(() => {
@@ -121,7 +122,7 @@ const ProductUpload = () => {
 
   const handleStockChange = (e, size) => {
     const { value } = e.target;
-    console.log(value)
+    console.log(value);
     setProductData((prevData) => ({
       ...prevData,
       stockCount: {
@@ -206,7 +207,7 @@ const ProductUpload = () => {
           return acc;
         }, {}),
       };
- 
+
       console.log(processedData);
       saveProduct(processedData).then((res) => {
         if (res.status === 201) {
@@ -440,7 +441,7 @@ const ProductUpload = () => {
         </div>
 
         <div>
-          <label className="font-semibold">Product Image (Multiple) *</label>
+          <label className="font-semibold">Product Image *</label>
           <input
             type="file"
             name="photos"

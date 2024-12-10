@@ -8,6 +8,7 @@ import {
   FaStar,
   // FaCog,
 } from "react-icons/fa";
+import { BiSolidOffer } from "react-icons/bi";
 import { MdContactSupport } from "react-icons/md";
 import { RiCoupon2Fill } from "react-icons/ri";
 import { FaExchangeAlt } from "react-icons/fa";
@@ -62,6 +63,19 @@ function AdminSidebar({ toggleSidebar }) {
           onClick={toggleSidebar} // Close sidebar on link click
         >
           <RiCoupon2Fill className="mr-3" /> Coupons
+        </NavLink>
+        <NavLink
+          to="comboproducts"
+          className={({ isActive }) =>
+            `flex items-center px-3 py-2 rounded ${
+              isActive
+                ? "bg-black text-white"
+                : "hover:bg-black hover:text-white"
+            }`
+          }
+          onClick={toggleSidebar} // Close sidebar on link click
+        >
+          <BiSolidOffer className="mr-3" /> Combos
         </NavLink>
         <NavLink
           to="orders"

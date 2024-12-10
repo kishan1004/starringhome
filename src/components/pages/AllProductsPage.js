@@ -6,73 +6,72 @@ import Product6img from "../../images/imgproduct6.jpeg";
 import { Link } from "react-router-dom";
 import { userProductsList } from "../../api/user";
 import { useQuery } from "react-query";
-import {Pagination} from 'antd'
-import {getCategoryApi} from '../../api/user'
+import { Pagination } from "antd";
+import { getCategoryApi } from "../../api/user";
 
-
-  const sizes = ["XS", "S", "M", "L", "XL", "2X"];
-  const tags = ["Top Rated", "BestSeller", "NewTrend", "Classic"];
-  const collections = [
-    "Summer",
-    "Winter",
-    "Festival",
-    "Beach",
-    "Trekking",
-    "Sports",
-    "Coords",
-  ];
+const sizes = ["XS", "S", "M", "L", "XL", "2X"];
+const tags = ["Top Rated", "BestSeller", "NewTrend", "Classic"];
+const collections = [
+  "Summer",
+  "Winter",
+  "Festival",
+  "Beach",
+  "Trekking",
+  "Sports",
+  "Coords",
+];
 
 const initialFilter = {
-  sizes:"L",
-  categories:[],
-  tags:[],
-  collections:[],
-  ratings:[],
-  pricegt:0,
-  pricelt:5000
-
-}
+  sizes: "L",
+  categories: [],
+  tags: [],
+  collections: [],
+  ratings: [],
+  pricegt: 0,
+  pricelt: 5000,
+};
 
 const AllProductsPage = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  const [currentPage,setCurrentPage] = useState(1);
-  const [searchText,setSearchText] = useState('')
-  const[filterData,setFilterData] = useState(initialFilter)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchText, setSearchText] = useState("");
+  const [filterData, setFilterData] = useState(initialFilter);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
   const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] =
     useState(false);
-  const [categories,setCategories] = useState([])
+  const [categories, setCategories] = useState([]);
 
+  const {
+    data: products,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["allproductrs", { currentPage, searchText }],
+    queryFn: () => userProductsList(currentPage, searchText, filterData),
+  });
 
-    const {data:products,isLoading,isError,refetch} = useQuery({
-      queryKey:['allproductrs',{currentPage,searchText}],
-      queryFn:()=>userProductsList(currentPage,searchText,filterData)
-    })
+  const { data: category } = useQuery({
+    queryKey: ["category"],
+    queryFn: () => getCategoryApi(),
+  });
 
-     const {data:category} = useQuery({
-      queryKey:['category'],
-      queryFn:()=> getCategoryApi()
-    })
-
-    useEffect(()=>{
-     if(category){
-      const categorynames = category.data.detail.data.map((list)=>{
-        return list.name
-      })
-      setCategories(categorynames)
-     }
-  },[category])
-
-   
+  useEffect(() => {
+    if (category) {
+      const categorynames = category.data.detail.data.map((list) => {
+        return list.name;
+      });
+      setCategories(categorynames);
+    }
+  }, [category]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
 
   const toggleDropdown2 = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -154,7 +153,9 @@ const AllProductsPage = () => {
                 {sizes.map((size) => (
                   <button
                     key={size}
-                    onClick={() => setFilterData({...filterData, sizes:size})}
+                    onClick={() =>
+                      setFilterData({ ...filterData, sizes: size })
+                    }
                     className={`border w-10 h-10 font-medium text-sm ${
                       filterData.sizes === size
                         ? "border-gray-900 text-gray-900 bg-gray-300"
@@ -212,9 +213,14 @@ const AllProductsPage = () => {
                         type="checkbox"
                         checked={filterData.categories.includes(category)}
                         onChange={(value) => {
-                          setFilterData({...filterData, categories:filterData.categories.includes(category) ? filterData.categories.filter((item)=> item !== category) :
-                            [...filterData.categories,category]
-                          })
+                          setFilterData({
+                            ...filterData,
+                            categories: filterData.categories.includes(category)
+                              ? filterData.categories.filter(
+                                  (item) => item !== category
+                                )
+                              : [...filterData.categories, category],
+                          });
                         }}
                         className="form-checkbox text-blue-500"
                       />
@@ -267,8 +273,11 @@ const AllProductsPage = () => {
                     <input
                       type="number"
                       value={filterData.pricegt}
-                      onChange={(e)=>{
-                          setFilterData({...filterData,pricegt:e.target.value})
+                      onChange={(e) => {
+                        setFilterData({
+                          ...filterData,
+                          pricegt: e.target.value,
+                        });
                       }}
                       className="w-20 p-2 border border-gray-300 rounded text-center text-sm"
                       min="0"
@@ -277,9 +286,12 @@ const AllProductsPage = () => {
                     <span className="text-gray-500">-</span>
                     <input
                       type="number"
-                        value={filterData.pricelt}
-                      onChange={(e)=>{
-                          setFilterData({...filterData,pricelt:e.target.value})
+                      value={filterData.pricelt}
+                      onChange={(e) => {
+                        setFilterData({
+                          ...filterData,
+                          pricelt: e.target.value,
+                        });
                       }}
                       className="w-20 p-2 border border-gray-300 rounded text-center text-sm"
                       min="0"
@@ -292,8 +304,11 @@ const AllProductsPage = () => {
                       min="0"
                       max="5000"
                       value={filterData.pricegt}
-                      onChange={(e)=>{
-                          setFilterData({...filterData,pricegt:e.target.value})
+                      onChange={(e) => {
+                        setFilterData({
+                          ...filterData,
+                          pricegt: e.target.value,
+                        });
                       }}
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                     />
@@ -302,14 +317,18 @@ const AllProductsPage = () => {
                       min="0"
                       max="5000"
                       value={filterData.pricelt}
-                      onChange={(e)=>{
-                          setFilterData({...filterData,pricelt:e.target.value})
+                      onChange={(e) => {
+                        setFilterData({
+                          ...filterData,
+                          pricelt: e.target.value,
+                        });
                       }}
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                     />
                   </div>
                   <p className="mt-2 text-sm font-bold">
-                    Selected range: ${filterData.pricegt} - ${filterData.pricelt}
+                    Selected range: ${filterData.pricegt} - $
+                    {filterData.pricelt}
                   </p>
                 </div>
               )}
@@ -354,9 +373,16 @@ const AllProductsPage = () => {
                         type="checkbox"
                         checked={filterData.collections.includes(collection)}
                         onChange={() => {
-                            setFilterData({...filterData, collections:filterData.collections.includes(collection) ? filterData.collections.filter((item)=> item !== collection) :
-                            [...filterData.collections,collection]
-                          })
+                          setFilterData({
+                            ...filterData,
+                            collections: filterData.collections.includes(
+                              collection
+                            )
+                              ? filterData.collections.filter(
+                                  (item) => item !== collection
+                                )
+                              : [...filterData.collections, collection],
+                          });
                         }}
                         className="form-checkbox text-blue-500"
                       />
@@ -410,14 +436,18 @@ const AllProductsPage = () => {
                         type="checkbox"
                         checked={filterData.tags.includes(tag)}
                         onChange={() => {
-                            setFilterData({...filterData, tags:filterData.tags.includes(tag) ? filterData.tags.filter((item)=> item !== tag) :
-                            [...filterData.tags,tag]})
+                          setFilterData({
+                            ...filterData,
+                            tags: filterData.tags.includes(tag)
+                              ? filterData.tags.filter((item) => item !== tag)
+                              : [...filterData.tags, tag],
+                          });
                         }}
                         className="form-checkbox text-blue-500"
                       />
                       <span
                         className={`text-sm font-bold ${
-                         filterData.tags.includes(tag)
+                          filterData.tags.includes(tag)
                             ? "font-bold"
                             : "text-black"
                         }`}
@@ -468,8 +498,14 @@ const AllProductsPage = () => {
                         type="checkbox"
                         checked={filterData.ratings.includes(rating)}
                         onChange={() => {
-                            setFilterData({...filterData, ratings:filterData.ratings.includes(rating) ? filterData.ratings.filter((item)=> item !== rating) :
-                            [...filterData.ratings,rating]})
+                          setFilterData({
+                            ...filterData,
+                            ratings: filterData.ratings.includes(rating)
+                              ? filterData.ratings.filter(
+                                  (item) => item !== rating
+                                )
+                              : [...filterData.ratings, rating],
+                          });
                         }}
                         className="form-checkbox h-4 w-4 text-yellow-400 border-gray-300 rounded"
                       />
@@ -505,10 +541,10 @@ const AllProductsPage = () => {
 
             <div className="flex space-x-4 my-6">
               <button
-                onClick={()=>{
-                  setFilterData(initialFilter)
+                onClick={() => {
+                  setFilterData(initialFilter);
                   setTimeout(() => {
-                    refetch()
+                    refetch();
                   }, 500);
                 }}
                 className="w-full py-2 bg-black hover:text-[#D9D9D9] text-white font-semibold rounded"
@@ -516,8 +552,8 @@ const AllProductsPage = () => {
                 Clear All
               </button>
               <button
-                onClick={()=>{
-                  refetch()
+                onClick={() => {
+                  refetch();
                 }}
                 className="w-full py-2 bg-[#D9D9D9] text-black hover:text-white font-semibold rounded"
               >
@@ -605,52 +641,72 @@ const AllProductsPage = () => {
 
           {/* Display Filtered Products */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-6 pt-10">
-            {products ?
-            products?.data.detail.total === 0 ? (
-              <p className="text-gray-500">No items found for this filter.</p>
-            ):
-             products.data.detail.data.map(({ _id, name, photos, price, offerPrice }) => {
-                // Find the item to calculate max rating and offer percentage
-                // const maxRating = Math.max(...item.ratings);
-                const offerPercentage = Math.round(
-                  ((price - offerPrice) / price) * 100
-                );
-                return (
-                  <div key={_id}> <Link to={`/one-product?id=${_id}`}>
-                    <div className="border rounded-md p-4">
-                      <img
-                        src={photos[0]}
-                        alt={name}
-                        className="h-80 w-full object-contain"
-                      />
-                      <div className="flex items-center space-x-3 pt-2">
-                        <p className="font-medium text-xs text-gray-600">
-                          {name}
-                        </p>
-                        <p className="font-medium text-xs text-gray-600">
-                          {/* ({maxRating} ratings) */}
-                        </p>
+            {products ? (
+              products?.data.detail.total === 0 ? (
+                <p className="text-gray-500">No items found for this filter.</p>
+              ) : (
+                products.data.detail.data.map(
+                  ({ _id, name, photos, price, offerPrice }) => {
+                    // Find the item to calculate max rating and offer percentage
+                    // const maxRating = Math.max(...item.ratings);
+                    const offerPercentage = Math.round(
+                      ((price - offerPrice) / price) * 100
+                    );
+                    return (
+                      <div key={_id}>
+                        {" "}
+                        <Link to={`/one-product?id=${_id}`}>
+                          <div className="border rounded-md p-4">
+                            <img
+                              src={photos[0]}
+                              alt={name}
+                              className="h-80 w-full object-contain"
+                            />
+                            <div className="flex items-center space-x-3 pt-2">
+                              <p className="font-medium text-xs text-gray-600">
+                                {name}
+                              </p>
+                              <p className="font-medium text-xs text-gray-600">
+                                {/* ({maxRating} ratings) */}
+                              </p>
+                            </div>
+                            <div className="flex items-center justify-between pt-2">
+                              <h2 className="font-medium text-sm">{name}</h2>
+                              <p className="text-gray-600 line-through">
+                                Rs.{price}
+                              </p>
+                              <p className="text-lg font-bold">
+                                Rs.{offerPrice}
+                              </p>
+                              <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
+                                {offerPercentage}% OFF
+                              </p>
+                            </div>
+                          </div>
+                        </Link>
                       </div>
-                      <div className="flex items-center justify-between pt-2">
-                        <h2 className="font-medium text-sm">{name}</h2>
-                        <p className="text-gray-600 line-through">Rs.{price}</p>
-                        <p className="text-lg font-bold">Rs.{offerPrice}</p>
-                        <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
-                          {offerPercentage}% OFF
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                  </div>
-                 
-                );
-              })
-             : isError && <p className="text-gray-500">Products not found Something went wrong</p> }
+                    );
+                  }
+                )
+              )
+            ) : (
+              isError && (
+                <p className="text-gray-500">
+                  Products not found Something went wrong
+                </p>
+              )
+            )}
           </div>
           <div className=" flex justify-center pt-10 pb-5 px-5">
-             <Pagination value={currentPage} onChange={(value)=>{setCurrentPage(value)}} total={products?.data?.detail.total} hideOnSinglePage />
+            <Pagination
+              value={currentPage}
+              onChange={(value) => {
+                setCurrentPage(value);
+              }}
+              total={products?.data?.detail.total}
+              hideOnSinglePage
+            />
           </div>
-         
         </div>
       </div>
     </section>

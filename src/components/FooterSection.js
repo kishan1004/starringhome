@@ -35,13 +35,13 @@ const FooterSection = (props) => {
           data-aos-duration="1000"
         />
         <h2 className="text-2xl font-bold mb-4">Newsletter</h2>
-        <div className="flex items-center justify-between border border-gray-300 max-w-lg mx-auto py-2">
+        <div className="flex items-center justify-between border border-gray-300 max-w-lg mx-auto rounded-full">
           <input
             type="email"
-            placeholder="    Enter your email here"
+            placeholder="     Enter your email here"
             className="w-full text-gray-600 placeholder-gray-500 focus:outline-none bg-[#FAFAFA]"
           />
-          <button className="mx-4 text-black font-bold hover:text-gray-700">
+          <button className="px-4 py-2 text-white rounded-full bg-black font-bold hover:text-gray-700">
             SUBSCRIBE
           </button>
         </div>

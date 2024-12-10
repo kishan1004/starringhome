@@ -5,8 +5,8 @@ const FeatureSection = (props) => {
     {
       icon1: (
         <svg
-          width="140"
-          height="130"
+          width="80"
+          height="80"
           viewBox="0 0 164 164"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +22,7 @@ const FeatureSection = (props) => {
       icon2: (
         <svg
           width="161"
-          height="11"
+          height="6"
           viewBox="0 0 161 11"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -37,9 +37,9 @@ const FeatureSection = (props) => {
     {
       icon1: (
         <svg
-          width="114"
-          height="116"
-          viewBox="0 0 134 156"
+          width="80"
+          height="80"
+          viewBox="0 0 134 146"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -72,7 +72,7 @@ const FeatureSection = (props) => {
       icon2: (
         <svg
           width="161"
-          height="11"
+          height="6"
           viewBox="0 0 161 11"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -87,8 +87,8 @@ const FeatureSection = (props) => {
     {
       icon1: (
         <svg
-          width="120"
-          height="148"
+          width="80"
+          height="80"
           viewBox="0 0 140 188"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +110,7 @@ const FeatureSection = (props) => {
       icon2: (
         <svg
           width="161"
-          height="11"
+          height="6"
           viewBox="0 0 161 11"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
