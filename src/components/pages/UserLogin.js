@@ -105,6 +105,25 @@ const UserLogin = () => {
       <div className="flex md:min-h-screen">
         {/* Left Side - Form Section */}
         <div className="flex flex-col justify-center items-center md:w-1/2 md:p-8 p-4">
+          <div className="md:px-10  px-4 pb-4 pt-10 text-start">
+            <Link to="/">
+              <svg
+                width="62"
+                height="14"
+                viewBox="0 0 62 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M60.5 7H1M1 7L7 1M1 7L7 13"
+                  stroke="black"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
           <h1 className="text-3xl font-bold mb-4 text-center">
             Welcome Back{" "}
             <span role="img" aria-label="wave">

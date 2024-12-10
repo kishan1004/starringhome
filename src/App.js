@@ -101,7 +101,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ScrollToTop />
       <div className="App bg-[#FAFAFA] ">
-        <CursorBlur />
+        {!window.location.pathname.startsWith("/admin") && <CursorBlur />}
         <Routes>
           {/* Public Routes */}
           <Route

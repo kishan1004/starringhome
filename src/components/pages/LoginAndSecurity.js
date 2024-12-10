@@ -24,7 +24,26 @@ const LoginAndSecurity = () => {
 
       <div className="flex md:min-h-screen">
         {/* Left Side - Form Section */}
-        <div className="md:w-1/2 m-5 p-6">
+        <div className="md:w-1/2 p-6">
+          <div className="w-full pb-4">
+            <Link to="/user-account">
+              <svg
+                width="62"
+                height="14"
+                viewBox="0 0 62 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M60.5 7H1M1 7L7 1M1 7L7 13"
+                  stroke="black"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
           <h2 className="text-xl font-bold mb-4">Login and Security</h2>
 
           {/* Username Section */}

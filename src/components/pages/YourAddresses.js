@@ -6,54 +6,45 @@ import { deleteAddress, getAddresses } from "../../api/user";
 import { jwtDecode } from "jwt-decode";
 
 const YourAddresses = () => {
-  const [addresses,setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    const token = localStorage.getItem('userToken');
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
     const user = jwtDecode(token);
     console.log(user);
-    const fetchAddresses = async()=>{
-      try{
+    const fetchAddresses = async () => {
+      try {
         const res = await getAddresses();
-        if(res.status===200)
-        {
+        if (res.status === 200) {
           console.log(res.data);
           setAddresses(res.data.detail.data);
-        }
-        else
-        {
+        } else {
           console.log(res.data);
         }
-      }
-      catch(err)
-      {
+      } catch (err) {
         console.error(err);
       }
-    }
+    };
     fetchAddresses();
-  },[])
+  }, []);
 
+  const handleAddressUpdate = async (id) => {
+    navigate(`/add-address/${id}`);
+  };
 
-  const handleAddressUpdate = async(id)=>{
-    navigate(`/add-address/${id}`)
-  }
-
-  const handleAddressDelete = async(id)=>{
+  const handleAddressDelete = async (id) => {
     const addressId = [];
     addressId.push(id);
-    try{
+    try {
       const res = await deleteAddress(addressId);
-      if(res.status===200)
-      {
+      if (res.status === 200) {
         console.log(res);
       }
-    }
-    catch(err)
-    {
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
   return (
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
@@ -63,7 +54,26 @@ const YourAddresses = () => {
       <div className="flex md:min-h-screen">
         {/* Left Side - Form Section */}
 
-        <div className="md:w-1/2 m-5 p-4">
+        <div className="md:w-1/2 p-4">
+          <div className="w-full pb-4">
+            <Link to="/user-account">
+              <svg
+                width="62"
+                height="14"
+                viewBox="0 0 62 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M60.5 7H1M1 7L7 1M1 7L7 13"
+                  stroke="black"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
           <h1 className="text-2xl font-semibold mb-6">Your Addresses</h1>
           <div className="grid grid-cols-1 gap-6">
             {/* Add Address Card */}
@@ -98,10 +108,16 @@ const YourAddresses = () => {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-4 mt-4 text-sm">
-                  <button onClick={()=>handleAddressUpdate(address._id)} className="text-blue-500 hover:underline">
+                  <button
+                    onClick={() => handleAddressUpdate(address._id)}
+                    className="text-blue-500 hover:underline"
+                  >
                     Edit
                   </button>
-                  <button onClick={()=>handleAddressDelete(address._id)} className="text-blue-500 hover:underline">
+                  <button
+                    onClick={() => handleAddressDelete(address._id)}
+                    className="text-blue-500 hover:underline"
+                  >
                     Remove
                   </button>
                   {!address.isDefault && (

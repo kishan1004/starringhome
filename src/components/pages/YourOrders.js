@@ -38,6 +38,25 @@ const YourOrders = () => {
       <div className="flex md:min-h-screen">
         {/* Left Side - Form Section */}
         <div className="min-h-screen bg-gray-100 py-8 md:w-1/2 w-full">
+          <div className="w-full p-4">
+            <Link to="/user-account">
+              <svg
+                width="62"
+                height="14"
+                viewBox="0 0 62 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M60.5 7H1M1 7L7 1M1 7L7 13"
+                  stroke="black"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">
               Your Orders
