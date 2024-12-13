@@ -218,6 +218,7 @@ function App() {
                         />
                         <Route path="coupons" element={<AdminCouponPage />} />
                         <Route path="add-coupon" element={<AddCouponPage />} />
+                         <Route path="add-coupon/:couponid" element={<AddCouponPage />} />
                         <Route
                           path="comboproducts"
                           element={<AdminComboProductsPage />}

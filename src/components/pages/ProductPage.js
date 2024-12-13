@@ -18,16 +18,25 @@ import FrequentProduct1 from "../../images/product1.jpeg";
 import FrequentProduct2 from "../../images/product3.jpeg";
 import { addToCart, getProductById, addFavouriteProduct } from "../../api/user";
 import { buyOrder } from "../../api/admin";
+import { useQuery } from "react-query";
 
 const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState("M");
   const [params] = useSearchParams();
   const productKey = params.get("id");
-  const [product, setProduct] = useState(null);
   const [isRed, setIsRed] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const navigate = useNavigate();
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
+  const {data,isLoading,isError} = useQuery({
+    queryKey:['individualProduct',{productKey}],
+     queryFn:()=> getProductById(productKey),
+     enabled: !!productKey
+  })
+ let product = isError ? false : data?.data?.detail
+
+ 
   const similarProducts = [
     {
       id: 1,
@@ -85,7 +94,7 @@ const ProductPage = () => {
     { text: "Fast delivery and amazing deals.", author: "Emily Davis" },
   ];
 
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  
 
   const handleProductSelect = (productId) => {
     setSelectedProducts((prevSelected) =>
@@ -95,14 +104,6 @@ const ProductPage = () => {
     );
   };
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      const res = await getProductById(productKey);
-      setProduct(res.data.detail);
-      console.log(res.data.detail);
-    };
-    fetchProduct();
-  }, [productKey]);
 
   const handleClick = (id) => {
     setIsRed((prev) => !prev);
@@ -127,9 +128,6 @@ const ProductPage = () => {
     });
   };
 
-  if (!product) {
-    return <div>Loading...</div>;
-  }
 
   const allSizes = ["XS", "S", "M", "L", "XL", "2X"];
 
@@ -156,7 +154,9 @@ const ProductPage = () => {
           </svg>
         </Link>
       </div>
-      <div className="md:flex items-center justify-center lg:px-32 p-4 pt-10">
+      {
+        product ?
+          <div className="md:flex items-center justify-center lg:px-32 p-4 pt-10">
         <div className="grid grid-cols-5 gap-4 max-w-4xl md:w-1/2 max-h-[600px] md:p-4 pb-4">
           <div className="col-span-4">
             <img
@@ -276,7 +276,9 @@ const ProductPage = () => {
             ADD
           </button>
         </div>
-      </div>
+      </div> : <div className="flex justify-center items-center">Product Not found</div>
+      }
+    
 
       <div>
         <div className="md:p-10 p-3 pb-10 grid lg:grid-cols-2 grid-cols-1 gap-2">

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { axiosInstance } from "../utils/axios";
+import { adminAuthInstance, axiosInstance } from "../utils/axios";
 import { jwtDecode } from "jwt-decode";
 
 /**
@@ -330,36 +330,48 @@ export const deleteContactUs = async (id) => {
   });
 };
 
-// Admin Coupon create
-export const addCoupon = async (data) => {
-  const token = localStorage.getItem("authToken");
-  return axiosInstance.post(`/coupons/create`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
-
-// Admin Coupon  delete
-export const deleteCoupon = async (id) => {
-  const token = localStorage.getItem("authToken");
-  return axiosInstance.delete(`/coupons/{id}/remove`, {
-    data: { couponId: [id] },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
-
 //Admin coupon get
-export const getCoupons = async (page, limit) => {
+export const getCouponsApi = async (page) => {
   const token = localStorage.getItem("authToken");
-  return axiosInstance.get("/coupons/details", {
+  return adminAuthInstance.get(`/coupons/details?page=${page}&limit=10`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
+
+export const getCouponsByIdApi = async (id) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.get(`/coupons/${id}/details`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const createCouponApi = (data) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.post(`/coupons/create`, data,{
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    }}
+  );
+};
+
+export const deleteCouponApi = (data) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.delete(`/coupons/{id}/remove`, {
+    data: { couponId:data.id },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+
+
+
 
 export const getOrder = async (order_id) => {
   const token = localStorage.getItem("authToken");

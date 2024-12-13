@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Product2img from "../../images/imgproduct2.jpeg";
-import Product4img from "../../images/imgproduct4.jpeg";
-import Product5img from "../../images/imgproduct5.jpeg";
-import Product6img from "../../images/imgproduct6.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { userProductsList } from "../../api/user";
 import { useQuery } from "react-query";
 import { Pagination } from "antd";
 import { getCategoryApi } from "../../api/user";
+
+
 
 const sizes = ["XS", "S", "M", "L", "XL", "2X"];
 const tags = ["Top Rated", "BestSeller", "NewTrend", "Classic"];
@@ -22,7 +20,7 @@ const collections = [
 ];
 
 const initialFilter = {
-  sizes: "L",
+  sizes: "",
   categories: [],
   tags: [],
   collections: [],
@@ -44,15 +42,18 @@ const AllProductsPage = () => {
   const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] =
     useState(false);
   const [categories, setCategories] = useState([]);
-
+  let [searchParams]=  useSearchParams();
+  const searchKey = searchParams.get('category')
+  
   const {
     data: products,
     isLoading,
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["allproductrs", { currentPage, searchText }],
+    queryKey: ["allproducts", { currentPage, searchText }],
     queryFn: () => userProductsList(currentPage, searchText, filterData),
+    enabled:false
   });
 
   const { data: category } = useQuery({
@@ -67,7 +68,15 @@ const AllProductsPage = () => {
       });
       setCategories(categorynames);
     }
-  }, [category]);
+
+    if(searchKey){
+     if(filterData.categories.length === 0){
+       setIsCategoryDropdownOpen(true)
+       setFilterData({...filterData,categories: [...filterData.categories, searchKey]})
+     }
+    }
+    setTimeout(()=>{refetch()},200)
+  }, [category,searchParams]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -644,7 +653,7 @@ const AllProductsPage = () => {
             {products ? (
               products?.data.detail.total === 0 ? (
                 <p className="text-gray-500">No items found for this filter.</p>
-              ) : (
+              ) :(
                 products.data.detail.data.map(
                   ({ _id, name, photos, price, offerPrice }) => {
                     // Find the item to calculate max rating and offer percentage

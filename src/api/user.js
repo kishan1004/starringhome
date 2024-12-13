@@ -3,8 +3,8 @@ import { axiosInstance } from "../utils/axios";
 
 export const userLogin = (userName, password) => {
     return axiosInstance.post('user/login', {
-        userName,
-        password
+        userName:userName,
+        password:password
     })
 }
 
@@ -15,11 +15,7 @@ export const userLogin = (userName, password) => {
  * Once ui feature is done, remove .then and handle it on the ui component.
  */
 export const userLogout = async () => {
-    return axiosInstance.delete('user/logout').then(res => {
-        if (res.status === 200) {
-            localStorage.removeItem("userToken");
-        }
-    })
+    return axiosInstance.delete('user/logout')
 }
 
 export const checkUserName = (userName) => {
@@ -53,9 +49,12 @@ export const newarrivalProducts = ()=>{
     return axiosInstance.get(`/users/orders/products?page=1&limit=4`)
 }
 export const userProductsList = (currentPage,searchText,filterData) => {
-    let url = `/users/orders/products?page=${currentPage}&limit=20&sizes=${filterData.sizes}&price_gt=${filterData.pricegt}&price_lt=${filterData.pricelt}`
+    let url = `/users/orders/products?page=${currentPage}&limit=20&price_gt=${filterData.pricegt}&price_lt=${filterData.pricelt}`
     if(searchText !== ''){
         url = url + `&name=${searchText}`
+    }
+    if(filterData.sizes !== ''){
+        url = url + `&name=${filterData.sizes}`
     }
     if(filterData.categories.length > 0){
       url = url + filterData.categories.map((list)=>{
@@ -84,12 +83,7 @@ export const userProductsList = (currentPage,searchText,filterData) => {
 }
 
 export const getProductById = (id) => {
-    console.log("In api",id)
-    if (!id) {
-        console.error("Id is missing");
-        return;
-    }
-    return axiosInstance.get(`/users/orders/products/${id}/view`);
+   return axiosInstance.get(`/users/orders/products/${id}/view`);
 }
 
 
@@ -208,18 +202,6 @@ export const addAddress = (firstName,
     postalCode,
     isDefault,
     id)=>{
-    console.log(firstName,
-        lastName,
-        email,
-        mobileNumber,
-        country,
-        state,
-        address,
-        city,
-        landmark,
-        postalCode,
-        isDefault,
-        id)
     return axiosInstance.put('/users/profiles/address/save/update',
         {
             firstName,
@@ -241,15 +223,10 @@ export const addAddress = (firstName,
 }
 
 
-export const deleteAddress = async(addressId)=>{
-    console.log(addressId);
-    const r = {addressId:addressId};
-    console.log("swagger format",r);
-    return await axiosInstance.delete('users/profiles/adddress/remove',{
-                r
-            }
-    )
-}
+export const deleteAddress = async(data)=>{
+  
+    return await axiosInstance.delete('users/profiles/adddress/remove',data)
+    }
 
 
 export const getUserNotifications =async ()=>{

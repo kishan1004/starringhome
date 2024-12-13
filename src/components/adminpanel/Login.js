@@ -41,18 +41,11 @@ const Login = () => {
 
   useEffect(() => {
     setErrorMessage("");
+    if(localStorage.getItem('authToken')){
+      navigate('/admin/dashboard')
+    }
   }, [username, password]);
 
-  //  const loginUser = (e) => {
-  //   //API: Login api handled set auth state with this, using react context is prefered
-  //   e.preventDefault();
-  //   userLogin(username, password).then(res => {
-  //     if (res.status === 200 && res?.data?.detail?.token) {
-  //       localStorage.setItem('authToken', res?.data?.detail?.token);
-  //       navigate('/admin/dashboard');
-  //     }
-  //   })
-  // }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">

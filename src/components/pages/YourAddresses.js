@@ -12,7 +12,6 @@ const YourAddresses = () => {
   useEffect(() => {
     const token = localStorage.getItem("userToken");
     const user = jwtDecode(token);
-    console.log(user);
     const fetchAddresses = async () => {
       try {
         const res = await getAddresses();
@@ -34,17 +33,17 @@ const YourAddresses = () => {
   };
 
   const handleAddressDelete = async (id) => {
-    const addressId = [];
-    addressId.push(id);
-    try {
-      const res = await deleteAddress(addressId);
+      try {
+      const res = await deleteAddress({data:{addressId:[id]}});
       if (res.status === 200) {
         console.log(res);
+         navigate(`/addresses`);
       }
     } catch (err) {
       console.log(err);
     }
   };
+
   return (
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
