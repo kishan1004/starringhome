@@ -1,60 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { getInventoryDetailsandExport } from "../../api/admin";
+import { useQuery } from "react-query";
+import moment from "moment";
+import { Pagination } from "antd";
 
 const Inventory = () => {
   const [dateRange, setDateRange] = useState({ startDate: "", endDate: "" });
   const [currentPage, setCurrentPage] = useState(1);
-  const [inventory, setInventory] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
   const [isExcelExportingInProgress, setIsExcelExportingInProgress] =
     useState(false);
-  const itemsPerPage = 4; // Adjust as needed
+  const pageSize = 10;
 
-  useEffect(() => {
-    if (
-      (dateRange.startDate && dateRange.endDate) ||
-      (!dateRange.startDate && !dateRange.endDate)
-    ) {
-      fetchInventory();
-    }
-  }, [dateRange]);
+  const { data: inventory,isLoading,isError } = useQuery({
+    queryKey: ["getAllinventory", { dateRange }],
+    queryFn: () =>
+      getInventoryDetailsandExport(
+        dateRange,
+        false,
+        ""
+      ),
+  });
 
-  // Helper to construct API params
-  const constructParams = (exportType = false) => {
-    const { startDate, endDate } = dateRange;
-    const params = { export: exportType };
-    if (startDate) params["start_date"] = startDate;
-    if (endDate) params["end_date"] = endDate;
-    if (exportType) params["export_type"] = "excel";
-    return params;
-  };
-
-  // Fetch inventory data
-  const fetchInventory = async () => {
-    setIsLoading(true);
-    const params = constructParams();
-    try {
-      const res = await getInventoryDetailsandExport(params);
-      if (res.status === 200) {
-        setInventory(res.data.detail.data);
-        setError(false);
-      } else {
-        setError(true);
-      }
-    } catch (error) {
-      setError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+   const currentData = inventory?.data.detail.data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // Export inventory to Excel
   const excelExportInventory = async () => {
     setIsExcelExportingInProgress(true);
-    const params = constructParams(true);
     try {
-      const res = await getInventoryDetailsandExport(params);
+      const res = await getInventoryDetailsandExport(dateRange , true, "excel");
       if (res.status === 200) {
         const blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
         const link = document.createElement("a");
@@ -75,21 +48,10 @@ const Inventory = () => {
 
   // Handle date input changes
   const handleDateChange = (field, value) => {
-    setDateRange((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const totalPages = Math.ceil(inventory.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentInventory = inventory.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
-
-  // Handle pagination
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+    setDateRange((prev) => ({
+      ...prev,
+      [field]: value !== '' ? moment(value).format("DD/MM/YYYY") : '',
+    }));
   };
 
   return (
@@ -104,7 +66,7 @@ const Inventory = () => {
           <input
             id="start-date"
             type="date"
-            value={dateRange.startDate}
+            // value={moment(dateRange.startDate).format("YYYY-DD-MM")}
             onChange={(e) => handleDateChange("startDate", e.target.value)}
             className="px-3 py-2 border rounded w-full md:w-auto"
           />
@@ -114,7 +76,7 @@ const Inventory = () => {
           <input
             id="end-date"
             type="date"
-            value={dateRange.endDate}
+            // value={moment(dateRange.endDate).format("YYYY-DD-MM")}
             onChange={(e) => handleDateChange("endDate", e.target.value)}
             className="px-3 py-2 border rounded w-full md:w-auto"
           />
@@ -123,7 +85,7 @@ const Inventory = () => {
           <button
             className="bg-black text-white px-2 py-2 rounded"
             onClick={excelExportInventory}
-            disabled={isExcelExportingInProgress || currentInventory.length < 1}
+            disabled={isExcelExportingInProgress || inventory?.data.detail.total === 0}
           >
             {isExcelExportingInProgress ? "Exporting..." : "Export in Excel"}
           </button>
@@ -142,7 +104,7 @@ const Inventory = () => {
           </tr>
         </thead>
         <tbody>
-          {error && (
+          {isError && (
             <tr className="border">
               <td className="px-6 py-4 border">Something went wrong</td>
             </tr>
@@ -152,8 +114,8 @@ const Inventory = () => {
               <td className="px-6 py-4 border">Loading...</td>
             </tr>
           )}
-          {!error && !isLoading && currentInventory.length > 0
-            ? currentInventory.map((item) => (
+          {!isError && !isLoading 
+            ? currentData.map((item) => (
                 <tr key={item.productId} className="text-center">
                   <td className="py-3 px-4 border">{item.productId}</td>
                   <td className="py-3 px-4 border">{item.productName}</td>
@@ -166,9 +128,9 @@ const Inventory = () => {
                   <td className="py-3 px-4 border">{item.shippedStock}</td>
                 </tr>
               ))
-            : !error &&
+            : !isError &&
               !isLoading &&
-              currentInventory.length === 0 && (
+             inventory?.data.detail.total === 0 && (
                 <tr>
                   <td colSpan="7" className="py-3 px-4 border text-center">
                     No inventory data found for the selected date range.
@@ -177,37 +139,15 @@ const Inventory = () => {
               )}
         </tbody>
       </table>
-      {/* Pagination Controls */}
-      <div className="flex justify-center items-center mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
-        >
-          Previous
-        </button>
-
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${
-              currentPage === i + 1
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
-          >
-            {i === 0 ? 1 : i + 1}
-          </button>
-        ))}
-
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
-        >
-          Next
-        </button>
+      <div className=" flex justify-center pt-10 pb-5 px-5">
+        <Pagination
+          value={currentPage}
+          onChange={(value) => {
+            setCurrentPage(value);
+          }}
+          total={inventory?.data.detail.total}
+          //hideOnSinglePage
+        />
       </div>
     </div>
   );

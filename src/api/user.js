@@ -258,3 +258,7 @@ export const proceedPaymentApi =async (orderId, amt) => {
         amt: amt*100
     });
 }
+
+export const getTestimonialApi = ()=>{
+ return axiosInstance.get(`users/orders/testimonials?page=1&limit=15`)
+}
