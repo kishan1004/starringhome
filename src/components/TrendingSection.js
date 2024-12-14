@@ -20,42 +20,40 @@ const TrendingSection = (props) => {
         id={props.id}
       >
         {/* Left Section */}
-      
+
         <div
           className="relative col-span-1 bg-cover cursor-pointer"
           style={{ backgroundImage: `url(${Product1})` }}
         >
-          <Link to={'/all-products?category=Hoodie'} > 
-          <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
-          <div
-            className="absolute bottom-14 left-8 text-white text-2xl font-semibold"
-            data-aos="flip-left"
-          >
-            <p>Hoodie</p>
-          </div>
+          <Link to={"/all-products?category=Hoodie"}>
+            <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
+            <div
+              className="absolute bottom-14 left-8 text-white text-2xl font-semibold"
+              data-aos="flip-left"
+            >
+              <p>Hoodie</p>
+            </div>
           </Link>
         </div>
-        
-       
 
         {/* Center Section */}
         <div
           className="relative lg:col-span-3 col-span-1 bg-cover bg-center cursor-pointer"
           style={{ backgroundImage: `url(${Centerimage})` }}
         >
-            <Link to={'/all-products?category=Shirt'} > 
-          <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
-          <div className="flex justify-end mr-10">
-            <div
-              className="absolute flex flex-col justify-center items-end  text-white h-full"
-              data-aos="flip-left"
-            >
-              <p className="text-3xl font-semibold text-end">Shirts</p>
-              <p className="text-6xl font-bold mt-2 ">2024</p>
-              <hr className="w-36 border-t-2" />
+          <Link to={"/all-products?category=Shirt"}>
+            <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
+            <div className="flex justify-end mr-10">
+              <div
+                className="absolute flex flex-col justify-center items-end  text-white h-full"
+                data-aos="flip-left"
+              >
+                <p className="text-3xl font-semibold text-end">Shirts</p>
+                <p className="text-6xl font-bold mt-2 ">2024</p>
+                <hr className="w-36 border-t-2" />
+              </div>
             </div>
-          </div>
-            </Link> 
+          </Link>
         </div>
 
         {/* Right Section */}
@@ -63,17 +61,16 @@ const TrendingSection = (props) => {
           className="relative col-span-1 bg-cover cursor-pointer"
           style={{ backgroundImage: `url(${Product2})` }}
         >
-          <Link to={'/all-products?category=T-Shirt'} > 
-          <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
-          <div
-            className="absolute bottom-14 left-8 text-white text-2xl text-center font-semibold"
-            data-aos="flip-left"
-          >
-            <p>T-shirts</p>
-          </div>
+          <Link to={"/all-products?category=T-Shirt"}>
+            <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
+            <div
+              className="absolute bottom-14 left-8 text-white text-2xl text-center font-semibold"
+              data-aos="flip-left"
+            >
+              <p>T-shirts</p>
+            </div>
           </Link>
         </div>
-     
       </div>
 
       <div className="relative 2xl:h-[700px] h-[600px] max-w[1440px] w-full mx-auto bg-cover max-sm:bg-center">

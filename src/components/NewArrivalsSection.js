@@ -51,8 +51,7 @@ const ProductCard = ({ image, title, price, id }) => {
 
 // Main Component
 const NewArrivalsSection = (props) => {
-
-   const {
+  const {
     data: products,
     isLoading,
     isError,

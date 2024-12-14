@@ -82,6 +82,10 @@ export const orderDetails = (page, limit = 20) => {
 
 /* Product API */
 
+export const getAllProductsApi = ()=>{
+  return adminAuthInstance.get(`/admin/products/details`)
+}
+
 export const getProductList = (page, limit = 50) => {
   return axiosInstance.get("/admin/products/details", {
     params: {
@@ -370,9 +374,6 @@ export const deleteCouponApi = (data) => {
 }
 
 
-
-
-
 export const getOrder = async (order_id) => {
   const token = localStorage.getItem("authToken");
   return axiosInstance.get(`/admin/orders/${order_id}`, {
@@ -438,3 +439,32 @@ export const getInventoryDetailsandExport = async (args) => {
     },
   });
 };
+
+//combo api
+export const createComboApi = (data) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.post(`/admin/combo/products/add`, data,{
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    }}
+  );
+};
+
+export const getComboApi = async (page) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.get(`/admin/combo/products/details?page=${page}&limit=10`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const deleteComboApi = (data) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.delete(`/admin/combo/products/${data.id}/remove`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}

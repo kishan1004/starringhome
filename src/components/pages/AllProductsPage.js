@@ -5,8 +5,6 @@ import { useQuery } from "react-query";
 import { Pagination } from "antd";
 import { getCategoryApi } from "../../api/user";
 
-
-
 const sizes = ["XS", "S", "M", "L", "XL", "2X"];
 const tags = ["Top Rated", "BestSeller", "NewTrend", "Classic"];
 const collections = [
@@ -42,9 +40,9 @@ const AllProductsPage = () => {
   const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] =
     useState(false);
   const [categories, setCategories] = useState([]);
-  let [searchParams]=  useSearchParams();
-  const searchKey = searchParams.get('category')
-  
+  let [searchParams] = useSearchParams();
+  const searchKey = searchParams.get("category");
+
   const {
     data: products,
     isLoading,
@@ -53,7 +51,7 @@ const AllProductsPage = () => {
   } = useQuery({
     queryKey: ["allproducts", { currentPage, searchText }],
     queryFn: () => userProductsList(currentPage, searchText, filterData),
-    enabled:false
+    enabled: false,
   });
 
   const { data: category } = useQuery({
@@ -69,14 +67,19 @@ const AllProductsPage = () => {
       setCategories(categorynames);
     }
 
-    if(searchKey){
-     if(filterData.categories.length === 0){
-       setIsCategoryDropdownOpen(true)
-       setFilterData({...filterData,categories: [...filterData.categories, searchKey]})
-     }
+    if (searchKey) {
+      if (filterData.categories.length === 0) {
+        setIsCategoryDropdownOpen(true);
+        setFilterData({
+          ...filterData,
+          categories: [...filterData.categories, searchKey],
+        });
+      }
     }
-    setTimeout(()=>{refetch()},200)
-  }, [category,searchParams]);
+    setTimeout(() => {
+      refetch();
+    }, 200);
+  }, [category, searchParams]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -653,7 +656,7 @@ const AllProductsPage = () => {
             {products ? (
               products?.data.detail.total === 0 ? (
                 <p className="text-gray-500">No items found for this filter.</p>
-              ) :(
+              ) : (
                 products.data.detail.data.map(
                   ({ _id, name, photos, price, offerPrice }) => {
                     // Find the item to calculate max rating and offer percentage
