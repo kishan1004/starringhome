@@ -32,7 +32,7 @@ export const userLogin = (email, password) => {
 };
 
 export const userLogout = () => {
-  return axiosInstance.delete("/user/auth/logout");
+  return adminAuthInstance.delete("/user/auth/logout");
 };
 
 /* Profile APIs */
