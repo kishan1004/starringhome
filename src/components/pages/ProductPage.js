@@ -19,6 +19,7 @@ import FrequentProduct2 from "../../images/product3.jpeg";
 import { addToCart, getProductById, addFavouriteProduct } from "../../api/user";
 import { buyOrder } from "../../api/admin";
 import { useQuery } from "react-query";
+import { getTestimonialApi } from "../../api/user";
 
 const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState("M");
@@ -29,14 +30,20 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const [selectedProducts, setSelectedProducts] = useState([]);
 
-  const {data,isLoading,isError} = useQuery({
-    queryKey:['individualProduct',{productKey}],
-     queryFn:()=> getProductById(productKey),
-     enabled: !!productKey
-  })
- let product = isError ? false : data?.data?.detail
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["individualProduct", { productKey }],
+    queryFn: () => getProductById(productKey),
+    enabled: !!productKey,
+  });
 
- 
+  const {data:reviews} = useQuery({
+    queryKey: ["reviews"],
+    queryFn: () => getTestimonialApi(),
+  });
+
+
+  let product = isError ? false : data?.data?.detail;
+
   const similarProducts = [
     {
       id: 1,
@@ -94,8 +101,6 @@ const ProductPage = () => {
     { text: "Fast delivery and amazing deals.", author: "Emily Davis" },
   ];
 
-  
-
   const handleProductSelect = (productId) => {
     setSelectedProducts((prevSelected) =>
       prevSelected.includes(productId)
@@ -103,7 +108,6 @@ const ProductPage = () => {
         : [...prevSelected, productId]
     );
   };
-
 
   const handleClick = (id) => {
     setIsRed((prev) => !prev);
@@ -127,7 +131,6 @@ const ProductPage = () => {
       }
     });
   };
-
 
   const allSizes = ["XS", "S", "M", "L", "XL", "2X"];
 
@@ -154,131 +157,135 @@ const ProductPage = () => {
           </svg>
         </Link>
       </div>
-      {
-        product ?
-          <div className="md:flex items-center justify-center lg:px-32 p-4 pt-10">
-        <div className="grid grid-cols-5 gap-4 max-w-4xl md:w-1/2 max-h-[600px] md:p-4 pb-4">
-          <div className="col-span-4">
-            <img
-              src={product.photos[selectedImage]}
-              alt="Main Product"
-              className="w-full h-[560px] object-cover"
-            />
-          </div>
-
-          <div className="flex flex-col space-y-4">
-            {product.photos.map((image, index) => (
+      {product ? (
+        <div className="md:flex items-center justify-center lg:px-32 p-4 pt-10">
+          <div className="grid grid-cols-5 gap-4 max-w-4xl md:w-1/2 max-h-[600px] md:p-4 pb-4">
+            <div className="col-span-4">
               <img
-                key={index}
-                src={image}
-                alt={`Thumbnail ${index + 1}`}
-                className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${
-                  selectedImage === index ? "opacity-100" : "opacity-50"
-                }`}
-                onClick={() => setSelectedImage(index)}
+                src={product.photos[selectedImage]}
+                alt="Main Product"
+                className="w-full h-[560px] object-cover"
               />
-            ))}
-          </div>
-        </div>
-
-        <div className="lg:max-w-[380px] md:w-1/2 px-10 border-2 relative">
-          <button
-            className="absolute top-0 right-0"
-            onClick={() => handleClick(product._id)}
-            style={{
-              border: "none",
-              padding: "10px",
-              cursor: "pointer",
-            }}
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill={isRed ? "red" : "white"}
-              stroke="black"
-              strokeWidth="2"
-              xmlns="http://www.w3.org/2000/svg"
-              style={{ transform: "rotate(-40deg)" }}
-            >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-          </button>
-          <h2 className="md:text-2xl text-xl font-semibold pt-10">
-            {product.name}
-          </h2>
-          <div className="flex items-center space-x-2">
-            <p className="text-sm line-through text-gray-500">
-              Rs.{product.price}
-            </p>
-            <p className="text-lg font-bold">Rs.{product.offerPrice}</p>
-
-            <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
-              {product.offerPercentage}% OFF
-            </p>
-            <div className="flex">
-              {product.rating}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-5 h-5 text-yellow-500"
-              >
-                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-              </svg>
             </div>
-          </div>
 
-          {product.stockCount < 9 && (
-            <p className="text-sm text-red-600 pt-2">
-              <strong>Hurry! Only {product.stockCount} left in stock.</strong>
-            </p>
-          )}
-
-          <p className="text-sm text-gray-500">MRP incl. of all taxes</p>
-
-          <p className="text-xs font-medium text-gray-600 py-5">
-            {product.description}
-          </p>
-
-          <div className="mb-6">
-            <h3 className="text-xs font-light text-gray-600 mb-2">Size</h3>
-            <div className="grid grid-cols-3 gap-5 md:grid-cols-6 md:gap-2">
-              {allSizes.map((size) => (
-                <button
-                  key={size}
-                  onClick={() =>
-                    product.sizes.includes(size) && setSelectedSize(size)
-                  }
-                  disabled={!product.sizes.includes(size)}
-                  className={`py-2 border ${
-                    product.sizes.includes(size)
-                      ? selectedSize === size
-                        ? "border-black"
-                        : "border-gray-300"
-                      : "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
-                  } hover:border-black ${
-                    !product.sizes.includes(size) ? "hover:border-gray-300" : ""
+            <div className="flex flex-col space-y-4">
+              {product.photos.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`Thumbnail ${index + 1}`}
+                  className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${
+                    selectedImage === index ? "opacity-100" : "opacity-50"
                   }`}
-                >
-                  {size}
-                </button>
+                  onClick={() => setSelectedImage(index)}
+                />
               ))}
             </div>
           </div>
-          <p className="text-xs text-gray-500 pb-3 underline">
-            <Link to="/size-chart">FIND YOUR SIZE | MEASUREMENT GUIDE</Link>
-          </p>
-          <button
-            className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white"
-            onClick={handleAddToCart}
-          >
-            ADD
-          </button>
+
+          <div className="lg:max-w-[380px] md:w-1/2 px-10 border-2 relative">
+            <button
+              className="absolute top-0 right-0"
+              onClick={() => handleClick(product._id)}
+              style={{
+                border: "none",
+                padding: "10px",
+                cursor: "pointer",
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill={isRed ? "red" : "white"}
+                stroke="black"
+                strokeWidth="2"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ transform: "rotate(-40deg)" }}
+              >
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </button>
+            <h2 className="md:text-2xl text-xl font-semibold pt-10">
+              {product.name}
+            </h2>
+            <div className="flex items-center space-x-2">
+              <p className="text-sm line-through text-gray-500">
+                Rs.{product.price}
+              </p>
+              <p className="text-lg font-bold">Rs.{product.offerPrice}</p>
+
+              <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
+                {product.offerPercentage}% OFF
+              </p>
+              <div className="flex">
+                {product.rating}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 text-yellow-500"
+                >
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
+              </div>
+            </div>
+
+            {product.stockCount < 9 && (
+              <p className="text-sm text-red-600 pt-2">
+                <strong>Hurry! Only {product.stockCount} left in stock.</strong>
+              </p>
+            )}
+
+            <p className="text-sm text-gray-500">MRP incl. of all taxes</p>
+
+            <p className="text-xs font-medium text-gray-600 py-5">
+              {product.description}
+            </p>
+
+            <div className="mb-6">
+              <h3 className="text-xs font-light text-gray-600 mb-2">Size</h3>
+              <div className="grid grid-cols-3 gap-5 md:grid-cols-6 md:gap-2">
+                {allSizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() =>
+                      product.sizes.includes(size) && setSelectedSize(size)
+                    }
+                    disabled={!product.sizes.includes(size)}
+                    className={`py-2 border ${
+                      product.sizes.includes(size)
+                        ? selectedSize === size
+                          ? "border-black"
+                          : "border-gray-300"
+                        : "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
+                    } hover:border-black ${
+                      !product.sizes.includes(size)
+                        ? "hover:border-gray-300"
+                        : ""
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 pb-3 underline">
+              <Link to="/size-chart">FIND YOUR SIZE | MEASUREMENT GUIDE</Link>
+            </p>
+            <button
+              className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white"
+              onClick={handleAddToCart}
+            >
+              ADD
+            </button>
+          </div>
         </div>
-      </div> : <div className="flex justify-center items-center">Product Not found</div>
-      }
-    
+      ) : (
+        <div className="flex justify-center items-center">
+          Product Not found
+        </div>
+      )}
 
       <div>
         <div className="md:p-10 p-3 pb-10 grid lg:grid-cols-2 grid-cols-1 gap-2">
@@ -357,13 +364,13 @@ const ProductPage = () => {
             <h3 className="text-lg font-semibold mb-4 mt-2">Testimonials</h3>
 
             <div className="grid md:grid-cols-2 grid-cols-1 xl:grid-cols-2 lg:grid-cols-1 gap-4">
-              {testimonials.slice(0, 5).map((testimonial, index) => (
+              {reviews?.data.detail.data.slice(0, 5).map((testimonial, index) => (
                 <div
                   key={index}
                   className="bg-white p-4 rounded-lg shadow-md border"
                 >
                   <p className="text-sm italic text-gray-600">
-                    "{testimonial.text}" - {testimonial.author}
+                    "{testimonial.review}" - {testimonial.name}
                   </p>
                 </div>
               ))}

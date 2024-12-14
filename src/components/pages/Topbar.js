@@ -74,7 +74,7 @@ const Topbar = () => {
           </svg>
         </Link>
 
-        <div className="flex">
+        <div className="flex gap-2">
           <Link to="/shopping-cart">
             <button className="bg-black text-white px-4 md:px-5 py-4 items-center rounded-full hover:text-gray-400 font-medium text-sm hidden lg:block">
               Cart

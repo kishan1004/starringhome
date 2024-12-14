@@ -4,14 +4,14 @@ import axios from "axios";
  * Base url for backend server is mapped here, functions using axios Instance will
  * make call to this baseUrl.
  */
-const baseURL = "https://3.14.249.42:9004/api/v1/"
+const baseURL = "https://3.14.249.42:9004/api/v1/";
 export const axiosInstance = axios.create({
-  baseURL:baseURL ,
+  baseURL: baseURL,
 });
 
 export const adminAuthInstance = axios.create({
-    baseURL:baseURL ,
-})
+  baseURL: baseURL,
+});
 
 /**
  * A request interceptor adds additional property to out going request
@@ -23,7 +23,7 @@ export const adminAuthInstance = axios.create({
  */
 axiosInstance.interceptors.request.use((config) => {
   let apiKey = "";
-  if (config.url.includes("/user/auth") || config.url.includes("/admin")) {
+  if (config.url.split("/").includes("admin")) {
     apiKey = localStorage.getItem("authToken");
   } else {
     apiKey = localStorage.getItem("userToken");
@@ -44,33 +44,23 @@ axiosInstance.interceptors.response.use(
     return res;
   },
   (error) => {
-    if (error?.response?.status === 403 || error?.response?.status === 401) {
+     console.log(error)
+    if (error?.response?.status === 401) {
       let url = error?.config?.url;
-      if (url.includes("/user/auth") || url.includes("/admin")) {
+      if (url.split("/").includes("admin") || error?.response?.data.detail[0].msg ==='Not authenticated') {
         window.location.href = "/admin/login";
       } else {
-        if (url.includes("/user-login")) {
-          return;
-        } else {
-          window.location.href = "/user-login";
-        }
+        window.location.href = "/user-login";
       }
     }
     return error;
   }
 );
 
-
 adminAuthInstance.interceptors.request.use((config) => {
   let apiKey = "";
-  if (config.url.includes("/user/auth") || config.url.includes("/admin")) {
     apiKey = localStorage.getItem("authToken");
-  } else {
-    apiKey = localStorage.getItem("userToken");
-  }
-  if (apiKey) {
     config.headers["Authorization"] = `Bearer ${apiKey}`;
-  }
   return config;
 });
 
@@ -79,17 +69,8 @@ adminAuthInstance.interceptors.response.use(
     return res;
   },
   (error) => {
-    if (error?.response?.status === 403 || error?.response?.status === 401) {
-      let url = error?.config?.url;
-      if (url.includes("/user/auth") || url.includes("/admin")) {
-        window.location.href = "/admin/login";
-      } else {
-        if (url.includes("/user-login")) {
-          return;
-        } else {
-          window.location.href = "/user-login";
-        }
-      }
+    if (error?.response?.status === 401 || error?.response?.data.detail[0].msg ==='Not authenticated') {
+      window.location.href = "/admin/login";
     }
     return Promise.reject(error.response.data.detail);
   }

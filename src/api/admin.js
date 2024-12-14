@@ -399,41 +399,22 @@ export const statusToShipping = async (orderId, status) => {
   );
 };
 
-export const getInventoryDetailsandExport = async (args) => {
-  const {
-    export: isExport = false,
-    export_type = "excel",
-    start_date,
-    end_date,
-  } = args;
-
+export const getInventoryDetailsandExport = (date,isexport,export_type) => {
   const token = localStorage.getItem("authToken");
 
   // Base URL
-  let url = `/inventory/management/details?export=${isExport}`;
+  let url = `/inventory/management/details?export=${isexport}`
 
-  // Add export_type if isExport is true
-  if (isExport) {
-    url += `&export_type=${export_type}`;
-  }
+   if(isexport){
+    url = url + `&export_type=${export_type}`
+   }
 
-  const formatDate = (date) => {
-    if (!date) return null;
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
-  };
-
-  // Format dates if provided
-  const formattedStartDate = formatDate(start_date);
-  const formattedEndDate = formatDate(end_date);
   // Add start_date and end_date if available
-  if (formattedStartDate && formattedEndDate) {
-    url += `&start_date=${encodeURIComponent(
-      formattedStartDate
-    )}&end_date=${encodeURIComponent(formattedEndDate)}`;
+  if (date.startDate !== '' && date.endDate !== '' ) {
+    url += `&start_date=${date.startDate}&end_date=${date.endDate}`;
   }
 
-  return axiosInstance.get(url, {
+  return adminAuthInstance.get(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
