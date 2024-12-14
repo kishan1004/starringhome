@@ -1,5 +1,5 @@
 import axios from "axios";
-import { axiosInstance } from "../utils/axios";
+import { adminAuthInstance, axiosInstance } from "../utils/axios";
 import { jwtDecode } from "jwt-decode";
 
 /**
@@ -81,6 +81,10 @@ export const orderDetails = (page, limit = 20) => {
 };
 
 /* Product API */
+
+export const getAllProductsApi = ()=>{
+  return adminAuthInstance.get(`/admin/products/details`)
+}
 
 export const getProductList = (page, limit = 50) => {
   return axiosInstance.get("/admin/products/details", {
@@ -330,36 +334,45 @@ export const deleteContactUs = async (id) => {
   });
 };
 
-// Admin Coupon create
-export const addCoupon = async (data) => {
-  const token = localStorage.getItem("authToken");
-  return axiosInstance.post(`/coupons/create`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
-
-// Admin Coupon  delete
-export const deleteCoupon = async (id) => {
-  const token = localStorage.getItem("authToken");
-  return axiosInstance.delete(`/coupons/{id}/remove`, {
-    data: { couponId: [id] },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
-
 //Admin coupon get
-export const getCoupons = async (page, limit) => {
+export const getCouponsApi = async (page) => {
   const token = localStorage.getItem("authToken");
-  return axiosInstance.get("/coupons/details", {
+  return adminAuthInstance.get(`/coupons/details?page=${page}&limit=10`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
+
+export const getCouponsByIdApi = async (id) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.get(`/coupons/${id}/details`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const createCouponApi = (data) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.post(`/coupons/create`, data,{
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    }}
+  );
+};
+
+export const deleteCouponApi = (data) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.delete(`/coupons/{id}/remove`, {
+    data: { couponId:data.id },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 
 export const getOrder = async (order_id) => {
   const token = localStorage.getItem("authToken");
@@ -426,3 +439,32 @@ export const getInventoryDetailsandExport = async (args) => {
     },
   });
 };
+
+//combo api
+export const createComboApi = (data) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.post(`/admin/combo/products/add`, data,{
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    }}
+  );
+};
+
+export const getComboApi = async (page) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.get(`/admin/combo/products/details?page=${page}&limit=10`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const deleteComboApi = (data) => {
+  const token = localStorage.getItem("authToken");
+  return adminAuthInstance.delete(`/admin/combo/products/${data.id}/remove`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}

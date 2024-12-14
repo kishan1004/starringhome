@@ -2,45 +2,49 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FaArrowLeft } from "react-icons/fa";
+import { useForm, Controller } from "react-hook-form";
+import { Button, Select, ConfigProvider } from "antd";
+import { useQuery } from "react-query";
+import { createComboApi, getAllProductsApi } from "../../api/admin";
+import { useMutation } from "react-query";
+
+const { Option } = Select;
 
 const AddComboPage = () => {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    comboName: "",
-    product1: "",
-    product2: "",
-    actualPrice: "",
-    comboPrice: "",
+  const { data: products } = useQuery({
+    queryFn: () => getAllProductsApi(),
   });
 
-  const [errors, setErrors] = useState({});
+  const {
+    register,
+    handleSubmit,
+    setError,
+    control,
+    formState: { errors },
+  } = useForm();
 
-  const validate = () => {
-    const newErrors = {};
-    if (!form.comboName) newErrors.comboName = "Combo name is required.";
-    if (!form.product1) newErrors.product1 = "Product 1 ID is required.";
-    if (!form.product2) newErrors.product2 = "Product 2 ID is required.";
-    if (!form.actualPrice || isNaN(form.actualPrice))
-      newErrors.actualPrice = "Valid actual price is required.";
-    if (!form.comboPrice || isNaN(form.comboPrice))
-      newErrors.comboPrice = "Valid combo price is required.";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
+  const createComboMutation = useMutation({
+    mutationFn: createComboApi,
+    onSuccess: () => {
       Swal.fire("Success", "Combo added successfully!", "success");
-      // Logic to submit form
-      console.log("Combo submitted:", form);
-    }
+      navigate("/admin/comboproducts");
+    },
+    onError: (error) => {
+      setError(error[0].field, { type: "custom", message: error[0].msg });
+    },
+  });
+
+  const onSubmit = (value) => {
+    createComboMutation.mutate({
+      comboName: value.comboName,
+      products: value.products,
+      actualPrice: value.actualPrice,
+      comboPrice: value.comboPrice,
+    });
   };
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
@@ -58,54 +62,65 @@ const AddComboPage = () => {
       <h2 className="text-2xl font-semibold mb-6">Add Combo</h2>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Combo Name */}
         <div>
           <label className="block font-medium mb-1">Combo Name *</label>
           <input
             type="text"
-            name="comboName"
-            value={form.comboName}
-            onChange={handleChange}
+            id="comboName"
+            {...register("comboName", {
+              required: "comboName is required",
+              maxLength: { value: 15, message: "Maximum 15 character allowed" },
+              minLength: {
+                value: 3,
+                message: "Minimum 3 Characters is required",
+              },
+            })}
             className={`w-full border ${
               errors.comboName ? "border-red-500" : "border-gray-300"
             } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           {errors.comboName && (
-            <p className="text-red-500 text-sm mt-1">{errors.comboName}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.comboName.message}
+            </p>
           )}
         </div>
 
         {/* Product IDs */}
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block font-medium mb-1">Product 1 ID *</label>
-            <input
-              type="text"
-              name="product1"
-              value={form.product1}
-              onChange={handleChange}
-              className={`w-full border ${
-                errors.product1 ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-            />
-            {errors.product1 && (
-              <p className="text-red-500 text-sm mt-1">{errors.product1}</p>
-            )}
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Product 2 ID *</label>
-            <input
-              type="text"
-              name="product2"
-              value={form.product2}
-              onChange={handleChange}
-              className={`w-full border ${
-                errors.product2 ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-            />
-            {errors.product2 && (
-              <p className="text-red-500 text-sm mt-1">{errors.product2}</p>
+          <div className="w-full">
+            <label className="block font-medium mb-1">Select Products *</label>
+            <ConfigProvider theme={{ token: { colorPrimary: "#1677ff" } }}>
+              <Controller
+                name="products"
+                control={control}
+                rules={{ required: "Please select a products" }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    mode="multiple"
+                    placeholder="Select a products"
+                    style={{ width: 200 }}
+                    onChange={field.onChange} // Pass `onChange` from field
+                    onBlur={field.onBlur}
+                    className="w-full"
+                    size="large"
+                    status={errors.products && "error"} // Pass `onBlur` from field
+                  >
+                    {products?.data?.detail.data.map((product, index) => (
+                      <Option value={product.productId}>{product.name}</Option>
+                    ))}
+                  </Select>
+                )}
+              />
+            </ConfigProvider>
+
+            {errors.products && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.products.message}
+              </p>
             )}
           </div>
         </div>
@@ -115,42 +130,50 @@ const AddComboPage = () => {
           <div>
             <label className="block font-medium mb-1">Actual Price *</label>
             <input
-              type="text"
-              name="actualPrice"
-              value={form.actualPrice}
-              onChange={handleChange}
+              type="number"
+              id="actualPrice"
+              {...register("actualPrice", {
+                required: "actualPrice is required",
+              })}
               className={`w-full border ${
                 errors.actualPrice ? "border-red-500" : "border-gray-300"
               } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
             {errors.actualPrice && (
-              <p className="text-red-500 text-sm mt-1">{errors.actualPrice}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.actualPrice.message}
+              </p>
             )}
           </div>
           <div>
             <label className="block font-medium mb-1">Combo Price *</label>
             <input
-              type="text"
-              name="comboPrice"
-              value={form.comboPrice}
-              onChange={handleChange}
+              type="number"
+              id="comboPrice"
+              {...register("comboPrice", {
+                required: "comboPrice is required",
+              })}
               className={`w-full border ${
                 errors.comboPrice ? "border-red-500" : "border-gray-300"
               } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
             {errors.comboPrice && (
-              <p className="text-red-500 text-sm mt-1">{errors.comboPrice}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.comboPrice.message}
+              </p>
             )}
           </div>
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          className="px-4 py-2 bg-slate-900 text-white rounded hover:bg-slate-950"
+        <Button
+          htmlType="submit"
+          type="primary"
+          loading={createComboMutation.isLoading}
+          className="px-4 py-2 mt-5 bg-slate-900 text-white rounded hover:bg-slate-950"
         >
           Add Combo
-        </button>
+        </Button>
       </form>
     </div>
   );

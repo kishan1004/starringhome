@@ -1,13 +1,8 @@
-import React, { useState } from "react";
-import Product1 from "../images/product1.jpeg";
-import Product2 from "../images/product2.jpeg";
-import Product3 from "../images/product3.jpeg";
+import React from "react";
 import "aos/dist/aos.css";
-import Aos from "aos";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getProductList } from "../api/admin";
 import { newarrivalProducts } from "../api/user";
+import { useQuery } from "react-query";
 
 // Component for Star Ratings
 const StarRating = () => {
@@ -30,10 +25,10 @@ const StarRating = () => {
 };
 
 // Component for Individual Product Card
-const ProductCard = ({ image, title, price }) => {
+const ProductCard = ({ image, title, price, id }) => {
   return (
     <div className="flex flex-col items-start p-4" data-aos="flip-right">
-      <Link to="/all-products">
+      <Link to={`/one-product?id=${id}`}>
         <div className="relative">
           <img
             src={image}
@@ -56,16 +51,15 @@ const ProductCard = ({ image, title, price }) => {
 
 // Main Component
 const NewArrivalsSection = (props) => {
-
-  const [products,setProducts] = useState([]);
-
-
-  useEffect(() => {
-   newarrivalProducts().then((res)=>{
-      setProducts(res.data.detail.data);
-    })
-  }, []);
-
+  const {
+    data: products,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["newArraival"],
+    queryFn: () => newarrivalProducts(),
+  });
 
   return (
     <section
@@ -82,19 +76,20 @@ const NewArrivalsSection = (props) => {
         </h2>
         <p className="mt-10 text-gray-600" data-aos="fade-up">
           Step into the season with our new arrivals, designed to keep you
-          trendy and confident. Don’t miss out on the styles that everyone’s
+          trendy and confident. Don't miss out on the styles that everyone's
           talking about!
         </p>
       </div>
 
       {/* Right Product Cards Section */}
       <div className="w-full grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-        {products.map((product, index) => (
+        {products?.data.detail.data.map((product, index) => (
           <ProductCard
             key={product._id}
             image={product.photos[0]}
             title={product.name}
             price={product.price}
+            id={product._id}
           />
         ))}
       </div>

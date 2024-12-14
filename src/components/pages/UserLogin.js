@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,6 +15,13 @@ const UserLogin = () => {
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const navigate = useNavigate();
+
+
+useEffect(()=>{
+if(localStorage.getItem('userToken')){
+  navigate('/user-account')
+}
+},[])
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -43,15 +50,13 @@ const UserLogin = () => {
     // API call for login
     try {
       const res = await userLogin(userName, password);
-      console.log(res, "Response");
-
       if (res.status === 200) {
         localStorage.setItem("userToken", res?.data?.detail?.token);
-        // Navigate to home
-        navigate("/", { replace: true });
+        //Navigate to home
+        navigate("/user-account", { replace: true });
       } else {
         setError("Login failed. Please check your credentials.");
-      }
+     }
     } catch (error) {
       console.error("Error during login:", error);
       setError("An error occurred during login. Please try again.");
@@ -60,7 +65,6 @@ const UserLogin = () => {
 
   const handleForgotPassword = async () => {
     navigate("/otp-login/forgot-password");
-    // setIsForgotPassword(true);
     setPassword("");
     setUserName("");
   };
@@ -95,6 +99,13 @@ const UserLogin = () => {
   const handleBack = () => {
     setIsForgotPassword(false);
   };
+
+
+
+if(localStorage.getItem('userToken')){
+  navigate('/user-account')
+  return
+}
 
   return (
     <section className="font-beatrice bg-gray-100 h-screen">
@@ -256,7 +267,7 @@ const UserLogin = () => {
           <p className="pt-4">
             Don't you have an account?{" "}
             <span className="underline text-blue-500">
-              {/* <Link to="/otp-login/new">Sign up</Link> */}
+              <Link to="/otp-login/new">Sign up</Link>
             </span>
           </p>
         </div>

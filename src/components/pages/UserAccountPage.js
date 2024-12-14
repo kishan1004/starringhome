@@ -1,9 +1,11 @@
-import React from "react";
-import { Link } from "react-router-dom"; // Import Link from React Router
+import React, { useEffect } from "react";
+import { Link,useNavigate } from "react-router-dom"; // Import Link from React Router
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
+import { userLogout } from "../../api/user";
 
 const UserLogin = () => {
+  const navigate = useNavigate();
   const accountOptions = [
     {
       title: "Your Orders",
@@ -24,6 +26,14 @@ const UserLogin = () => {
       link: "/addresses", // Route for this card
     },
   ];
+
+useEffect(()=>{
+  if(!localStorage.getItem('userToken')){
+    navigate('/user-login')
+  }
+},[localStorage])
+
+
 
   return (
     <section className="font-beatrice bg-gray-100 min-h-screen">
@@ -73,6 +83,23 @@ const UserLogin = () => {
                 </div>
               </Link>
             ))}
+            
+                <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
+                type="button"
+                onClick={()=>{
+                  userLogout()
+                  .then(res => {
+                   if (res.status === 200) {
+                      localStorage.removeItem("userToken");
+                      navigate('/user-login')
+                        }
+                     })
+                }}
+              >
+                Logout
+              </button>
+             
           </div>
         </div>
 

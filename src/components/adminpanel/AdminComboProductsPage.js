@@ -1,62 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { deleteComboApi, getComboApi } from "../../api/admin";
+import { useQuery } from "react-query";
+import { Pagination } from "antd";
+import { FaTrash } from "react-icons/fa";
+import { useMutation } from "react-query";
 
 const AdminComboProductsPage = () => {
   const navigate = useNavigate();
 
-  const [combos, setCombos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const itemsPerPage = 5;
 
-  const totalPages = Math.ceil(total / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentCombos = combos.slice(startIndex, startIndex + itemsPerPage);
+  const {
+    data: combos,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["allcombo", { currentPage }],
+    queryFn: () => getComboApi(currentPage),
+  });
 
-  const fetchCombos = async () => {
-    // Mock data fetch - Replace this with API call
-    const mockData = [
-      {
-        id: "1",
-        comboName: "Combo 1",
-        product1: "Product A",
-        product2: "Product B",
-        actualPrice: 200,
-        comboPrice: 180,
-      },
-    ];
-    setCombos(mockData);
-    setTotal(mockData.length);
-  };
-
-  const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This will delete the combo permanently!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Mock delete logic - Replace with API call
-        setCombos(combos.filter((combo) => combo.id !== id));
-        Swal.fire("Deleted!", "The combo has been deleted.", "success");
-      }
-    });
-  };
-
-  useEffect(() => {
-    fetchCombos();
-  }, []);
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  const deleteComboMutation = useMutation({
+    mutationFn: deleteComboApi,
+    onSuccess: () => {
+      Swal.fire("Success", "Combo deleted successfully!", "success");
+      refetch();
+    },
+    onError: (error) => {
+      Swal.fire("Error", "Try again some times", "error");
+    },
+  });
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
@@ -83,7 +58,17 @@ const AdminComboProductsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {currentCombos.length === 0 ? (
+            {isError && (
+              <tr className="border">
+                <td className="px-6 py-4 border">Something went wrong</td>
+              </tr>
+            )}
+            {isLoading && (
+              <tr className="border">
+                <td className="px-6 py-4 border">Loading...</td>
+              </tr>
+            )}
+            {combos?.data?.detail.total === 0 ? (
               <tr>
                 <td
                   colSpan="5"
@@ -93,20 +78,22 @@ const AdminComboProductsPage = () => {
                 </td>
               </tr>
             ) : (
-              currentCombos.map((combo) => (
+              combos?.data?.detail.data.map((combo) => (
                 <tr key={combo.id}>
                   <td className="px-4 py-2 border">{combo.comboName}</td>
                   <td className="px-4 py-2 border">
-                    {combo.product1} & {combo.product2}
+                    {combo.products.toString()}
                   </td>
                   <td className="px-4 py-2 border">{combo.actualPrice}</td>
                   <td className="px-4 py-2 border">{combo.comboPrice}</td>
                   <td className="px-6 py-4 text-red-500 cursor-pointer">
                     <button
-                      onClick={() => handleDelete(combo.id)}
-                      className="text-red-600 hover:text-red-800 flex"
+                      onClick={() => {
+                        deleteComboMutation.mutate({ id: combo._id });
+                      }}
+                      className="text-red-600 hover:text-red-800 flex "
                     >
-                      Delete
+                      <FaTrash />
                     </button>
                   </td>
                 </tr>
@@ -116,35 +103,15 @@ const AdminComboProductsPage = () => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center items-center mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
-        >
-          Previous
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${
-              currentPage === i + 1
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
-        >
-          Next
-        </button>
+      <div className=" flex justify-center pt-10 pb-5 px-5">
+        <Pagination
+          value={currentPage}
+          onChange={(value) => {
+            setCurrentPage(value);
+          }}
+          total={combos?.data?.detail.total}
+          hideOnSinglePage
+        />
       </div>
     </div>
   );

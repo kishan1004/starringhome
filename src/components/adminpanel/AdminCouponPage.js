@@ -1,57 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCoupons, deleteCoupon } from "../../api/admin";
+import { getCouponsApi,deleteCouponApi } from "../../api/admin";
+import { useMutation, useQuery } from "react-query";
+import { Pagination } from "antd";
 import { FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const AdminCouponTablePage = () => {
   const navigate = useNavigate();
-
-  const [coupons, setCoupons] = useState([]);
-  const [total, setTotal] = useState(0);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const itemsPerPage = 10;
 
-  // Pagination logic
-  const totalPages = Math.ceil(total / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentCoupons = coupons.slice(startIndex, startIndex + itemsPerPage);
+  const {data:coupons,isLoading,isError,refetch} = useQuery({
+    queryKey:['allcoupon',{currentPage}],
+    queryFn:()=>getCouponsApi(currentPage)
+  })
 
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+  const deleteCouponMutation = useMutation({
+    mutationFn:deleteCouponApi,
+      onSuccess:()=>{
+      Swal.fire("Success", "Coupon deleted successfully!", "success");
+      refetch()
+    },
+    onError:(error)=>{
+     Swal.fire("Error", "Try again some times", "error");
     }
-  };
+  })
 
-  const fetchCoupons = async () => {
-    setLoading(true);
-    const res = await getCoupons(currentPage, itemsPerPage);
-    if (res.status === 200) {
-      setCoupons(res.data.detail.data);
-      setTotal(res.data.detail.total);
-      setLoading(false);
-      setError(false);
-    } else {
-      setError(true);
-
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    const res = await deleteCoupon(id);
-    if (res.status === 200) {
-      console.log(res);
-      fetchCoupons();
-    } else {
-    }
-  };
-
-  useEffect(() => {
-    fetchCoupons();
-  }, [currentPage]);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
@@ -72,43 +46,42 @@ const AdminCouponTablePage = () => {
             <tr>
               <th className="px-4 py-2 border font-medium">Code</th>
               <th className="px-4 py-2 border font-medium">Discount (₹)</th>
-              <th className="px-4 py-2 border font-medium">Description</th>
+              <th className="px-4 py-2 border font-medium ">Description</th>
               <th className="px-4 py-2 border font-medium">Start Date</th>
               <th className="px-4 py-2 border font-medium">End Date</th>
               <th className="px-4 py-2 border font-medium">Action</th>
             </tr>
           </thead>
           <tbody>
-            {error && (
+            {isError && (
               <tr className="border">
                 <td className="px-6 py-4 border">Something went wrong</td>
               </tr>
             )}
-            {loading && (
+            {isLoading && (
               <tr className="border">
                 <td className="px-6 py-4 border">Loading...</td>
               </tr>
             )}
-            {!error && !loading && currentCoupons.length === 0 ? (
+            {coupons?.data?.detail.total === 0 ? (
               <tr>
                 <td colSpan="5" className="text-center text-gray-500 py-4">
                   No coupons found
                 </td>
               </tr>
             ) : (
-              !error &&
-              !loading &&
-              currentCoupons.map((coupon, index) => (
+              coupons &&
+              coupons?.data?.detail.data.map((coupon, index) => (
                 <tr key={index}>
                   <td className="px-4 py-2 border">{coupon.code}</td>
                   <td className="px-4 py-2 border">{coupon.discoutAmount}</td>
-                  <td className="px-4 py-2 border">{coupon.description}</td>
+                  <td className="px-4 py-2 border truncate w-60 ">{coupon.description}</td>
                   <td className="px-4 py-2 border">{coupon.startDate}</td>
                   <td className="px-4 py-2 border">{coupon.endDate}</td>
                   <td className="px-6 py-4 text-red-500 cursor-pointer">
                     <button
                       onClick={() => {
-                        handleDelete(coupon._id);
+                        deleteCouponMutation.mutate({id:[coupon._id]})
                       }}
                       className="text-red-600 hover:text-red-800 flex "
                     >
@@ -122,38 +95,19 @@ const AdminCouponTablePage = () => {
         </table>
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-center items-center mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
-        >
-          Previous
-        </button>
-
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${
-              currentPage === i + 1
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
-        >
-          Next
-        </button>
+      <div className=" flex justify-center pt-10 pb-5 px-5">
+            <Pagination
+              value={currentPage}
+              onChange={(value) => {
+                setCurrentPage(value);
+              }}
+              total={coupons?.data?.detail.total}
+              hideOnSinglePage
+            />
       </div>
+     
+
+    
     </div>
   );
 };

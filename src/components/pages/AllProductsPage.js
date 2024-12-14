@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Product2img from "../../images/imgproduct2.jpeg";
-import Product4img from "../../images/imgproduct4.jpeg";
-import Product5img from "../../images/imgproduct5.jpeg";
-import Product6img from "../../images/imgproduct6.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { userProductsList } from "../../api/user";
 import { useQuery } from "react-query";
 import { Pagination } from "antd";
@@ -22,7 +18,7 @@ const collections = [
 ];
 
 const initialFilter = {
-  sizes: "L",
+  sizes: "",
   categories: [],
   tags: [],
   collections: [],
@@ -44,6 +40,8 @@ const AllProductsPage = () => {
   const [isCollectionDropdownOpen, setIsCollectionDropdownOpen] =
     useState(false);
   const [categories, setCategories] = useState([]);
+  let [searchParams] = useSearchParams();
+  const searchKey = searchParams.get("category");
 
   const {
     data: products,
@@ -51,8 +49,9 @@ const AllProductsPage = () => {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["allproductrs", { currentPage, searchText }],
+    queryKey: ["allproducts", { currentPage, searchText }],
     queryFn: () => userProductsList(currentPage, searchText, filterData),
+    enabled: false,
   });
 
   const { data: category } = useQuery({
@@ -67,7 +66,20 @@ const AllProductsPage = () => {
       });
       setCategories(categorynames);
     }
-  }, [category]);
+
+    if (searchKey) {
+      if (filterData.categories.length === 0) {
+        setIsCategoryDropdownOpen(true);
+        setFilterData({
+          ...filterData,
+          categories: [...filterData.categories, searchKey],
+        });
+      }
+    }
+    setTimeout(() => {
+      refetch();
+    }, 200);
+  }, [category, searchParams]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
