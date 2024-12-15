@@ -1,258 +1,352 @@
 import React, { useEffect, useState } from "react";
 import Product1 from "../../images/product1.jpeg";
 import Product2 from "../../images/product2.jpeg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import {
   buyProducts,
   getAddresses,
   getCartDetails,
-  getCartProducts,
   getProductById,
+  addToCart,
+  viewCouponsApi,
+  proceedToPay,
+  verifyPayment,
 } from "../../api/user";
+import { useMutation, useQuery } from "react-query";
+import { useForm } from "react-hook-form";
+import { Button, Spin } from "antd";
+import { BiSolidCoupon } from "react-icons/bi";
+import Swal from "sweetalert2";
 
-// Saved Address Component
-const SavedAddress = ({ savedAddress }) => {
+const CheckoutPage = () => {
+  const [orders, setOrders] = useState([]);
   const [isAddressVisible, setIsAddressVisible] = useState(false);
+  const [currentAddressId, setCurrentAddressId] = useState("");
+  const navigate = useNavigate();
+  let [searchParams] = useSearchParams();
+  const checkoutType = searchParams.get("type");
+  const paramProdcutId = searchParams.get("productId");
+  const [selectedCoupon, setSelectedCoupon] = useState({
+    id: "",
+    amount: 0,
+  });
+  const [readyForPayment, setReadyForPayment] = useState(false);
+  const [orderData, setOrderData] = useState({
+    name: "",
+    amount: "",
+    email: "",
+    contact: "",
+    orderId: "",
+    address: "",
+  });
 
   const toggleAddressVisibility = () => {
     setIsAddressVisible((prevState) => !prevState);
   };
-
-  return (
-    <div className="space-y-6 pb-4">
-      <h3
-        className="text-sm font-semibold cursor-pointer flex items-center"
-        onClick={toggleAddressVisibility}
-      >
-        SAVED ADDRESS <RiArrowDropDownLine />
-      </h3>
-      {isAddressVisible && (
-        <div className="space-y-4">
-          <div className="p-3 border border-gray-300 bg-gray-50">
-            <p className="text-sm font-medium">
-              {savedAddress.firstName} {savedAddress.lastName}
-            </p>
-            <p className="text-sm">{savedAddress.address}</p>
-            <p className="text-sm">
-              {savedAddress.city}, {savedAddress.state}{" "}
-              {savedAddress.postalCode}
-            </p>
-            <p className="text-sm">{savedAddress.country}</p>
-            <p className="text-sm">{savedAddress.phone}</p>
-            <p className="text-sm">{savedAddress.email}</p>
-            <button className="text-sm text-blue-500 mt-2">
-              Use this address
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const CheckoutPage = () => {
-  const [orders, setOrders] = useState([]);
-  const [cartProducts, setCartProducts] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [addressDetails, setAddressDetails] = useState({
-    firstName: "",
-    lastName: "",
-    country: "India",
-    state: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    landmark: "",
-    email: "",
-    mobileNumber: "",
-  });
-  const [products, setProducts] = useState([
-    {
-      productId: "",
-      name: "",
-      size: "",
-      count: "",
-    },
-  ]);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchCartDetails = async () => {
-      const response = await getCartDetails(1, 100);
-      const { data } = response.data.detail;
-      setOrders(data);
-      setProducts(
-        data.map((product) => ({
-          productId: product._id,
-          name: product.name,
-          size: "",
-          count: 1,
-        }))
-      );
-      console.log("get cart details", data);
-    };
-    fetchCartDetails();
-  }, []);
-
-  useEffect(() => {
-    const productIds = orders.map((product) => product._id);
-    const fetchProductDetails = async () => {
-      const productDetails = await Promise.all(
-        productIds.map(async (id) => {
-          const response = await getProductById(id);
-          return response.data.detail;
-        })
-      );
-      console.log("all products", productDetails);
-      const t = productDetails.reduce((acc, product) => acc + product.price, 0);
-      setTotal(t);
-      setCartProducts(productDetails);
-    };
-
-    fetchProductDetails();
-
-    console.log(orders);
-  }, [orders]);
-
-  useEffect(() => {
-    // Assuming you have a function to fetch saved address
-    const fetchSavedAddress = async () => {
-      const response = await getAddresses(); // Replace with actual API call
-      const { firstName, lastName, country, state, address, city, postalCode } =
-        response.data;
-      setAddressDetails({
-        firstName,
-        lastName,
-        country,
-        state,
-        address,
-        city,
-        postalCode,
-      });
-    };
-
-    fetchSavedAddress();
-  }, []);
-  const subtotal = cartProducts.reduce(
-    (acc, product) => acc + product.price * product.stockCount[0].count,
-    0
-  );
-
-  const totalCount = cartProducts.reduce(
-    (acc, product) => acc + product.stockCount[0].count,
-    0
-  );
-
-  const [orderData, setOrderData] = useState({
-    products: cartProducts.map((product) => ({
-      productId: product._id,
-      name: product.name,
-      size: product.sizes[0].size,
-      count: 1,
-    })), // Assuming you have a way to get this
-    addressDetails: {
-      firstName: addressDetails.firstName,
-      lastName: addressDetails.lastName,
-      email: "", // Add email if available
-      mobileNumber: "", // Add mobile number if available
-      country: "India",
-      state: addressDetails.state,
-      address: addressDetails.address,
-      city: addressDetails.city,
-      landmark: "", // Add landmark if available
-      postalCode: addressDetails.postalCode,
-    },
-    amount: total,
-    couponId: "", // Assuming you have a way to get this
-    shipping: total > 3000 ? 0 : 100, // Assuming a fixed shipping cost
-    total: 300, // Calculate total
+  const { data: getAlladdress } = useQuery({
+    queryKey: ["Alladdress"],
+    queryFn: () => getAddresses(),
   });
 
-  const handleIncrease = (productIndex) => {
-    setTotal(total + cartProducts[productIndex].price);
-    setProducts((prevProducts) => {
-      const updatedProducts = [...prevProducts];
-      updatedProducts[productIndex].count = Number(
-        (updatedProducts[productIndex].count || 0) + 1
-      );
+  const {
+    data: getCartProducts,
+    isLoading: cartLoading,
+    isError: cartError,
+    refetch,
+  } = useQuery({
+    queryKey: ["AllCart"],
+    queryFn: () => getCartDetails(),
+    enabled: checkoutType === "cart",
+  });
 
-      return updatedProducts;
-    });
-  };
+  const {
+    data: comboProduct,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["individualProduct", { paramProdcutId }],
+    queryFn: () => getProductById(paramProdcutId),
+    enabled: checkoutType === "combo" && !!paramProdcutId,
+  });
 
-  const handleDecrease = (productIndex) => {
-    setTotal(total - cartProducts[productIndex].price);
-    setProducts((prevProducts) => {
-      const updatedProducts = [...prevProducts];
-      if (updatedProducts[productIndex].count > 0) {
-        updatedProducts[productIndex].count = Number(
-          updatedProducts[productIndex].count - 1
+  const { data: coupons } = useQuery({
+    queryKey: ["allcoupons"],
+    queryFn: () => viewCouponsApi(),
+  });
+
+  useEffect(() => {
+    if (getCartProducts && checkoutType === "cart") {
+      if (getCartProducts?.data.detail.total === 0) {
+        navigate("/all-products");
+        return;
+      }
+      const products = getCartProducts?.data.detail.data.map((list) => {
+        const SameOrder = orders.filter(
+          (order) => order.productId === list._id
         );
+        return {
+          productId: list._id,
+          name: list.name,
+          size: SameOrder.length !== 0 ? SameOrder[0].size : list.sizes[0],
+          count: SameOrder.length !== 0 ? SameOrder[0].count : 1,
+          photos: list.photos[0],
+          availableSizes: list.sizes,
+          price: list.offerPrice,
+        };
+      });
+      setOrders(products);
+      return;
+    }
+
+    if (comboProduct && checkoutType === "combo") {
+      if (comboProduct.data.detail.isComboAvailable) {
+        const products = comboProduct.data.detail.comboProducts.map((list) => {
+          const SameOrder = orders.filter(
+            (order) => order.productId === list._id
+          );
+          return {
+            productId: list._id,
+            name: list.name,
+            size: SameOrder.length !== 0 ? SameOrder[0].size : list.sizes[0],
+            count: SameOrder.length !== 0 ? SameOrder[0].count : 1,
+            photos: list.photos[0],
+            availableSizes: list.sizes,
+            price: list.offerPrice,
+          };
+        });
+        setOrders(products);
+      } else {
+        navigate("/all-products");
       }
-      return updatedProducts;
+    }
+  }, [getCartProducts, comboProduct]);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      country: "India",
+      firstName: "",
+      lastName: "",
+      email: "",
+      mobileNumber: "",
+      postalCode: "",
+      address: "",
+      landmark: "",
+      city: "",
+      state: "",
+    },
+  });
+
+  useEffect(() => {
+    if (getAlladdress) {
+      const filterUserAddress = getAlladdress.data.detail.data.filter(
+        (address) => address.isDefault
+      );
+      if (filterUserAddress.length > 0) {
+        setCurrentAddressId(filterUserAddress[0]._id);
+        setIsAddressVisible(true);
+        setOrderData({
+          ...orderData,
+          name:
+            filterUserAddress[0].firstName +
+            " " +
+            filterUserAddress[0].lastName,
+          email: filterUserAddress[0].email,
+          contact: filterUserAddress[0].mobileNumber,
+          address: filterUserAddress[0].address,
+        });
+      }
+    }
+  }, [getAlladdress]);
+
+  let amount =
+    orders.reduce((total, value) => total + value.price * value.count, 0) -
+    selectedCoupon.amount;
+
+  let totalProducts = orders.reduce((total, value) => total + value.count, 0);
+
+  let shipping = amount > 3000 ? 0 : 100;
+
+  let total = amount + shipping;
+
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
     });
-  };
+  }
 
-  const handleDelete = (productIndex) => {
-    setCartProducts((prevProducts) => {
-      return prevProducts.filter((_, i) => i !== productIndex);
-    });
-  };
+  const verifyPaymentMutation = useMutation({
+    mutationFn: verifyPayment,
+    onSuccess: (res) => {
+      Swal.fire("Sucess", "Payment SuccessFully completed", "success");
+      navigate("/your-orders");
+    },
+    onError: (error) => {
+      Swal.fire("Error", "verify payment Error", "error");
+      console.log(error)
+    },
+  });
 
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    setAddressDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-  };
-
-  const handleShippingClick = async () => {
-    try {
-      console.log("address details", addressDetails);
-      addressDetails.country = "India";
-      setOrderData((prevOrderData) => ({
-        ...prevOrderData,
-        addressDetails: {
-          ...addressDetails,
-          amount: total,
-          total: total + (total > 3000 ? 0 : 100),
+  const proceedtopayMutation = useMutation({
+    mutationFn: proceedToPay,
+    onSuccess: (res) => {
+      console.log(res.data.detail.data.id, ">>>>");
+      const razorPayReady = loadScript(
+        "https://checkout.razorpay.com/v1/checkout.js"
+      );
+      if (!razorPayReady) {
+        Swal.fire("Error", "Razorpay not loaded succesfully", "error");
+        return;
+      }
+      const params = {
+        // store this value in env value
+        key: process.env.REACT_APP_RAZORPAY_KEY || "rzp_test_cfKaZHLoDVQQkC",
+        amount: orderData.amount,
+        currecy: "INR",
+        name: "Starring",
+        description: "Starring Clothing",
+        order_id: res.data.detail.data.id,
+        handler: (res) => {
+          verifyPaymentMutation.mutate(res);
         },
-      }));
+        prefill: {
+          name: orderData.name,
+          email: orderData.email,
+          contact: orderData.contact,
+        },
+        notes: {
+          address: orderData.address,
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+      const rzPay = new window.Razorpay(params);
+      rzPay.open();
+    },
+    onError: (error) => {
+      Swal.fire("Error", error[0].msg, "error");
+      console.log(error);
+    },
+  });
 
-      setOrderData((prevOrderData) => ({
-        ...prevOrderData,
-        products: products,
-      }));
-      const res = await buyProducts(orderData);
-      if (res.status === 201) {
-        navigate(`/payment-confirmation/${res?.data?.detail?.orderId}`);
-        console.log("res", res);
+  const buyOrderMutation = useMutation({
+    mutationFn: buyProducts,
+    onSuccess: (res) => {
+      setOrderData({
+        ...orderData,
+        orderId: res?.data?.detail[0]?.orderId,
+        amount: total * 100,
+      });
+      proceedtopayMutation.mutate({
+        orderId: res?.data?.detail[0]?.orderId,
+        amount: total * 100,
+      });
+    },
+    onError: (error) => {
+      Swal.fire("Error", error[0].msg, "error");
+      console.log(error);
+    },
+  });
+
+  const handleDelete = (id) => {
+    const data = {
+      productId: [id],
+      action: "REMOVE",
+    };
+
+    addToCart({ data: data }).then((res) => {
+      if (res?.status === 401) {
+        navigate("/user-login");
+        return;
       }
-      // const response = await axios.post('/api/checkout', orderData); // Replace with your actual API endpoint
-      // console.log('Order posted successfully:', response.data);
-      // Handle success (e.g., navigate to a confirmation page)
-    } catch (error) {
-      console.error("Error posting order:", error);
-      // Handle error (e.g., show an error message)
+      refetch();
+    });
+  };
+
+  const onAddressSubmit = (value) => {
+    if (!readyForPayment) {
+      Swal.fire(
+        "Payment Confirmation",
+        "Please Agree to Tearm and conditions",
+        "warning"
+      );
+      return;
+    }
+    const buyDetails = {
+      products: orders.map((list) => {
+        return {
+          productId: list.productId,
+          name: list.name,
+          size: list.size,
+          count: list.count,
+        };
+      }),
+      addressId: currentAddressId,
+      addressDetails: value,
+      amount: amount,
+      couponId: selectedCoupon.id,
+      shipping: shipping,
+      total: total,
+    };
+    setOrderData({
+      ...orderData,
+      name: value.firstName + " " + value.lastName,
+      email: value.email,
+      contact: value.mobileNumber,
+      address: value.address,
+    });
+    buyOrderMutation.mutate(buyDetails);
+  };
+
+  const onSubmitWithSavedAddress = () => {
+    if (!readyForPayment) {
+      Swal.fire(
+        "Payment Confirmation",
+        "Please Agree to Tearm and conditions",
+        "warning"
+      );
+      return;
+    }
+    if (currentAddressId !== "") {
+      const buyDetails = {
+        products: orders.map((list) => {
+          return {
+            productId: list.productId,
+            name: list.name,
+            size: list.size,
+            count: list.count,
+          };
+        }),
+        addressId: currentAddressId,
+        amount: amount,
+        couponId: selectedCoupon.id,
+        shipping: shipping,
+        total: total,
+      };
+      buyOrderMutation.mutate(buyDetails);
     }
   };
 
-  const handleSizeChange = (productIndex, size) => {
-    setProducts((prevProducts) => {
-      const updatedProducts = [...prevProducts];
-      updatedProducts[productIndex].size = size;
-      return updatedProducts;
-    });
-  };
-
   return (
-    // <div>Checking.....</div>
     <section className=" w-full bg-gray-100 min-h-screen">
       <div className=" md:px-10 md:py-14 px-4 py-10">
-        <Link to="/one-product">
+        <Link to="/all-products">
           <svg
             width="62"
             height="14"
@@ -282,280 +376,502 @@ const CheckoutPage = () => {
 
       <div className="md:flex">
         <div className="md:p-10 md:w-1/2 p-4 pb-10">
-          <SavedAddress savedAddress={addressDetails} />
-
-          <h3 className="text-sm font-semibold pt-4 pb-2">SHIPPING ADDRESS</h3>
-          <div className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={addressDetails.firstName}
-                  onChange={handleAddressChange}
-                  placeholder="First Name"
-                  className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                />
-                {!addressDetails.firstName && (
-                  <p className="text-red-500 text-sm">
-                    First Name is required.
-                  </p>
-                )}
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={addressDetails.lastName}
-                  onChange={handleAddressChange}
-                  placeholder="Last Name"
-                  className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                />
-                {!addressDetails.lastName && (
-                  <p className="text-red-500 text-sm">Last Name is required.</p>
-                )}
-              </div>
-            </div>
-            <div>
-              <input
-                type="email"
-                name="email"
-                value={addressDetails.email}
-                onChange={handleAddressChange}
-                placeholder="Email"
-                className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-              />
-              {!addressDetails.email && (
-                <p className="text-red-500 text-sm">Email is required.</p>
-              )}
-            </div>
-            <div>
-              <input
-                type="tel"
-                name="mobileNumber"
-                value={addressDetails.mobileNumber}
-                onChange={handleAddressChange}
-                placeholder="Mobile Number"
-                className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-              />
-              {!addressDetails.mobileNumber && (
-                <p className="text-red-500 text-sm">
-                  Mobile Number is required.
-                </p>
-              )}
-            </div>
-            <div>
-              <input
-                type="text"
-                name="state"
-                value={addressDetails.state}
-                onChange={handleAddressChange}
-                placeholder="State / Region"
-                className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-              />
-              {!addressDetails.state && (
-                <p className="text-red-500 text-sm">
-                  State / Region is required.
-                </p>
-              )}
-            </div>
-            <div>
-              <input
-                type="text"
-                name="address"
-                value={addressDetails.address}
-                onChange={handleAddressChange}
-                placeholder="Address"
-                className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-              />
-              {!addressDetails.address && (
-                <p className="text-red-500 text-sm">Address is required.</p>
-              )}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <input
-                  type="text"
-                  name="city"
-                  value={addressDetails.city}
-                  onChange={handleAddressChange}
-                  placeholder="City"
-                  className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                />
-                {!addressDetails.city && (
-                  <p className="text-red-500 text-sm">City is required.</p>
-                )}
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="landmark"
-                  value={addressDetails.landmark}
-                  onChange={handleAddressChange}
-                  placeholder="Landmark"
-                  className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="postalCode"
-                  value={addressDetails.postalCode}
-                  onChange={handleAddressChange}
-                  placeholder="Postal Code"
-                  className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                />
-                {!addressDetails.postalCode && (
-                  <p className="text-red-500 text-sm">
-                    Postal Code is required.
-                  </p>
-                )}
-              </div>
-            </div>
+          <div className="text-sm font-semibold pt-4 pb-4">
+            SHIPPING ADDRESS
           </div>
-
-          <button
-            onClick={handleShippingClick}
-            className="w-full bg-blue-500 text-white py-3 font-semibold text-base font-beatrice mt-4"
-          >
-            Continue
-          </button>
-          {/* <Link to="/payment-confirmation"> */}
-          <div className="md:grid grid-cols-1 justify-items-end gap-4 hidden">
-            <button className="w-1/2 flex justify-between bg-[#D9D9D9] hover:bg-gray-500 py-3 lg:px-5 px-2 items-center font-semibold text-base font-beatrice mt-4">
-              Shipping
-              <svg
-                width="50"
-                height="14"
-                viewBox="0 0 50 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+          {/* addresses */}
+          {getAlladdress?.data.detail.total !== 0 && (
+            <div className="space-y-6 pb-2">
+              <h3
+                className="text-sm font-semibold cursor-pointer flex items-center"
+                onClick={toggleAddressVisibility}
               >
-                <path
-                  d="M1 7H48.5M48.5 7L42.5 1M48.5 7L42.5 13"
-                  stroke="black"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </div>
-          {/* </Link> */}
-        </div>
-
-        <div className="p-4 md:pr-10 lg:mx-20 mt-10 font-beatrice">
-          <div className="px-4 py-10 border-2 md:px-6 relative">
-            <div className="absolute bg-white text-[#000E8A] top-0 right-0 h-10 w-10 flex items-center justify-center">
-              <p>({totalCount})</p>
-            </div>
-            <h3 className="text-base font-medium">YOUR ORDER</h3>
-            <div className="space-y-6 mt-6">
-              {cartProducts.map((product, productIndex) => (
-                <div key={productIndex} className="flex items-center">
-                  <Link to="/one-product">
-                    <img
-                      src={product.photos[0]}
-                      alt={product.name}
-                      className="w-28 h-36 object-cover border-2"
-                    />
-                  </Link>
-                  <div className="grid grid-cols-2 md:gap-10 gap-5 place-content-between ml-4">
-                    <div className="flex flex-col">
-                      <Link to="/one-product">
-                        <p className="font-medium text-base xl:w-52">
-                          {product.name}
-                        </p>
-                      </Link>
-                      <div className="flex space-x-2">
-                        {product.sizes.map((size, sizeIndex) => (
-                          <button
-                            key={sizeIndex}
-                            className={`px-2 py-1 border ${
-                              products[productIndex]?.size === size
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-200"
-                            }`}
-                            onClick={() => handleSizeChange(productIndex, size)}
-                          >
-                            {size}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
+                SAVED ADDRESS <RiArrowDropDownLine />
+              </h3>
+              {isAddressVisible &&
+                getAlladdress?.data.detail.data.map((savedAddress) => (
+                  <div key={savedAddress._id} className="space-y-4">
+                    <div className="p-3 border border-gray-300 bg-gray-50">
+                      {savedAddress.isDefault && (
+                        <div className="px-2 py-1 text-xs bg-yellow-400 w-fit rounded-full mb-3">
+                          Default Address
+                        </div>
+                      )}
+                      <p className="text-sm font-medium">
+                        {savedAddress.firstName} {savedAddress.lastName}
+                      </p>
+                      <p className="text-sm">{savedAddress.address}</p>
+                      <p className="text-sm">
+                        {savedAddress.city}, {savedAddress.state}{" "}
+                        {savedAddress.postalCode}
+                      </p>
+                      <p className="text-sm">{savedAddress.country}</p>
+                      <p className="text-sm">{savedAddress.phone}</p>
+                      <p className="text-sm">{savedAddress.email}</p>
                       <button
-                        className="text-red-500 text-lg"
-                        onClick={() => handleDelete(productIndex)}
+                        className={`text-sm ${
+                          currentAddressId === savedAddress._id
+                            ? "text-green-500"
+                            : "text-blue-500"
+                        }  mt-2`}
+                        onClick={() => {
+                          setCurrentAddressId(savedAddress._id);
+                          clearErrors();
+                          setOrderData({
+                            ...orderData,
+                            name:
+                              savedAddress.firstName +
+                              " " +
+                              savedAddress.lastName,
+                            email: savedAddress.email,
+                            contact: savedAddress.mobileNumber,
+                            address: savedAddress.address,
+                          });
+                          setValue("firstName", "");
+                          setValue("lastName", "");
+                          setValue("mobileNumber", "");
+                          setValue("email", "");
+                          setValue("postalCode", "");
+                          setValue("state", "");
+                          setValue("city", "");
+                          setValue("landmark", "");
+                          setValue("address", "");
+                        }}
                       >
-                        X
+                        {currentAddressId === savedAddress._id
+                          ? "Selected"
+                          : "Use this address"}
                       </button>
-                    </div>
-
-                    <div className="text-[#000E8A]">
-                      <div className="text-[#000E8A] flex items-center space-x-2">
+                      {currentAddressId === savedAddress._id && (
                         <button
-                          className="px-2 py-1 bg-gray-200"
-                          onClick={() => handleDecrease(productIndex)}
+                          onClick={() => {
+                            setCurrentAddressId("");
+                            clearErrors();
+                            setOrderData({
+                              ...orderData,
+                              name:
+                                savedAddress.firstName +
+                                " " +
+                                savedAddress.lastName,
+                              email: savedAddress.email,
+                              contact: savedAddress.mobileNumber,
+                              address: savedAddress.address,
+                            });
+                            setValue("firstName", "");
+                            setValue("lastName", "");
+                            setValue("mobileNumber", "");
+                            setValue("email", "");
+                            setValue("postalCode", "");
+                            setValue("state", "");
+                            setValue("city", "");
+                            setValue("landmark", "");
+                            setValue("address", "");
+                          }}
+                          className="ml-5 text-sm text-blue-500"
                         >
-                          -
+                          Add New
                         </button>
-                        <p>{products[productIndex]?.count || 0}</p>
-                        <button
-                          className="px-2 py-1 bg-gray-200"
-                          onClick={() => handleIncrease(productIndex)}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="font-medium">Rs.{product.price}</p>
+                      )}
                     </div>
                   </div>
+                ))}
+            </div>
+          )}
+
+          {/* form */}
+          <form onSubmit={handleSubmit(onAddressSubmit)} className="pt-5">
+            {currentAddressId === "" && (
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      name="firstName"
+                      {...register("firstName", {
+                        required: "First name is required",
+                        minLength: {
+                          value: 3,
+                          message: "Minimum 3 Characters is required",
+                        },
+                      })}
+                      placeholder="First Name"
+                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                    />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.firstName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="lastName"
+                      {...register("lastName", {
+                        required: "Last name is required",
+                      })}
+                      placeholder="Last Name"
+                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                    />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.lastName.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              ))}
+                <div>
+                  <input
+                    type="email"
+                    name="email"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    placeholder="Email"
+                    className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    name="mobileNumber"
+                    {...register("mobileNumber", {
+                      required: "Mobile number is required",
+                      pattern: {
+                        value: /^[6-9]\d{9}$/,
+                        message: "Invalid Mobile number",
+                      },
+                    })}
+                    placeholder="Mobile Number"
+                    className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                  />
+                  {errors.mobileNumber && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.mobileNumber.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    name="state"
+                    {...register("state", {
+                      required: "State is required",
+                    })}
+                    placeholder="State / Region"
+                    className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                  />
+                  {errors.state && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.state.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    name="address"
+                    placeholder="Flat, House no., Building, Company, Apartment"
+                    {...register("address", {
+                      required: "Address is required",
+                      minLength: {
+                        value: 10,
+                        message: "Minimum 10 Characters is required",
+                      },
+                    })}
+                    className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                  />
+                  {errors.address && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.address.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      name="city"
+                      {...register("city", {
+                        required: "City is required",
+                      })}
+                      placeholder="City"
+                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                    />
+                    {errors.city && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.city.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="landmark"
+                      {...register("landmark", {
+                        required: "Landmark is required",
+                      })}
+                      placeholder="Landmark"
+                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                    />
+                    {errors.landmark && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.landmark.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="postalCode"
+                      {...register("postalCode", {
+                        required: "Pincode is required",
+                        pattern: {
+                          value: /^[1-9][0-9]{5}$/,
+                          message: "Invalid pincode",
+                        },
+                      })}
+                      placeholder="Postal Code"
+                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                    />
+                    {errors.postalCode && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.postalCode.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="flex gap-3 mt-2">
+              <input
+                type="checkbox"
+                checked={readyForPayment}
+                onChange={(e) => setReadyForPayment(e.target.checked)}
+              />
+              <div>I agree to the Tearms and Conditions</div>
+            </div>
+            <Button
+              htmlType={currentAddressId === "" ? "submit" : "button"}
+              type="primary"
+              size="large"
+              loading={
+                buyOrderMutation.isLoading || proceedtopayMutation.isLoading
+              }
+              className="w-full bg-blue-500 text-white py-3 font-semibold text-base font-beatrice mt-4"
+              onClick={onSubmitWithSavedAddress}
+            >
+              Continue
+            </Button>
+          </form>
+        </div>
+
+        {/* orders */}
+        <div className="p-4 md:pr-10 lg:mx-20 mt-10 font-beatrice">
+          <div className="px-4 py-10 border-2 md:px-6 relative">
+            <h3 className="text-base font-medium">YOUR ORDER</h3>
+            <div className="space-y-6 mt-6">
+              {orders.length !== 0 &&
+                orders.map((product, productIndex) => (
+                  <div key={productIndex} className="flex items-center">
+                    <Link to="/one-product">
+                      <img
+                        src={product.photos}
+                        alt={product.name}
+                        className="w-28 h-36 object-cover border-2"
+                      />
+                    </Link>
+                    <div className="grid grid-cols-2 md:gap-10 gap-5 place-content-between ml-4">
+                      <div className="flex flex-col">
+                        <Link to="/one-product">
+                          <p className="font-medium text-base xl:w-52">
+                            {product.name}
+                          </p>
+                        </Link>
+                        <div className="flex space-x-2">
+                          {product.availableSizes.map((size, sizeIndex) => (
+                            <button
+                              key={sizeIndex}
+                              className={`px-2 py-1 border ${
+                                size === product.size
+                                  ? "bg-blue-500 text-white"
+                                  : "bg-gray-200"
+                              }`}
+                              onClick={() => {
+                                setOrders((prevItems) =>
+                                  prevItems.map((item) =>
+                                    item.productId === product.productId
+                                      ? { ...item, size: size }
+                                      : item
+                                  )
+                                );
+                              }}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      {checkoutType === "cart" && (
+                        <div>
+                          <button
+                            className="text-red-500 text-lg"
+                            onClick={() => handleDelete(product.productId)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      )}
+
+                      <div className="text-[#000E8A]">
+                        <div className="text-[#000E8A] flex items-center space-x-2">
+                          <button
+                            className="px-2 py-1 bg-gray-200"
+                            onClick={() => {
+                              setOrders((prevItems) =>
+                                prevItems.map((item) =>
+                                  item.productId === product.productId
+                                    ? {
+                                        ...item,
+                                        count:
+                                          item.count === 1
+                                            ? item.count
+                                            : item.count - 1,
+                                      }
+                                    : item
+                                )
+                              );
+                            }}
+                          >
+                            -
+                          </button>
+                          <p>{product.count}</p>
+                          <button
+                            className="px-2 py-1 bg-gray-200"
+                            onClick={() => {
+                              setOrders((prevItems) =>
+                                prevItems.map((item) =>
+                                  item.productId === product.productId
+                                    ? {
+                                        ...item,
+                                        count:
+                                          item.count === 5
+                                            ? item.count
+                                            : item.count + 1,
+                                      }
+                                    : item
+                                )
+                              );
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="font-medium">Rs.{product.price}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
 
-            <div className="border-t-2 mt-6 pt-4">
+            <div className="border-t-2 space-y-4 mt-6 pt-4">
+              {/* coupon */}
+              {isLoading ? (
+                <div>
+                  <Spin spinning={true} />
+                </div>
+              ) : (
+                coupons?.data.detail.total > 0 && (
+                  <div className="space-y-3">
+                    <div>Coupons</div>
+                    {coupons?.data.detail.data.map((coupon) => (
+                      <div
+                        key={coupon._id}
+                        className="text-white bg-violet-500 rounded-2xl flex justify-between"
+                      >
+                        <div className="flex justify-between gap-3 p-3 items-center">
+                          <div className="bg-white rounded-full h-10 w-10 flex justify-center items-center flex-none text-violet-500">
+                            <BiSolidCoupon className=" rotate-45 text-xl" />
+                          </div>
+
+                          <div>
+                            <div>{coupon.description}</div>
+                            <div className=" font-semibold">{coupon.code}</div>
+                            <div className="text-sm">
+                              Rs.{coupon.discoutAmount}
+                            </div>
+                            <div className="text-xs">
+                              use before : {coupon.endDate}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className=" w-[30%] border-dashed border-l-2 border-white px-4 flex justify-center items-center">
+                          <div
+                            className="cursor-pointer"
+                            onClick={() => {
+                              if (coupon._id === selectedCoupon.id) {
+                                setSelectedCoupon({
+                                  id: "",
+                                  amount: 0,
+                                });
+                              } else {
+                                Swal.fire(
+                                  "Success",
+                                  "Coupon Applied Successfully",
+                                  "success"
+                                );
+                                setSelectedCoupon({
+                                  id: coupon._id,
+                                  amount: coupon.discoutAmount,
+                                });
+                              }
+                            }}
+                          >
+                            {selectedCoupon.id === coupon._id
+                              ? "Applied"
+                              : "Apply"}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              )}
+
+              <div className="flex justify-between">
+                <p className="font-medium">Total Products</p>
+                <p className="font-medium text-base">{totalProducts}</p>
+              </div>
               <div className="flex justify-between">
                 <p className="font-medium">Subtotal</p>
-                <p className="font-medium text-base">{total}</p>
+                <p className="font-medium text-base">{amount}</p>
               </div>
               <div className="flex justify-between items-center">
                 <p className="font-medium">Shipping</p>
-                <p className="font-medium text-xs text-[#8A8A8A]">
-                  Calculated at next step
-                </p>
+                <p className="font-medium text-xs text-[#8A8A8A]">{shipping}</p>
               </div>
               <div className="flex justify-between mt-6 border-t-2 pt-4">
                 <p className="text-base font-medium">Total</p>
-                <p className="text-base font-medium">Rs.{total}</p>
+                <p className="text-base font-medium">
+                  Rs.
+                  {total}
+                </p>
               </div>
             </div>
           </div>
-          {/* <Link to="/payment-confirmation"> */}
-          <div className="grid grid-cols-1 justify-items-end gap-4 md:hidden pb-20">
-            <button className="w-1/2 flex justify-between bg-[#D9D9D9] hover:bg-gray-600 py-3 lg:px-5 px-2 items-center font-semibold text-base font-beatrice mt-4">
-              Shipping
-              <svg
-                width="50"
-                height="14"
-                viewBox="0 0 50 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M1 7H48.5M48.5 7L42.5 1M48.5 7L42.5 13"
-                  stroke="black"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </div>
-          {/* </Link> */}
         </div>
       </div>
     </section>

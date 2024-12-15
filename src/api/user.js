@@ -1,5 +1,5 @@
 import axios from "axios";
-import { axiosInstance } from "../utils/axios";
+import { axiosInstance, userAuthInstance } from "../utils/axios";
 
 export const userLogin = (userName, password) => {
     return axiosInstance.post('user/login', {
@@ -87,76 +87,31 @@ export const getProductById = (id) => {
 }
 
 
-export const getCartProducts = () => {
-    return axiosInstance.get('/users/orders/details',
-        {
-            headers:{
-                'Authorization': `Bearer ${localStorage.getItem("userToken")}`
-            }
-        }
-    );
+export const getMyOrdersProducts = () => {
+    return userAuthInstance.get('/users/orders/details');
 }
-export const addFavouriteProduct = (id, action) => {
-    if (!id) {
-        console.error("Id required");
-        return;
-    }
-
-    return axiosInstance.put('/users/orders/products/favourites', {
-        productId: [...id],
-        action
-    })
+export const addFavouriteProduct = (data) => {
+    return userAuthInstance.put('/users/orders/products/favourites', data.data)
 }
 
 export const getAllFavourites = (page = 1, limit = 20) => {
     return axiosInstance.get(`/users/orders/products/favourites/details?page=${page}&limit=${limit}`);
 }
+
 export const addToCart = (data) => {
-    const { productId, action } = data;
-    if (productId.length === 0) {
-        console.error("Product array is empty");
-        return;
-    }
-    if (!action) {
-        console.error("Action is empty")
-        return;
-    }
-
-    return axiosInstance.put('/users/orders/products/add/to/cart', {
-        productId,
-        action
-    },
-    {
-        headers:{
-            'Authorization': `Bearer ${localStorage.getItem("userToken")}`
-        }
-    }
-)
-
+  return userAuthInstance.put('/users/orders/products/add/to/cart', data.data)
 }
 
-export const getCartDetails = (page, limit = 20) => {
-    return axiosInstance.get('/users/orders/products/cart/details', {
-        params: {
-            page,
-            limit
-        }
-    })
+export const getCartDetails = () => {
+    return axiosInstance.get('/users/orders/products/cart/details')
 }
 
-export const proceedToPay = (orderID, amt) => {
-    return axiosInstance.post('/payments/proceed/to/pay', {
-        orderId: orderID,
-        amount: amt*100
-    })
+export const proceedToPay = (data) => {
+    return userAuthInstance.post('/payments/proceed/to/pay',data)
 }
 
-export const verifyPayment = ( razorpay_payment_id, razorpay_order_id, razorpay_signature) =>{
-    return axiosInstance.post('/payments/verify', {
-        razorpay_payment_id,
-        razorpay_order_id,
-        razorpay_signature
-    });
+export const verifyPayment = (data) =>{
+    return axiosInstance.post('/payments/verify', data);
 }
 
 export const updatePassword = (currentPassword,newPassword)=>{
@@ -185,41 +140,17 @@ export const forgotPassword = (userName) => {
 
 
 export const getAddresses = ()=>{
-    console.log("in user file")
     return axiosInstance.get('/users/profiles/address');
 }
 
 
-export const addAddress = (firstName,
-    lastName,
-    email,
-    mobileNumber,
-    country,
-    state,
-    address,
-    city,
-    landmark,
-    postalCode,
-    isDefault,
-    id)=>{
-    return axiosInstance.put('/users/profiles/address/save/update',
-        {
-            firstName,
-            lastName,
-            email,
-            mobileNumber,
-            country,
-            state,
-            address,
-            city,
-            landmark,   
-            postalCode,
-            isDefault
-        },
-        {
-            ...(id !== "new" && { params: { address_id: id } })
-        }
-    )
+export const addAddress = (data)=>{
+    let url = '/users/profiles/address/save/update'
+
+    if(data.id !== 'new'){
+        url = url + `?address_id=${data.id}`
+    }
+    return userAuthInstance.put(url,data.data)
 }
 
 
@@ -244,11 +175,8 @@ export const getOtp =async(data)=>{
 }
 
 
-export const buyProducts =async (orderData) => {
-    console.log("order data", orderData);
-    orderData.addressDetails.country= "India";
-    // orderData.amount= 200;
-    return await axiosInstance.post('/users/orders/buy', orderData);
+export const buyProducts=(data) => {
+    return userAuthInstance.post('/users/orders/buy', data);
     
 }
 
@@ -261,4 +189,8 @@ export const proceedPaymentApi =async (orderId, amt) => {
 
 export const getTestimonialApi = ()=>{
  return axiosInstance.get(`users/orders/testimonials?page=1&limit=15`)
+}
+
+export const viewCouponsApi = ()=>{
+    return userAuthInstance.get('/users/orders/view/coupons')
 }

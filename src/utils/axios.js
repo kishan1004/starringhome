@@ -13,6 +13,10 @@ export const adminAuthInstance = axios.create({
   baseURL: baseURL,
 });
 
+export const userAuthInstance = axios.create({
+  baseURL: baseURL,
+});
+
 /**
  * A request interceptor adds additional property to out going request
  * This is the common place, where auth token is added, to out going request.
@@ -71,6 +75,25 @@ adminAuthInstance.interceptors.response.use(
   (error) => {
     if (error?.response?.status === 401 || error?.response?.data.detail[0].msg ==='Not authenticated') {
       window.location.href = "/admin/login";
+    }
+    return Promise.reject(error.response.data.detail);
+  }
+);
+
+userAuthInstance.interceptors.request.use((config) => {
+  let apiKey = "";
+    apiKey = localStorage.getItem("userToken");
+    config.headers["Authorization"] = `Bearer ${apiKey}`;
+  return config;
+});
+
+userAuthInstance.interceptors.response.use(
+  (res) => {
+    return res;
+  },
+  (error) => {
+    if (error?.response?.status === 401 || error?.response?.data.detail[0].msg ==='Not authenticated') {
+      window.location.href = "/user/login";
     }
     return Promise.reject(error.response.data.detail);
   }

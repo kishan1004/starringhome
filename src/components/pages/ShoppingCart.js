@@ -1,30 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getCartDetails, addToCart } from "../../api/user";
+import { useQuery } from "react-query";
+import { Spin } from "antd";
 
 const ShoppingCart = () => {
-  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
-  const increaseQuantity = (id) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product._id === id
-          ? { ...product, quantity: product.quantity + 1 }
-          : product
-      )
-    );
-  };
-
-  const decreaseQuantity = (id) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product._id === id && product.quantity > 1
-          ? { ...product, quantity: product.quantity - 1 }
-          : product
-      )
-    );
-  };
+  const {
+    data: getCartProducts,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["AllCart"],
+    queryFn: () => getCartDetails(),
+  });
 
   const handleDelete = (id) => {
     const data = {
@@ -32,33 +23,15 @@ const ShoppingCart = () => {
       action: "REMOVE",
     };
 
-    addToCart(data).then((res) => {
-      if (res?.status === 403) {
+    addToCart({ data: data }).then((res) => {
+      if (res?.status === 401) {
         navigate("/user-login");
+        return;
       }
-      getCartData();
+      refetch();
     });
-
-    setProducts((prevProducts) =>
-      prevProducts.filter((product) => product._id !== id)
-    );
   };
 
-  useEffect(() => {
-    getCartData();
-  }, []);
-
-  function getCartData() {
-    getCartDetails(1, 20).then((res) => {
-      if (res.status === 200) {
-        const data = res.data.detail.data.map((product) => ({
-          ...product,
-          quantity: product.quantity || 1, // Ensure quantity is initialized
-        }));
-        setProducts(data);
-      }
-    });
-  }
 
   return (
     <section className="bg-gray-100 font-sans min-h-screen">
@@ -89,64 +62,65 @@ const ShoppingCart = () => {
         <div className="border-t border-gray-300 my-4"></div>
       </div>
 
-      {/* Product List */}
-      <div className="px-4 md:px-10 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
-        {products.map((product) => (
-          <div
-            key={product._id}
-            className="flex items-center p-4 bg-white shadow-md mb-4 rounded-lg"
-          >
-            {/* Product Image */}
-            <Link to="/one-product">
-              <img
-                src={product.photos[0]}
-                alt={product.name}
-                className="w-24 h-24 object-contain rounded"
-              />
-            </Link>
-            <div className="px-2">
-              {/* Product Details */}
-              <div className="md:flex justify-between md:space-x-5">
-                <Link to="/one-product">
-                  <h2 className="text-md font-medium">{product.name}</h2>
-                </Link>
-                <p className="text-gray-800 font-bold">₹{product.price}</p>
-              </div>
-              <p className="text-gray-600 text-sm my-2">{product.description}</p>
-
-              {/* Quantity Controls */}
-              <div className="flex items-center space-x-2">
-                <button
-                  className="px-3 py-1 bg-gray-300 rounded text-black"
-                  onClick={() => decreaseQuantity(product._id)}
-                >
-                  -
-                </button>
-                <span className="px-3 py-1 bg-gray-100 border rounded">
-                  {product.quantity}
-                </span>
-                <button
-                  className="px-3 py-1 bg-gray-300 rounded text-black"
-                  onClick={() => increaseQuantity(product._id)}
-                >
-                  +
-                </button>
+      {isLoading ? (
+        <div className=" flex h-40 justify-center items-center">
+          <Spin spinning={true} />
+        </div>
+      ) : isError ? (
+        <div className=" flex h-40 justify-center items-center">
+          Error try after sometime
+        </div>
+      ) : (
+        <div className="px-4 md:px-10 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+          <div className={`p-10 ${getCartProducts?.data.detail.total !== 0 ? "hidden" : "block"}`}>
+            Products Not added yet!
+          </div>
+          {getCartProducts?.data.detail.data.map((product) => (
+            <div
+              key={product._id}
+              className="flex items-center p-4 bg-white shadow-md mb-4 rounded-lg"
+            >
+              {/* Product Image */}
+              <Link to={`/one-product?id=${product._id}`}>
+                <img
+                  src={product.photos[0]}
+                  alt={product.name}
+                  className="w-24 h-24 object-contain rounded"
+                />
+              </Link>
+              <div className="px-2">
+                {/* Product Details */}
+                <div className="md:flex justify-between md:space-x-5">
+                  <Link to="/one-product">
+                    <h2 className="text-md font-medium">{product.name}</h2>
+                  </Link>
+                  <p className="text-gray-800 font-bold">₹{product.offerPrice}</p>
+                </div>
+                <p className="text-gray-600 text-sm my-2">
+                  {product.description}
+                </p>
                 <button
                   className="text-red-500 hover:text-red-700"
                   onClick={() => handleDelete(product._id)}
                 >
-                  X
+                  Remove
                 </button>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Footer */}
-      <div className="p-10">
+      <div
+        className={`p-10 ${
+          isLoading || isError || getCartProducts?.data.detail.total === 0
+            ? "hidden"
+            : "block"
+        }`}
+      >
         <Link
-          to="/checkout"
+          to={`/checkout?type=${'cart'}`}
           className="bg-[#D9D9D9] text-black w-full py-3 px-2 mb-5 hover:bg-black hover:text-white"
         >
           Proceed to Checkout

@@ -124,7 +124,7 @@ const Inventory = () => {
                    <td className="py-3 px-4 border">{item.purchasedStock}</td>
                   <td className="py-3 px-4 border">{item.openingStock}</td>
                   <td className="py-3 px-4 border">
-                    {item.openingStock - item.shippedStock}
+                    {item.closingStock}
                   </td>
                   <td className="py-3 px-4 border">{item.orderedStock}</td>
                   <td className="py-3 px-4 border">{item.shippedStock}</td>
@@ -148,7 +148,7 @@ const Inventory = () => {
             setCurrentPage(value);
           }}
           total={inventory?.data.detail.total}
-          //hideOnSinglePage
+          hideOnSinglePage
         />
       </div>
     </div>
