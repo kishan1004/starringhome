@@ -33,7 +33,6 @@ const Favourites = () => {
       } else if(res.status === 200) {
         const allProducts = res?.data?.detail?.data;
         setSimilarProducts(allProducts)
-        console.log('all', allProducts);
       }
     })
   }

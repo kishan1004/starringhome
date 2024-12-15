@@ -12,7 +12,6 @@ const AdminContactForm = () => {
     setLoading(true);
     const res = await getContactUs(page, limit);
     if (res.status === 200) {
-      console.log(res.data.detail.data);
       setContacts(res.data.detail.data);
       setLoading(false);
       setError(false);

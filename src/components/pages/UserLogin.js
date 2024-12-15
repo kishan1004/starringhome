@@ -71,7 +71,7 @@ if(localStorage.getItem('userToken')){
 
   const updatePassword = async (e) => {
     e.preventDefault();
-    console.log(userName, password);
+
 
     const res = await forgotPassword(userName, password);
 

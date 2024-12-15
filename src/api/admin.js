@@ -103,7 +103,6 @@ const transformStockCount = (stockCount) => {
 };
 
 export const saveProduct = (data) => {
-  console.log("whole data", data);
   const token = localStorage.getItem("token");
   const { name, brand, price, tag, collection } = data;
   const transformedStockCount = data.stockCount
@@ -111,15 +110,6 @@ export const saveProduct = (data) => {
     : [];
   data.export = false;
   data.stockCount = transformedStockCount;
-  console.log(
-    "name, brand, prize, tag, collection photos:",
-    name,
-    brand,
-    price,
-    tag,
-    collection,
-    data.photos
-  );
   if (!name || !brand || !price || !tag || !collection) {
     throw new Error("Missing required parameters");
   }
@@ -151,7 +141,6 @@ export const editProduct = (id, data) => {
   if (!id) {
     console.error("Product id is requried");
   }
-  console.log(id, " ", data);
   const transformedStockCount = data.stockCount
     ? transformStockCount(data.stockCount)
     : [];
@@ -209,7 +198,6 @@ export const getNotifications = () => {
 
 export const getOrderStats = (day_filter) => {
   const token = localStorage.getItem("authToken");
-  console.log(day_filter);
   const d = day_filter.toLowerCase();
 
   return axiosInstance.get("/dashboard/admin/user/orders/stats", {
@@ -237,7 +225,6 @@ export const getSalesDetails = () => {
 
 //admin media
 export const mediaUpload = async (filesObject) => {
-  console.log("files :", filesObject);
   const formData = new FormData();
 
   filesObject.forEach((file) => {

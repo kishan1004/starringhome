@@ -90,6 +90,10 @@ export const getProductById = (id) => {
 export const getMyOrdersProducts = () => {
     return userAuthInstance.get('/users/orders/details');
 }
+export const getOrdersDetailById = (id) => {
+    return userAuthInstance.get(`/users/orders/${id}/details`);
+}
+
 export const addFavouriteProduct = (data) => {
     return userAuthInstance.put('/users/orders/products/favourites', data.data)
 }
@@ -115,7 +119,6 @@ export const verifyPayment = (data) =>{
 }
 
 export const updatePassword = (currentPassword,newPassword)=>{
-    console.log("In user function")
     return axiosInstance.patch('/users/profiles/password/reset',{
         currentPassword,
         newPassword
@@ -124,7 +127,6 @@ export const updatePassword = (currentPassword,newPassword)=>{
 
 
 export const forgotPassword = (userName) => {
-    console.log("In forgot password",userName)
     return axiosInstance.post('/users/profiles/pasword/forgot',{
         userName:userName.userName,
         newPassword:userName.newPassword
@@ -165,7 +167,6 @@ export const getUserNotifications =async ()=>{
 }
 
 export const getOtp =async(data)=>{
-    console.log("In api",data);
     return axiosInstance.put('/users/profiles/otp/verification',data,{
         headers:{
             'Content-Type': 'application/json',

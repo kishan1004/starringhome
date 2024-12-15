@@ -5,14 +5,12 @@ import { Button, Card, Select } from "antd";
 
 const OrderDetail = () => {
   const { orderId } = useParams();
-  console.log("In order details",orderId);
 
   useEffect(()=>{
     const fetchOrder = async()=>{
       const resp = await getOrder(orderId);
       if(resp.status===200)
       {
-        console.log(resp.data.detail.data);
         setOrderDetails(resp.data.detail.data);
       }
       else

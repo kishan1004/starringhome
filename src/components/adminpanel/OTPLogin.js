@@ -21,7 +21,6 @@ const OTPLogin = () => {
       userName: inputValue,
     };
 
-    console.log("In handle next", data);
 
     getOtp(data).then((res) => {
       console.log(res);
@@ -29,7 +28,6 @@ const OTPLogin = () => {
         setOtp(res.data?.detail.otp);
       }
     });
-    console.log(`Sending OTP to ${loginType}: ${inputValue}`);
     setStep(2);
   };
 
@@ -71,8 +69,6 @@ const OTPLogin = () => {
           timerProgressBar: true,
         });
       });
-
-    console.log(`Verifying OTP: ${otp} for ${loginType}: ${inputValue}`);
   };
 
   return (

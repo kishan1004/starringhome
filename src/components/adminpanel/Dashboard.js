@@ -114,11 +114,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchOrderStats = async () => {
-      console.log(stats.completedOrders);
       try {
         const res = await getOrderStats(timeRange); 
         if (res.status === 200) {
-          console.log("Order Stats Data:", res.data.detail);
           setOrderStats(res.data.detail);
           setPieChartData({
             labels: ["Completed", "Dispatched"],
@@ -140,7 +138,6 @@ const Dashboard = () => {
               },
             ],
           });
-          console.log(pieChartData);
         } else {
           console.log(res);
         }
@@ -157,7 +154,6 @@ const Dashboard = () => {
       try {
         const res = await getSalesDetails(); 
         if (res.status === 200) {
-          console.log("Sales Details Data:", res.data.detail);
           setSalesDetails(res.data.detail);
         } else {
           console.log(res);
