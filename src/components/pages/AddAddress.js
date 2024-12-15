@@ -2,108 +2,79 @@ import React, { useEffect, useState } from "react";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { addAddress, getAddresses } from "../../api/user";
-import { jwtDecode } from "jwt-decode";
 import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "antd";
+import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import Swal from "sweetalert2";
 
 const AddAddress = () => {
-  const [formData, setFormData] = useState({
-    country: "India",
-    firstName: "",
-    lastName:"",
-    mobile: "",
-    pincode: "",
-    flat: "",
-    area: "",
-    landmark: "",
-    city: "",
-    state: "",
-    isDefault: false,
-  });
-  const [email, setEmail] = useState("");
-  const [isUpdate,setIsUpdate] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
   const navigate = useNavigate();
-  const {id} = useParams();
+  const { id } = useParams();
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      country: "India",
+      firstName: "",
+      lastName: "",
+      email: "",
+      mobileNumber: "",
+      postalCode: "",
+      address: "",
+      landmark: "",
+      city: "",
+      state: "",
+      isDefault: false,
+    },
+  });
 
-  useEffect(()=>{
-    const token = localStorage.getItem('userToken');
-    const getAddress=async()=>{
-      const user = jwtDecode(token);
-      console.log("email",user.userName);
-      if(id!=='new')
-      {
+  const updateAddressMurtation = useMutation({
+    mutationFn: addAddress,
+    onSuccess: (res) => {
+      navigate("/addresses");
+      Swal.fire("Success", "Address Added", "success");
+    },
+    onError: (error) => {
+      Swal.fire("Error", error[0].msg, "error");
+    },
+  });
+
+  useEffect(() => {
+    const getAddress = async () => {
+      if (id !== "new") {
         setIsUpdate(true);
         const resp = await getAddresses();
-        if(resp.status===200)
-        {
-          const address = resp.data.detail.data.find(address => address._id === id);
-          const arr = address.address.split(' ');
-          setFormData({
-            firstName:address.firstName,
-            lastName:address.lastName,
-            email:token.userName,
-            pincode:address.postalCode,
-            state:address.state,
-            landmark:address.landmark,
-            city:address.city,
-            mobile:address.mobileNumber,
-            flat:arr[0],
-            area:arr[1]
-          })
+        if (resp.status === 200) {
+          const filterUserAddress = resp.data.detail.data.filter(
+            (address) => address._id === id
+          );
+          if (filterUserAddress.length === 0) {
+            navigate("/addresses");
+          }
+          setValue("firstName", filterUserAddress[0].firstName);
+          setValue("lastName", filterUserAddress[0].lastName);
+          setValue("mobileNumber", filterUserAddress[0].mobileNumber);
+          setValue("email", filterUserAddress[0].email);
+          setValue("postalCode", filterUserAddress[0].postalCode);
+          setValue("state", filterUserAddress[0].state);
+          setValue("city", filterUserAddress[0].city);
+          setValue("landmark", filterUserAddress[0].landmark);
+          setValue("address", filterUserAddress[0].address);
+          setValue("isDefault", filterUserAddress[0].isDefault);
         }
       }
-      console.log(id,user.userName);
-      setEmail(user.userName);
-    }
-  getAddress();
-  },[])
+    };
+    getAddress();
+  }, []);
 
-  const handleFormSubmit = async(e) => {
-    e.preventDefault();
-    console.log("Submitted Data: ", formData);
-    try{
-      const address = formData.flat+" "+formData.area;
-      const res = await addAddress(formData.firstName,
-        formData.lastName,
-        email,
-        formData.mobile,
-        formData.country,
-        formData.state,
-        address,
-        formData.city,
-        formData.landmark,
-        formData.pincode,
-        formData.isDefault,
-        id)
-        if(res.status===200)
-        {
-          console.log(res.data);
-          setFormData({
-            country: "India",
-            firstName: "",
-            lastName: "",
-            mobile: "",
-            pincode: "",
-            flat: "",
-            area: "",
-            landmark: "",
-            city: "",
-            state: "",
-            isDefault: false,
-            id
-          });
-        }
-        navigate('/addresses')
-    }catch (err) {
-      console.error("Error submitting form: ", err); 
-    }
+  const onAddressSubmit = (value) => {
+    updateAddressMurtation.mutate({ data: value, id: id });
   };
 
   return (
@@ -116,26 +87,23 @@ const AddAddress = () => {
         {/* Left Side - Form Section */}
 
         <div className="md:w-1/2 mx-5 p-6   mt-5">
-          <h1 className="text-2xl font-bold mb-6"> {isUpdate?("Update Address"):("Add a new Address")}</h1>
+          <div className=" flex justify-between flex-wrap gap-3">
+            <h1 className="text-2xl font-bold mb-6">
+              {" "}
+              {isUpdate ? "Update Address" : "Add a new Address"}
+            </h1>
+            <Button
+              type="primary"
+              className="bg-black"
+              onClick={() => {
+                navigate("/addresses");
+              }}
+            >
+              Back
+            </Button>
+          </div>
 
-          <form onSubmit={handleFormSubmit}>
-            {/* Country/Region */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">
-                Country/Region
-              </label>
-              <select
-                name="country"
-                value={formData.country}
-                onChange={handleInputChange}
-                className="w-full border rounded p-2"
-              >
-                <option value="India">India</option>
-                <option value="USA">USA</option>
-                <option value="UK">UK</option>
-              </select>
-            </div>
-
+          <form onSubmit={handleSubmit(onAddressSubmit)}>
             {/* Full Name */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">
@@ -144,24 +112,61 @@ const AddAddress = () => {
               <input
                 type="text"
                 name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
+                {...register("firstName", {
+                  required: "First name is required",
+                  minLength: {
+                    value: 3,
+                    message: "Minimum 3 Characters is required",
+                  },
+                })}
                 placeholder="First name"
                 className="w-full border rounded p-2"
               />
-              </div>
-                <div className="mb-4">
+              {errors.firstName && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
+            <div className="mb-4">
               <label className="block text-sm font-medium mb-1">
                 Last Name
               </label>
-                <input
+              <input
                 type="text"
                 name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
+                {...register("lastName", {
+                  required: "Last name is required",
+                })}
                 placeholder=" Last name"
                 className="w-full border rounded p-2"
               />
+              {errors.lastName && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.lastName.message}
+                </p>
+              )}
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <input
+                type="text"
+                name="email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "Invalid email address",
+                  },
+                })}
+                placeholder="email"
+                className="w-full border rounded p-2"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             {/* Mobile Number */}
@@ -171,12 +176,22 @@ const AddAddress = () => {
               </label>
               <input
                 type="text"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleInputChange}
+                name="mobileNumber"
+                {...register("mobileNumber", {
+                  required: "Mobile number is required",
+                  pattern: {
+                    value: /^[6-9]\d{9}$/,
+                    message: "Invalid Mobile number",
+                  },
+                })}
                 placeholder="Enter mobile number"
                 className="w-full border rounded p-2"
               />
+              {errors.mobileNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.mobileNumber.message}
+                </p>
+              )}
             </div>
 
             {/* Pincode */}
@@ -184,52 +199,61 @@ const AddAddress = () => {
               <label className="block text-sm font-medium mb-1">Pincode</label>
               <input
                 type="text"
-                name="pincode"
-                value={formData.pincode}
-                onChange={handleInputChange}
+                name="postalCode"
+                {...register("postalCode", {
+                  required: "Pincode is required",
+                  pattern: {
+                    value: /^[1-9][0-9]{5}$/,
+                    message: "Invalid pincode",
+                  },
+                })}
                 placeholder="6 digits [0-9] PIN code"
                 className="w-full border rounded p-2"
               />
+              {errors.postalCode && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.postalCode.message}
+                </p>
+              )}
             </div>
 
             {/* Address Fields */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">
-                Flat, House no., Building, Company, Apartment
-              </label>
+              <label className="block text-sm font-medium mb-1">Address</label>
               <input
                 type="text"
-                name="flat"
-                value={formData.flat}
-                onChange={handleInputChange}
+                name="address"
+                placeholder="Flat, House no., Building, Company, Apartment"
+                {...register("address", {
+                  required: "Address is required",
+                  minLength: {
+                    value: 10,
+                    message: "Minimum 10 Characters is required",
+                  },
+                })}
                 className="w-full border rounded p-2"
               />
+              {errors.address && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.address.message}
+                </p>
+              )}
             </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">
-                Area, Street, Sector, Village
-              </label>
-              <input
-                type="text"
-                name="area"
-                value={formData.area}
-                onChange={handleInputChange}
-                className="w-full border rounded p-2"
-              />
-            </div>
-
             {/* Landmark */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Landmark</label>
               <input
                 type="text"
                 name="landmark"
-                value={formData.landmark}
-                onChange={handleInputChange}
+                {...register("landmark",{required:"Landmark is required"})}
                 placeholder="e.g., near Apollo Hospital"
                 className="w-full border rounded p-2"
               />
+              {errors.landmark && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.landmark.message}
+                </p>
+              )}
             </div>
 
             {/* Town/City and State */}
@@ -241,18 +265,25 @@ const AddAddress = () => {
                 <input
                   type="text"
                   name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
+                  {...register("city", {
+                    required: "City is required",
+                  })}
                   className="w-full border rounded p-2"
                 />
+                {errors.city && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.city.message}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-1">State</label>
                 <select
                   name="state"
-                  value={formData.state}
-                  onChange={handleInputChange}
+                  {...register("state", {
+                    required: "State is required",
+                  })}
                   className="w-full border rounded p-2"
                 >
                   <option value="">Choose a state</option>
@@ -260,6 +291,11 @@ const AddAddress = () => {
                   <option value="Karnataka">Karnataka</option>
                   <option value="Kerala">Kerala</option>
                 </select>
+                {errors.state && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.state.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -269,8 +305,7 @@ const AddAddress = () => {
                 <input
                   type="checkbox"
                   name="isDefault"
-                  checked={formData.isDefault}
-                  onChange={handleInputChange}
+                  {...register("isDefault")}
                   className="mr-2"
                 />
                 Make this my default address
@@ -279,13 +314,15 @@ const AddAddress = () => {
 
             {/* Submit Button */}
             <div>
-              <button
-                type="submit"
+              <Button
+                htmlType="submit"
+                type="primary"
+                loading={updateAddressMurtation.isLoading}
+                size="large"
                 className="w-full bg-black text-white py-2 rounded"
               >
-              {isUpdate?("Update Address"):("Add Address")}
-                
-              </button>
+                {isUpdate ? "Update Address" : "Add Address"}
+              </Button>
             </div>
           </form>
         </div>

@@ -136,7 +136,7 @@ function App() {
               </>
             }
           />
-          <Route
+          {/* <Route
             path="/payment-confirmation/:orderId"
             element={
               <>
@@ -144,7 +144,7 @@ function App() {
                 <PaymentConfirmation />
               </>
             }
-          />
+          /> */}
           <Route
             path="/favourites"
             element={

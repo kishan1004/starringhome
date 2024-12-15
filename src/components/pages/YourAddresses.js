@@ -1,47 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import Link from React Router
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
-import { deleteAddress, getAddresses } from "../../api/user";
-import { jwtDecode } from "jwt-decode";
+import { deleteAddress, getAddresses, addAddress } from "../../api/user";
+import { useQuery } from "react-query";
+import { Spin } from "antd";
+import { useMutation } from "react-query";
+import Swal from "sweetalert2";
 
 const YourAddresses = () => {
-  const [addresses, setAddresses] = useState([]);
   const navigate = useNavigate();
+  const {
+    data: getAlladdress,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["Alladdress"],
+    queryFn: () => getAddresses(),
+  });
 
-  useEffect(() => {
-    const token = localStorage.getItem("userToken");
-    const user = jwtDecode(token);
-    const fetchAddresses = async () => {
-      try {
-        const res = await getAddresses();
-        if (res.status === 200) {
-          console.log(res.data);
-          setAddresses(res.data.detail.data);
-        } else {
-          console.log(res.data);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchAddresses();
-  }, []);
 
   const handleAddressUpdate = async (id) => {
     navigate(`/add-address/${id}`);
   };
 
   const handleAddressDelete = async (id) => {
-      try {
-      const res = await deleteAddress({data:{addressId:[id]}});
+    try {
+      const res = await deleteAddress({ data: { addressId: [id] } });
       if (res.status === 200) {
+         refetch()
         console.log(res);
-         navigate(`/addresses`);
       }
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const updateAddressMurtation = useMutation({
+    mutationFn: addAddress,
+    onSuccess: (res) => {
+      refetch();
+      Swal.fire("Success", "Address Added to Default", "success");
+    },
+    onError: (error) => {
+      Swal.fire("Error", error[0].msg, "error");
+    },
+  });
+
+  const onUpdateDefaultAddress = (address) => {
+    updateAddressMurtation.mutate({
+      data: { ...address, isDefault: true },
+      id: address._id,
+    });
   };
 
   return (
@@ -86,47 +97,64 @@ const YourAddresses = () => {
             </Link>
 
             {/* Existing Address Cards */}
-            {addresses.map((address) => (
-              <div
-                key={address._id}
-                className="border rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200"
-              >
-                {/* Default Badge */}
-                {address.isDefault && (
-                  <span className="text-xs bg-yellow-400 text-black px-2 py-1 rounded-full inline-block mb-2">
-                    Default
-                  </span>
-                )}
-
-                {/* Address Details */}
-                <h2 className="text-lg font-semibold">{address.name}</h2>
-                <p className="text-sm text-gray-600 mt-1">{address.address}</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Phone number: {address.mobileNumber}
-                </p>
-
-                {/* Action Buttons */}
-                <div className="flex space-x-4 mt-4 text-sm">
-                  <button
-                    onClick={() => handleAddressUpdate(address._id)}
-                    className="text-blue-500 hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleAddressDelete(address._id)}
-                    className="text-blue-500 hover:underline"
-                  >
-                    Remove
-                  </button>
-                  {!address.isDefault && (
-                    <button className="text-blue-500 hover:underline">
-                      Set as Default
-                    </button>
-                  )}
-                </div>
+            {isLoading ? (
+              <div className="flex h-40 justify-center items-center">
+                <Spin spinning={true} />
               </div>
-            ))}
+            ) : isError ? (
+              <div className="flex h-40 justify-center items-center">
+                Address not found, Try after sometimes.
+              </div>
+            ) : (
+              getAlladdress?.data?.detail.data.map((address) => (
+                <div
+                  key={address._id}
+                  className="border rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200"
+                >
+                  {/* Default Badge */}
+                  {address.isDefault && (
+                    <span className="text-xs bg-yellow-400 text-black px-2 py-1 rounded-full inline-block mb-2">
+                      Default
+                    </span>
+                  )}
+
+                  {/* Address Details */}
+                  <h2 className="text-lg font-semibold">{address.name}</h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {address.address}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Phone number: {address.mobileNumber}
+                  </p>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-4 mt-4 text-sm">
+                    <button
+                      onClick={() => handleAddressUpdate(address._id)}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleAddressDelete(address._id)}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Remove
+                    </button>
+                    {!address.isDefault && (
+                      <button
+                        className="text-blue-500 hover:underline"
+                        onClick={() => {
+                          onUpdateDefaultAddress(address);
+                        }}
+                      >
+                        Set as Default
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

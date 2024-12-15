@@ -3,7 +3,7 @@ import Product1 from "../../images/product1.jpeg";
 import Product2 from "../../images/product2.jpeg";
 import { Link, useParams } from "react-router-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { verifyPayment, proceedToPay, getCartProducts, proceedPaymentApi } from "../../api/user";
+import { verifyPayment, proceedToPay, proceedPaymentApi } from "../../api/user";
 
 const SavedAddress = ({ savedAddress }) => {
   const [isAddressVisible, setIsAddressVisible] = useState(false);
@@ -62,21 +62,21 @@ const PaymentConfirmation = () => {
     shipping:0,
   });
   useEffect(() => {
-    const fetchCartProducts = async () => {
-      try {
-        const res = await getCartProducts();
-        console.log("res", res);
-        const data = res?.data?.detail?.data;
-        const order = data.filter((item) => item._id === orderId);
-        console.log("order", order);
-        setOrder(order);
+    // const fetchCartProducts = async () => {
+    //   try {
+    //     const res = await getCartProducts();
+    //     console.log("res", res);
+    //     const data = res?.data?.detail?.data;
+    //     const order = data.filter((item) => item._id === orderId);
+    //     console.log("order", order);
+    //     setOrder(order);
        
-      } catch (error) {
-        console.error("Error fetching cart products:", error);
-      }
-    };
+    //   } catch (error) {
+    //     console.error("Error fetching cart products:", error);
+    //   }
+    // };
 
-    fetchCartProducts();
+    //fetchCartProducts();
   }, [orderId]);
 
   useEffect(() => {
@@ -216,6 +216,8 @@ const PaymentConfirmation = () => {
           res?.razorpay_signature
         ).then((res) => {
           verificationRes = res;
+
+
         });
       },
       prefill: {

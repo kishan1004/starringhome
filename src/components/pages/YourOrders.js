@@ -3,6 +3,8 @@ import Productphoto from "../../images/product1.jpeg";
 import { Link } from "react-router-dom";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
+import { getMyOrdersProducts } from "../../api/user";
+import { useQuery } from "react-query";
 
 const orders = [
   {
@@ -29,6 +31,18 @@ const orders = [
 ];
 
 const YourOrders = () => {
+
+  const {
+      data: myOrders,
+      isLoading,
+      isError,
+      refetch,
+    } = useQuery({
+      queryKey: ["myorders"],
+      queryFn: () => getMyOrdersProducts(),
+    });
+ console.log(myOrders)
+
   return (
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">

@@ -1,8 +1,4 @@
 import React, { useState, useEffect } from "react";
-import SimilarProduct1 from "../../images/imgproduct2.jpeg";
-import SimilarProduct2 from "../../images/imgproduct4.jpeg";
-import SimilarProduct3 from "../../images/imgproduct5.jpeg";
-import SimilarProduct4 from "../../images/imgproduct6.jpeg";
 import { Link, useNavigate } from "react-router-dom";
 import { getAllFavourites,addFavouriteProduct } from "../../api/user";
 
@@ -11,15 +7,13 @@ const Favourites = () => {
   const [similarProducts, setSimilarProducts] = useState([
   ]);
 
-  // useEffect(async () => {
-  //   const response = await axios.get("/backend/?search=shirt&category=all");
-  //   setSimilarProducts(response);
-  // }, []);
-
   const handleDelete = (id) => {
-    console.log([id])
+     const data = {
+      productId: [id],
+      action:"REMOVE",
+    };
 
-    addFavouriteProduct([id], "REMOVE").then((res)=>{
+    addFavouriteProduct({data:data}).then((res)=>{
       getFavItems();
     })
 
@@ -27,10 +21,6 @@ const Favourites = () => {
       prevProducts.filter((product) => product.id !== id)
     );
   };
-
-  // if (loading) {
-  //   return <div>Loading</div>;
-  // }
 
   useEffect(() => {
     getFavItems();

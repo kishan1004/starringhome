@@ -5,7 +5,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
 import { Button, Select, ConfigProvider } from "antd";
 import { useQuery } from "react-query";
-import { createComboApi, getAllProductsApi } from "../../api/admin";
+import { createComboApi, getcomboProductsApi  } from "../../api/admin";
 import { useMutation } from "react-query";
 
 const { Option } = Select;
@@ -14,9 +14,9 @@ const AddComboPage = () => {
   const navigate = useNavigate();
 
   const { data: products } = useQuery({
-    queryFn: () => getAllProductsApi(),
+    queryFn: () => getcomboProductsApi(),
   });
-
+console.log(products)
   const {
     register,
     handleSubmit,
@@ -32,11 +32,19 @@ const AddComboPage = () => {
       navigate("/admin/comboproducts");
     },
     onError: (error) => {
+      if(error[0].field === 'API'){
+         Swal.fire("Error",  error[0].msg, "error");
+        return
+      }
       setError(error[0].field, { type: "custom", message: error[0].msg });
     },
   });
 
   const onSubmit = (value) => {
+    if(value.products.length !== 2){
+      setError('products',{type:"custom",message:"Select Aleast Two products"})
+       return
+    }
     createComboMutation.mutate({
       comboName: value.comboName,
       products: value.products,
@@ -110,7 +118,7 @@ const AddComboPage = () => {
                     status={errors.products && "error"} // Pass `onBlur` from field
                   >
                     {products?.data?.detail.data.map((product, index) => (
-                      <Option value={product.productId}>{product.name}</Option>
+                      <Option key={product} value={product}>{product}</Option>
                     ))}
                   </Select>
                 )}

@@ -449,3 +449,12 @@ export const deleteComboApi = (data) => {
     },
   });
 }
+
+export const getcomboProductsApi = () =>{
+   const token = localStorage.getItem("authToken");
+  return adminAuthInstance.get(`/admin/combo/products/ids`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
