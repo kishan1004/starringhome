@@ -205,7 +205,6 @@ const CheckoutPage = () => {
   const proceedtopayMutation = useMutation({
     mutationFn: proceedToPay,
     onSuccess: (res) => {
-      console.log(res.data.detail.data.id, ">>>>");
       const razorPayReady = loadScript(
         "https://checkout.razorpay.com/v1/checkout.js"
       );

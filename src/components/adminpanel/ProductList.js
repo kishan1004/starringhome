@@ -117,14 +117,12 @@ const ProductList = () => {
 
   useEffect(() => {
     //API: fetched and updated product state , set page count and size based for paginations after line 119
-    console.log("Fetching products");
     setIsLoading(true);
     getProductList(currentPage, 50).then((res) => {
       if (res.status === 200) {
         const data = res?.data?.detail?.data;
         setProducts(data);
         setIsLoading(false);
-        console.log("Products", data);
       }
     });
   }, [currentPage]);

@@ -81,7 +81,6 @@ const PaymentConfirmation = () => {
 
   useEffect(() => {
     if (order && order.length > 0) {
-      console.log("within second order", order[0].total);
       setPrices({
         total: order[0].total,
         subtotal: order[0].amount,

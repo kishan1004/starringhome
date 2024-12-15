@@ -6,7 +6,7 @@ const RefundPolicyPage = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded shadow">
         <div className="w-full pb-5">
-          <Link to="/">
+          <Link to="/your-orders">
             <svg
               width="62"
               height="14"
@@ -28,7 +28,7 @@ const RefundPolicyPage = () => {
         <p className="mb-6 text-gray-600">
           Thank you for shopping with us! We strive to provide high-quality
           products and excellent service. If you are not completely satisfied
-          with your purchase, we’re here to help.
+          with your purchase, we're here to help.
         </p>
 
         {/* Refund Policy */}

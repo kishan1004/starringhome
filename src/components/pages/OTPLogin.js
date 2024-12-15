@@ -34,10 +34,9 @@ const OTPLogin = () => {
       userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
     };
 
-    console.log("In handle next", data);
+
 
     getOtp(data).then((res) => {
-      console.log("response ", res);
       if (res.status === 200) {
         setOtp(res.data?.detail.otp);
       }
@@ -48,7 +47,6 @@ const OTPLogin = () => {
         console.log(res.response.data.detail);
       }
     });
-    console.log(`Sending OTP to ${loginType}: ${inputValue}`);
   };
 
   const verifyOtp = async (e) => {
@@ -65,7 +63,6 @@ const OTPLogin = () => {
       verificationType: t,
     });
 
-    console.log(res.data.detail[0]);
 
     if (res.status === 200) {
       Swal.fire({
@@ -150,7 +147,6 @@ const OTPLogin = () => {
         });
     }
 
-    console.log(`Verifying OTP: ${otp} for ${loginType}: ${inputValue}`);
   };
 
   function validateMobile(e) {
@@ -173,7 +169,6 @@ const OTPLogin = () => {
     const regex =
       /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$:;".<~>!%`^\[\]\-\'\\\({|_+=/,})*#?&]).{8,15}$/;
     const PassStatus = regex.test(e.target.value);
-    console.log(PassStatus);
     setPasswordStatus(!PassStatus);
     setPassword(e.target.value);
   }

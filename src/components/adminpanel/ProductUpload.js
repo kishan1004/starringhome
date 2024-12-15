@@ -122,7 +122,6 @@ const ProductUpload = () => {
 
   const handleStockChange = (e, size) => {
     const { value } = e.target;
-    console.log(value);
     setProductData((prevData) => ({
       ...prevData,
       stockCount: {
@@ -208,7 +207,6 @@ const ProductUpload = () => {
         }, {}),
       };
 
-      console.log(processedData);
       saveProduct(processedData).then((res) => {
         if (res.status === 201) {
           Swal.fire({

@@ -16,7 +16,7 @@ const AddComboPage = () => {
   const { data: products } = useQuery({
     queryFn: () => getcomboProductsApi(),
   });
-console.log(products)
+  
   const {
     register,
     handleSubmit,

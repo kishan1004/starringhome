@@ -13,7 +13,6 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(currentPassword, newPassword);
 
     if (newPassword !== reenterPassword) {
       Swal.fire({
