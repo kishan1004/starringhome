@@ -172,8 +172,8 @@ const Orders = () => {
             )}
             {!error && !isLoading && orders.length > 0
               ? orders.map((order) => (
-                  <tr key={order.id}>
-                    <td>
+                  <tr key={order._id} >
+                    <td className="border p-3">
                       <button
                         onClick={() => navigate(`../orderdetail/${order.id}`)}
                         className="text-blue-500 hover:underline"
@@ -181,11 +181,11 @@ const Orders = () => {
                         {order.orderId}
                       </button>
                     </td>
-                    <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                    <td>{order.userName}</td>
-                    <td>{order.total}</td>
-                    <td>{order.paymentStatus}</td>
-                    <td>
+                    <td className="border p-3">{new Date(order.orderDate).toLocaleDateString()}</td>
+                    <td className="border p-3">{order.userName}</td>
+                    <td className="border p-3">{order.total}</td>
+                    <td className="border p-3">{order.paymentStatus}</td>
+                    <td className="border p-3">
                       <select
                         value={order.orderStatus}
                         onChange={
@@ -195,7 +195,7 @@ const Orders = () => {
                       >
                         <option value="Completed">Completed</option>
                         <option value="In Transit">In Transit</option>
-                        <option value="Dispatch">Dispatch</option>
+                        <option value="Pending">Dispatch</option>
                       </select>
                     </td>
                     <td>

@@ -8,6 +8,7 @@ import { getOrdersDetailById } from "../../api/user";
 import { useSearchParams } from "react-router-dom";
 import { Spin, Button } from "antd";
 import moment from "moment";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const UserOrderDetail = () => {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ const UserOrderDetail = () => {
   };
 
   return (
+    <UserProtectLayout>
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
@@ -345,6 +347,7 @@ const UserOrderDetail = () => {
         ></div>
       </div>
     </section>
+    </UserProtectLayout>
   );
 };
 

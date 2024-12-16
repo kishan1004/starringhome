@@ -7,6 +7,7 @@ import { Button } from "antd";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import Swal from "sweetalert2";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const AddAddress = () => {
   const [isUpdate, setIsUpdate] = useState(false);
@@ -78,6 +79,7 @@ const AddAddress = () => {
   };
 
   return (
+    <UserProtectLayout>
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
@@ -334,6 +336,7 @@ const AddAddress = () => {
         ></div>
       </div>
     </section>
+    </UserProtectLayout>
   );
 };
 

@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { Button, Spin } from "antd";
 import { BiSolidCoupon } from "react-icons/bi";
 import Swal from "sweetalert2";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const CheckoutPage = () => {
   const [orders, setOrders] = useState([]);
@@ -343,6 +344,7 @@ const CheckoutPage = () => {
   };
 
   return (
+    <UserProtectLayout>
     <section className=" w-full bg-gray-100 min-h-screen">
       <div className=" md:px-10 md:py-14 px-4 py-10">
         <Link to="/all-products">
@@ -874,6 +876,7 @@ const CheckoutPage = () => {
         </div>
       </div>
     </section>
+    </UserProtectLayout>
   );
 };
 

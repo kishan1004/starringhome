@@ -7,6 +7,7 @@ import { useQuery } from "react-query";
 import { Spin } from "antd";
 import { useMutation } from "react-query";
 import Swal from "sweetalert2";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const YourAddresses = () => {
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ const YourAddresses = () => {
   };
 
   return (
+    <UserProtectLayout>
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
@@ -165,6 +167,7 @@ const YourAddresses = () => {
         ></div>
       </div>
     </section>
+    </UserProtectLayout>
   );
 };
 

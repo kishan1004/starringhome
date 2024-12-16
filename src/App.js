@@ -165,7 +165,7 @@ function App() {
             }
           />
 
-          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          {/* <Route path="/order-confirmation" element={<OrderConfirmation />} /> */}
           <Route path="/user-login" element={<UserLogin />} />
           <Route path="/user-account" element={<UserAccountPage />} />
           <Route path="/addresses" element={<YourAddresses />} />
