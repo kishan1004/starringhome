@@ -114,21 +114,6 @@ const UserOrderDetail = () => {
     }
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   Swal.fire({
-  //     icon: "success",
-  //     title: "Request Sent",
-  //     text: "The Return/Exchange request has been sent successfully!",
-  //     timer: 5000,
-  //     timerProgressBar: true,
-  //   }).then(() => {
-  //     setShowPopup(false); // Close popup after submission
-  //     setFormData({ action: "Return", reason: "" }); // Reset form
-  //   });
-  // };
-
   return (
     <UserProtectLayout>
       <section className="font-beatrice bg-gray-100 min-h-screen">
