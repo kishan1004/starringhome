@@ -49,15 +49,28 @@ axiosInstance.interceptors.response.use(
     return res;
   },
   (error) => {
-     console.log(error)
-      let weburl = window.location.href
-      if (error?.response?.status === 401 || error?.response?.status === 403 ) {
-      if (weburl.split("/").includes("admin") || error?.response?.data.detail[0].msg ==='Not authenticated') {
-        window.location.href = "/admin/login";
+    console.log(error);
+    let weburl = window.location.href;
+    
+    // Check for 401 or 403 error status
+    if (error?.response?.status === 401 || error?.response?.status === 403) {
+      const urlParts = weburl.split("/");
+      const isAdmin = urlParts.includes("admin");
+      const isNotAuthenticated = error?.response?.data?.detail?.[0]?.msg === "Not authenticated";
+    
+      if (isAdmin || isNotAuthenticated) {
+        // Avoid reloading if already on /admin/login
+        if (!weburl.endsWith("/admin/login")) {
+          window.location.href = "/admin/login";
+        }
       } else {
-        window.location.href = "/user-login";
+        // Avoid reloading if already on /user-login
+        if (!weburl.endsWith("/user-login")) {
+          window.location.href = "/user-login";
+        }
       }
     }
+    
     return error;
   }
 );

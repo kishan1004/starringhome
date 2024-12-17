@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 html {
-  max-width: 1440px;
   margin: auto;
   width: 100%;
   background: #fafafa;

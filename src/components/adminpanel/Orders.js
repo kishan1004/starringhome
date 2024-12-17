@@ -7,6 +7,7 @@ import {
 } from "../../api/admin";
 import { useMutation } from "react-query";
 import Swal from "sweetalert2";
+import Loader2 from "../common/Loader2";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -119,7 +120,7 @@ const Orders = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
       <h1 className="text-2xl font-bold mb-6">Orders</h1>
-
+      {isLoading && <Loader2/>}
       {/* Filters */}
       <div className="mb-6 flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0">
         <select

@@ -100,7 +100,7 @@ const Login = () => {
               className="absolute right-3 top-10 text-gray-600 hover:text-gray-800 focus:outline-none"
               onClick={togglePasswordVisibility}
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? <FaEye /> :  <FaEyeSlash />}
             </button>
           </div>
 

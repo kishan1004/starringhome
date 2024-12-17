@@ -5,10 +5,13 @@ import {
   deleteTestimonial,
 } from "../../api/admin";
 import Swal from "sweetalert2";
+import Loader2 from "../common/Loader2";
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
+  const [loaderState, SetLoader] = useState(false);
+
   const [newTestimonial, setNewTestimonial] = useState({
     customerName: "",
     review: "",
@@ -23,7 +26,9 @@ const Testimonials = () => {
   }, []);
 
   function getTestimonialsData() {
+    SetLoader(true);
     getTestimonialDetails(1, 50).then((res) => {
+      SetLoader(false);
       if (res.status === 200) {
         const data = res?.data?.detail?.data;
         setTestimonials([...data]);
@@ -120,7 +125,11 @@ const Testimonials = () => {
   );
 
   return (
+
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
+
+      {loaderState && <Loader2 />}
+
       <h1 className="text-2xl font-bold mb-6">Customer Testimonials</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -147,20 +156,18 @@ const Testimonials = () => {
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className={`px-4 py-2 rounded ${
-            currentIndex === 0 ? "bg-gray-300" : "bg-black text-white"
-          } `}
+          className={`px-4 py-2 rounded ${currentIndex === 0 ? "bg-gray-300" : "bg-black text-white"
+            } `}
         >
           Prev
         </button>
         <button
           onClick={handleNext}
           disabled={currentIndex >= Math.floor(totalItems / itemsPerPage)}
-          className={`px-4 py-2 rounded ${
-            currentIndex >= Math.floor(totalItems / itemsPerPage)
-              ? "bg-gray-300"
-              : "bg-black text-white"
-          }`}
+          className={`px-4 py-2 rounded ${currentIndex >= Math.floor(totalItems / itemsPerPage)
+            ? "bg-gray-300"
+            : "bg-black text-white"
+            }`}
         >
           Next
         </button>
@@ -182,9 +189,8 @@ const Testimonials = () => {
             name="customerName"
             value={newTestimonial.customerName}
             onChange={handleInputChange}
-            className={`w-full border ${
-              errors.customerName ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.customerName ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           {errors.customerName && (
             <p className="text-red-500 text-sm mt-1">{errors.customerName}</p>
@@ -199,9 +205,8 @@ const Testimonials = () => {
             name="review"
             value={newTestimonial.review}
             onChange={handleInputChange}
-            className={`w-full border ${
-              errors.review ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.review ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           ></textarea>
           {errors.review && (
             <p className="text-red-500 text-sm mt-1">{errors.review}</p>

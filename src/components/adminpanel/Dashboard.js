@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Doughnut } from "react-chartjs-2";
-
+import Loader2 from "../common/Loader2";
 import { FaSearch, FaFacebook, FaInstagram } from "react-icons/fa";
 import {
   FaUsers,
@@ -66,6 +66,8 @@ const Dashboard = () => {
 
   const [timeRange, setTimeRange] = useState("lastDay");
 
+  const [loaderState,SetLoader]=useState(false);
+
   const [pieChartData, setPieChartData] = useState({
     labels: ["Completed", "Dispatched"],
     datasets: [
@@ -114,9 +116,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchOrderStats = async () => {
+      SetLoader(true);
       try {
         const res = await getOrderStats(timeRange); 
+        SetLoader(false);
         if (res.status === 200) {
+          
           setOrderStats(res.data.detail);
           setPieChartData({
             labels: ["Completed", "Dispatched"],
@@ -142,10 +147,11 @@ const Dashboard = () => {
           console.log(res);
         }
       } catch (error) {
+        SetLoader(false);
         console.error("Error fetching order stats:", error);
       }
     };
-  
+
     fetchOrderStats();
   }, [timeRange]);
 
@@ -204,6 +210,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
+      {loaderState && <Loader2/>}
       <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
       {/* Time Range Selector */}
       <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">

@@ -184,7 +184,7 @@ if(localStorage.getItem('userToken')){
                     className="absolute right-3 top-9 text-gray-600 hover:text-gray-800 focus:outline-none"
                     onClick={togglePasswordVisibility}
                   >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    {showPassword ? <FaEye /> :  <FaEyeSlash />}
                   </button>
                 </div>
                 {error && <p className="text-red-500">{error}</p>}
@@ -243,7 +243,7 @@ if(localStorage.getItem('userToken')){
                   className="absolute right-3 top-9 text-gray-600 hover:text-gray-800 focus:outline-none"
                   onClick={togglePasswordVisibility}
                 >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  {showPassword ? <FaEye />  :  <FaEyeSlash />}
                 </button>
               </div>
               {error && <p className="text-red-500">{error}</p>}

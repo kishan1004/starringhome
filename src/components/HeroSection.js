@@ -97,7 +97,7 @@ const HeroSection = (props) => {
   return (
     <>
       <div
-        className="relative h-screen max-w-[1440px] w-full mx-auto bg-cover bg-center"
+        className="relative h-screen w-full mx-auto bg-cover bg-center"
         id={props.id}
       >
         <video
@@ -339,7 +339,7 @@ const HeroSection = (props) => {
                 className="bg-[#6D4C41] px-4 py-1 mt-4 inline-block text-sm font-medium"
                 data-aos="fade-up"
               >
-                Vivamus sit ameet interdum elit.
+                Clothing that lives with you
               </p>
               <p
                 className="bg-[#6D4C41] px-4 py-1 mt-1 inline-block text-sm font-medium"

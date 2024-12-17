@@ -3,6 +3,7 @@ import { getInventoryDetailsandExport } from "../../api/admin";
 import { useQuery } from "react-query";
 import moment from "moment";
 import { Pagination } from "antd";
+import Loader2 from "../common/Loader2";
 
 const Inventory = () => {
   const [dateRange, setDateRange] = useState({ startDate: "", endDate: "" });
@@ -56,6 +57,7 @@ const Inventory = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
+      {isLoading && <Loader2/>}
       <h1 className="text-2xl font-bold mb-6">Inventory Management</h1>
       {/* Date Filters */}
       <div className="mb-6 flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0">

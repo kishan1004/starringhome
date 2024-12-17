@@ -15,6 +15,7 @@ import {
   saveProduct,
 } from "../../api/admin";
 import Loader from "../common/Loader";
+import Loader2 from "../common/Loader2";
 
 const productImages = [
   Product1img,
@@ -104,8 +105,11 @@ const ProductList = () => {
   };
 
   const handleDelete = (productId) => {
+    
     if (window.confirm("Are you sure you want to delete this product?")) {
+      setIsLoading(true);
       deleteProduct(productId).then((res) => {
+        setIsLoading(false);
         if (res.status === 200) {
           setProducts((prevProducts) =>
             prevProducts.filter((product) => product._id !== productId)
@@ -142,6 +146,7 @@ const ProductList = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
+      {isLoading && <Loader2/>}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Product List</h1>
         <button

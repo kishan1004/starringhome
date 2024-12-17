@@ -11,6 +11,9 @@ import {
 import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 
+import Loader2 from "../common/Loader2";
+
+
 const ProductUpload = () => {
   const { productId } = useParams();
   const [productData, setProductData] = useState({
@@ -30,6 +33,7 @@ const ProductUpload = () => {
   });
   const [errors, setErrors] = useState({});
   const [reviewMode, setReviewMode] = useState(false);
+  const [LoaderState, setLoaderState] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
 
   const [categoriesList, SetCategoriesList] = useState([]);
@@ -47,7 +51,10 @@ const ProductUpload = () => {
     getCategoryName();
     const fetchProduct = async () => {
       if (productId !== "new") {
+        setLoaderState(true);
         const res = await getProduct(productId);
+        setLoaderState(false);
+
         if (res.status === 200) {
           const detail = res.data.detail;
           setProductData({
@@ -60,9 +67,9 @@ const ProductUpload = () => {
             price: detail.price || "",
             stockCount: detail.stockCount
               ? detail.stockCount.reduce((acc, item) => {
-                  acc[item.size.toUpperCase()] = item.count;
-                  return acc;
-                }, {})
+                acc[item.size.toUpperCase()] = item.count;
+                return acc;
+              }, {})
               : {},
             rating: detail.rating || 5,
             description: detail.description || "",
@@ -243,6 +250,7 @@ const ProductUpload = () => {
 
   return (
     <div className="min-h-screen w-full bg-gray-100 mt-14 p-8">
+      {LoaderState && <Loader2 />}
       <button
         onClick={() => navigate("/admin/products")}
         className="mb-4 flex items-center"
@@ -262,9 +270,8 @@ const ProductUpload = () => {
             name="name"
             value={productData.name}
             onChange={handleChange}
-            className={`w-full border ${
-              errors.name ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.name ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter product name (max 15 characters)"
             maxLength="15"
           />
@@ -278,9 +285,8 @@ const ProductUpload = () => {
             name="brand"
             value={productData.brand}
             onChange={handleChange}
-            className={`w-full border ${
-              errors.brand ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.brand ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter product brand (max 15 characters)"
             maxLength="15"
           />
@@ -295,9 +301,8 @@ const ProductUpload = () => {
             name="collection"
             value={productData.collection}
             onChange={handleChange}
-            className={`w-full border ${
-              errors.collection ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.collection ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter product collection (max 15 characters)"
             maxLength="15"
           />
@@ -312,9 +317,8 @@ const ProductUpload = () => {
             name="tag"
             value={productData.tag}
             onChange={handleChange}
-            className={`w-full border ${
-              errors.tag ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.tag ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter product tag (max 15 characters)"
             maxLength="15"
           />
@@ -327,9 +331,8 @@ const ProductUpload = () => {
             name="category"
             value={productData.category}
             onChange={handleChange}
-            className={`w-full border ${
-              errors.category ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.category ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           >
             <option value="" disabled>
               Select category
@@ -380,11 +383,10 @@ const ProductUpload = () => {
                     : ""
                 }
                 onChange={(e) => handleStockChange(e, size)}
-                className={`w-full border ${
-                  errors[`stockCount-${size}`]
+                className={`w-full border ${errors[`stockCount-${size}`]
                     ? "border-red-500"
                     : "border-gray-300"
-                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder={`Enter stock count for ${size}`}
               />
               {errors[`stockCount-${size}`] && (
@@ -402,9 +404,8 @@ const ProductUpload = () => {
             name="price"
             value={productData.price}
             onChange={handleChange}
-            className={`w-full border ${
-              errors.price ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.price ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           {errors.price && (
             <p className="text-red-500 text-sm">{errors.price}</p>
@@ -418,9 +419,8 @@ const ProductUpload = () => {
             name="offerPercentage"
             value={productData.offerPercentage}
             onChange={handleChange}
-            className={`w-full border ${
-              errors.offerPercentage ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.offerPercentage ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           {errors.offerPercentage && (
             <p className="text-red-500 text-sm">{errors.offerPercentage}</p>
@@ -458,9 +458,8 @@ const ProductUpload = () => {
           name="description"
           value={productData.description}
           onChange={handleChange}
-          className={`w-full border ${
-            errors.description ? "border-red-500" : "border-gray-300"
-          } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+          className={`w-full border ${errors.description ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           rows="4"
         ></textarea>
         {errors.description && (
