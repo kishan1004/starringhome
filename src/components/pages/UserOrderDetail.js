@@ -70,7 +70,7 @@ const UserOrderDetail = () => {
       Swal.fire("Error", error[0].msg, "error");
     },
   });
-  console.log(errors);
+ 
   const onSubmit = (value) => {
     if (value.action === "Exchange") {
       if (
