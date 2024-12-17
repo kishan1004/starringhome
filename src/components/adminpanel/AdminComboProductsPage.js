@@ -79,7 +79,7 @@ const AdminComboProductsPage = () => {
               </tr>
             ) : (
               combos?.data?.detail.data.map((combo) => (
-                <tr key={combo.id}>
+                <tr key={combo._id}>
                   <td className="px-4 py-2 border">{combo.comboName}</td>
                   <td className="px-4 py-2 border">
                     {combo.products.toString()}

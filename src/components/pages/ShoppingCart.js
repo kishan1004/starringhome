@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getCartDetails, addToCart } from "../../api/user";
 import { useQuery } from "react-query";
 import { Spin } from "antd";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const ShoppingCart = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const ShoppingCart = () => {
 
 
   return (
+    <UserProtectLayout>
     <section className="bg-gray-100 font-sans min-h-screen">
       {/* Top Navigation */}
       <div className="w-full px-4 pb-5">
@@ -127,6 +129,7 @@ const ShoppingCart = () => {
         </Link>
       </div>
     </section>
+    </UserProtectLayout>
   );
 };
 

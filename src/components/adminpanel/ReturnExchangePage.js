@@ -1,75 +1,55 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import { getReturnExchangeApi, updateReturnStatusApi } from "../../api/admin";
+import { useMutation, useQuery } from "react-query";
+import { Pagination, Dropdown} from "antd";
+import Swal from "sweetalert2";
 
 const ReturnExchangePage = () => {
-  const [requests, setRequests] = useState([
-    {
-      orderId: "12345",
-      type: "Return",
-      reason: "Defective Item",
-      status: "Accepted",
-      date: "2024-11-01",
-    },
-    {
-      orderId: "67890",
-      type: "Exchange",
-      reason: "Wrong Size",
-      status: "Declined",
-      date: "2024-11-10",
-    },
-    {
-      orderId: "11223",
-      type: "Return",
-      reason: "Late delivery",
-      status: "Pending",
-      date: "2024-11-15",
-    },
-    {
-      orderId: "99887",
-      type: "Exchange",
-      reason: "Color mismatch",
-      status: "Shipping",
-      date: "2024-11-20",
-    },
-  ]);
-
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const navigate = useNavigate();
+  const [dateRange, setDateRange] = useState({ startDate: "", endDate: "" });
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // Adjust as needed
-
-  // Filter requests based on date range
-  const filteredRequests = requests.filter((request) => {
-    const requestDate = new Date(request.date);
-    const matchesStartDate = !startDate || requestDate >= new Date(startDate);
-    const matchesEndDate = !endDate || requestDate <= new Date(endDate);
-    return matchesStartDate && matchesEndDate;
+  const {
+    data: returnExchangeData,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["getreturnExchange", { currentPage, dateRange }],
+    queryFn: () => getReturnExchangeApi(currentPage, dateRange),
   });
 
-  // Pagination logic
-  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentRequests = filteredRequests.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const handleDateChange = (field, value) => {
+    setDateRange((prev) => ({
+      ...prev,
+      [field]: value !== "" ? moment(value).format("DD/MM/YYYY") : "",
+    }));
+  };
 
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+
+  const updateReturnStatusMutation = useMutation({
+    mutationFn: updateReturnStatusApi,
+    onSuccess: () => {
+      refetch();
+      Swal.fire("Success", "Order status Updated to Completed", "success");
+    },
+    onError: (error) => {
+      Swal.fire("Error", error[0].msg, "error");
+    },
+  });
+
+  const isDisabled = (item, action) => {
+    if (item === "Accepted" && action === "Refund") {
+      return true;
+    } else if (item === "Shipping" && action === "Return") {
+      return true;
+    } else if (item === "Completed" && action === "Return") {
+      return true;
+    } else {
+      return false;
     }
   };
-
-  const handleStatusChange = (index, newStatus) => {
-    const updatedRequests = [...requests];
-    const globalIndex = requests.findIndex(
-      (req) => req.orderId === currentRequests[index].orderId
-    );
-    updatedRequests[globalIndex].status = newStatus;
-    setRequests(updatedRequests);
-  };
-
-  const navigate = useNavigate();
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-[60px]">
@@ -82,15 +62,13 @@ const ReturnExchangePage = () => {
             <label className="font-medium">From:</label>
             <input
               type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => handleDateChange("startDate", e.target.value)}
               className="px-3 py-2 border rounded w-full md:w-auto"
             />
             <label className="font-medium">To:</label>
             <input
               type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => handleDateChange("endDate", e.target.value)}
               className="px-3 py-2 border rounded w-full md:w-auto"
             />
           </div>
@@ -106,74 +84,101 @@ const ReturnExchangePage = () => {
                 <th className="p-2 text-left border">Reason</th>
                 <th className="p-2 text-left border">Date</th>
                 <th className="p-2 text-left border">Status</th>
+                <th className="p-2 text-left border">Action</th>
               </tr>
             </thead>
             <tbody>
-              {currentRequests.map((request, index) => (
-                <tr key={index} className="bg-white border">
-                  <td className="p-2 border">
-                    <button
-                      onClick={() => navigate(`../orderdetail/${request._id}`)}
-                      className="text-blue-500 hover:underline"
-                    >
-                      {request.orderId}
-                    </button>
-                  </td>
-                  <td className="p-2 border">{request.type}</td>
-                  <td className="p-2 border">{request.reason}</td>
-                  <td className="p-2 border">{request.date}</td>
-                  <td className="p-2 border">
-                    <select
-                      value={request.status}
-                      onChange={(e) =>
-                        handleStatusChange(index, e.target.value)
-                      }
-                      className="p-2 border border-gray-300 rounded"
-                    >
-                      <option value="Accepted">Accepted</option>
-                      <option value="Declined">Declined</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Shipping">Shipping</option>
-                    </select>
+              {isError ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-4">
+                    Something went wrong
                   </td>
                 </tr>
-              ))}
+              ) : isLoading ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-4">
+                    Loading...
+                  </td>
+                </tr>
+              ) : returnExchangeData?.data.detail.total === 0 ? (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="text-center text-gray-500 py-4 font-semibold"
+                  >
+                    No combos found
+                  </td>
+                </tr>
+              ) : (
+                returnExchangeData?.data.detail.data.map((request, index) => (
+                  <tr key={index} className="bg-white border">
+                    <td className="p-2 border">
+                      <button
+                        onClick={() =>
+                          navigate(`../orderdetail/${request._id}`)
+                        }
+                        className="text-blue-500 hover:underline"
+                      >
+                        {request.orderId}
+                      </button>
+                    </td>
+                    <td className="p-2 border">
+                      {request.action === "Refund"
+                        ? "Exchnage"
+                        : request.action}
+                    </td>
+                    <td className="p-2 border">{request.reason}</td>
+                    <td className="p-2 border">
+                      {moment(request.createdTime).format("DD-MM-YYYY")}
+                    </td>
+                    <td className="p-2 border">{request.status}</td>
+                    <td className="p-2 border">
+                      <div>
+                        <Dropdown
+                          menu={{
+                            items: [
+                              "Accepted",
+                              "Declined",
+                              "Shipping",
+                              "Completed",
+                            ].map((item) => {
+                              return {
+                                key: item,
+                                label: item,
+                                disabled: isDisabled(item, request.action),
+                              };
+                            }),
+                            onClick: (value) => {
+                              updateReturnStatusMutation.mutate({
+                                refundId: request._id,
+                                status: value.key,
+                              });
+                            },
+                          }}
+                          placement="bottom"
+                        >
+                          <div className=" cursor-pointer text-sm text-blue-500">
+                            Change Status
+                          </div>
+                        </Dropdown>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Pagination Controls */}
-      <div className="flex justify-center items-center mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
-        >
-          Previous
-        </button>
-
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${
-              currentPage === i + 1
-                ? "bg-black text-white"
-                : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 disabled:opacity-50"
-        >
-          Next
-        </button>
+      <div className=" flex justify-center pt-10 pb-5 px-5">
+        <Pagination
+          value={currentPage}
+          onChange={(value) => {
+            setCurrentPage(value);
+          }}
+          total={returnExchangeData?.data.detail.total}
+          hideOnSinglePage
+        />
       </div>
     </div>
   );

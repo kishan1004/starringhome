@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAllFavourites,addFavouriteProduct } from "../../api/user";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const Favourites = () => {
   const navigate = useNavigate()
@@ -38,6 +39,7 @@ const Favourites = () => {
   }
 
   return (
+    <UserProtectLayout>
     <div className="min-h-screen bg-gray-100 font-beatrice">
       <section className="max-w-full md:px-10 px-4">
         <Link to="/all-products">
@@ -106,6 +108,7 @@ const Favourites = () => {
         </div>
       </div>
     </div>
+    </UserProtectLayout>
   );
 };
 

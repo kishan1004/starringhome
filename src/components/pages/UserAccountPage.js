@@ -3,6 +3,7 @@ import { Link,useNavigate } from "react-router-dom"; // Import Link from React R
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { userLogout } from "../../api/user";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const UserLogin = () => {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ useEffect(()=>{
 
 
   return (
+    <UserProtectLayout>
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
@@ -110,6 +112,7 @@ useEffect(()=>{
         ></div>
       </div>
     </section>
+    </UserProtectLayout>
   );
 };
 

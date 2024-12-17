@@ -1,4 +1,3 @@
-import axios from "axios";
 import { axiosInstance, userAuthInstance } from "../utils/axios";
 
 export const userLogin = (userName, password) => {
@@ -107,7 +106,7 @@ export const addToCart = (data) => {
 }
 
 export const getCartDetails = () => {
-    return axiosInstance.get('/users/orders/products/cart/details')
+    return userAuthInstance.get('/users/orders/products/cart/details')
 }
 
 export const proceedToPay = (data) => {
@@ -115,7 +114,7 @@ export const proceedToPay = (data) => {
 }
 
 export const verifyPayment = (data) =>{
-    return axiosInstance.post('/payments/verify', data);
+    return userAuthInstance.post('/payments/verify', data);
 }
 
 export const updatePassword = (currentPassword,newPassword)=>{
@@ -194,4 +193,7 @@ export const getTestimonialApi = ()=>{
 
 export const viewCouponsApi = ()=>{
     return userAuthInstance.get('/users/orders/view/coupons')
+}
+export const updateReturnApi = (data)=>{
+    return userAuthInstance.post('/users/orders/return/exchange',data)
 }

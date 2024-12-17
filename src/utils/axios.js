@@ -26,8 +26,9 @@ export const userAuthInstance = axios.create({
  * If the api is for user it attaches userToken instead
  */
 axiosInstance.interceptors.request.use((config) => {
-  let apiKey = "";
-  if (config.url.split("/").includes("admin")) {
+   let apiKey = "";
+   let weburl = window.location.href
+  if (weburl.split("/").includes("admin")) {
     apiKey = localStorage.getItem("authToken");
   } else {
     apiKey = localStorage.getItem("userToken");
@@ -49,9 +50,9 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
      console.log(error)
-    if (error?.response?.status === 401) {
-      let url = error?.config?.url;
-      if (url.split("/").includes("admin") || error?.response?.data.detail[0].msg ==='Not authenticated') {
+      let weburl = window.location.href
+      if (error?.response?.status === 401 || error?.response?.status === 403 ) {
+      if (weburl.split("/").includes("admin") || error?.response?.data.detail[0].msg ==='Not authenticated') {
         window.location.href = "/admin/login";
       } else {
         window.location.href = "/user-login";
@@ -73,7 +74,7 @@ adminAuthInstance.interceptors.response.use(
     return res;
   },
   (error) => {
-    if (error?.response?.status === 401 || error?.response?.data.detail[0].msg ==='Not authenticated') {
+    if (error?.response?.status === 401 || error?.response?.status === 403 || error?.response?.data.detail[0].msg ==='Not authenticated') {
       window.location.href = "/admin/login";
     }
     return Promise.reject(error.response.data.detail);
@@ -92,8 +93,8 @@ userAuthInstance.interceptors.response.use(
     return res;
   },
   (error) => {
-    if (error?.response?.status === 401 || error?.response?.data.detail[0].msg ==='Not authenticated') {
-      window.location.href = "/user/login";
+    if (error?.response?.status === 401 || error?.response?.status === 403 || error?.response?.data.detail[0].msg ==='Not authenticated') {
+      window.location.href = "/user-login";
     }
     return Promise.reject(error.response.data.detail);
   }

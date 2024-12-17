@@ -302,6 +302,27 @@ export const getOrders = async (args) => {
   });
 };
 
+export const updateOrderShippingApi = (data)=>{
+  return adminAuthInstance.patch('/admin/orders/shipping/confirmation',data)
+}
+
+export const updateOrderCompleteApi = (data)=>{
+  return adminAuthInstance.patch('/admin/orders/complete',data)
+}
+
+export const getReturnExchangeApi = (currentPage,date) =>{
+  let url = `/admin/orders/return/exchanges/details?page=${currentPage}&limit=20`
+    // Add start_date and end_date if available
+  if (date.startDate !== '' && date.endDate !== '' ) {
+    url += `&start_date=${date.startDate}&end_date=${date.endDate}`;
+  }
+  return adminAuthInstance.get(url)
+} 
+
+export const updateReturnStatusApi = (data)=>{
+ return adminAuthInstance.patch('/admin/orders/return/exchang/accpet/decline',data)
+}
+
 // Admin Contact us
 export const getContactUs = async (page, limit) => {
   const token = localStorage.getItem("authToken");

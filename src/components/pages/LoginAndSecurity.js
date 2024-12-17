@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoginImg from "../../images/loginimage.jpeg";
 import LoginImgsm from "../../images/loginimagesmall.jpeg";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const LoginAndSecurity = () => {
   const [username, setUsername] = useState("deva@example.com");
@@ -17,6 +18,7 @@ const LoginAndSecurity = () => {
   };
 
   return (
+    <UserProtectLayout>
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
@@ -101,6 +103,7 @@ const LoginAndSecurity = () => {
         ></div>
       </div>
     </section>
+    </UserProtectLayout>
   );
 };
 

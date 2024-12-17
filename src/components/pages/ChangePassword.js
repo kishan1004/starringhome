@@ -4,6 +4,7 @@ import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { updatePassword } from "../../api/user";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import UserProtectLayout from "../common/UserProtectLayout";
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -57,6 +58,7 @@ const ChangePassword = () => {
   };
 
   return (
+    <UserProtectLayout>
     <section className="font-beatrice bg-gray-100 min-h-screen">
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
@@ -139,6 +141,7 @@ const ChangePassword = () => {
         ></div>
       </div>
     </section>
+    </UserProtectLayout>
   );
 };
 
