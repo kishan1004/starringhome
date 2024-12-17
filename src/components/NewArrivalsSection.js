@@ -28,7 +28,7 @@ const StarRating = () => {
 const ProductCard = ({ image, title, price, id }) => {
   return (
     <div className="flex flex-col items-start p-4" data-aos="flip-right">
-      <Link to={`/one-product?id=${id}`}>
+      <Link to={`/all-products`}>
         <div className="relative">
           <img
             src={image}
