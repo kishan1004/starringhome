@@ -194,3 +194,6 @@ export const getTestimonialApi = ()=>{
 export const viewCouponsApi = ()=>{
     return userAuthInstance.get('/users/orders/view/coupons')
 }
+export const updateReturnApi = (data)=>{
+    return userAuthInstance.post('/users/orders/return/exchange',data)
+}

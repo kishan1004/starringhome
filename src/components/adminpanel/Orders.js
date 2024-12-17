@@ -1,6 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getOrders } from "../../api/admin";
+import {
+  getOrders,
+  updateOrderCompleteApi,
+  updateOrderShippingApi,
+} from "../../api/admin";
+import { useMutation } from "react-query";
+import Swal from "sweetalert2";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -89,6 +95,27 @@ const Orders = () => {
     setDateRange((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateShippingMutation = useMutation({
+    mutationFn: updateOrderShippingApi,
+    onSuccess: () => {
+      fetchOrders();
+      Swal.fire("Success", "Order status Updated to Shipping", "success");
+    },
+    onError: (error) => {
+      Swal.fire("Error",  error[0].msg, "error");
+    },
+  });
+  const updateCompleteMutation = useMutation({
+    mutationFn: updateOrderCompleteApi,
+    onSuccess: () => {
+      fetchOrders();
+      Swal.fire("Success", "Order status Updated to Completed", "success");
+    },
+    onError: (error) => {
+      Swal.fire("Error",  error[0].msg, "error");
+    },
+  });
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
       <h1 className="text-2xl font-bold mb-6">Orders</h1>
@@ -152,7 +179,7 @@ const Orders = () => {
               <th className="py-3 px-4 border">Total Price</th>
               <th className="py-3 px-4 border">Payment Status</th>
               <th className="py-3 px-4 border">Order Status</th>
-              <th className="py-3 px-4 border">Download</th>
+              {/* <th className="py-3 px-4 border">Download</th> */}
             </tr>
           </thead>
           <tbody>
@@ -172,7 +199,7 @@ const Orders = () => {
             )}
             {!error && !isLoading && orders.length > 0
               ? orders.map((order) => (
-                  <tr key={order._id} >
+                  <tr key={order._id}>
                     <td className="border p-3">
                       <button
                         onClick={() => navigate(`../orderdetail/${order.id}`)}
@@ -181,26 +208,60 @@ const Orders = () => {
                         {order.orderId}
                       </button>
                     </td>
-                    <td className="border p-3">{new Date(order.orderDate).toLocaleDateString()}</td>
+                    <td className="border p-3">
+                      {new Date(order.orderDate).toLocaleDateString()}
+                    </td>
                     <td className="border p-3">{order.userName}</td>
                     <td className="border p-3">{order.total}</td>
                     <td className="border p-3">{order.paymentStatus}</td>
                     <td className="border p-3">
-                      <select
-                        value={order.orderStatus}
-                        onChange={
-                          (e) => setSelectedOrderStatus(e.target.value)
-                          // handleOrderStatusChange(order.id, e.target.value)
-                        }
-                      >
-                        <option value="Completed">Completed</option>
-                        <option value="In Transit">In Transit</option>
-                        <option value="Pending">Dispatch</option>
-                      </select>
+                      {order.orderStatus === "Pending" ||
+                      order.orderStatus === "Completed" ? (
+                        <div>{order.orderStatus}</div>
+                      ) : (
+                        <select
+                          value={order.orderStatus}
+                          onChange={(e) => {
+                            if (e.target.value === "InTransit") {
+                              updateShippingMutation.mutate({
+                                orderId: order._id,
+                                status: "Shipping",
+                              });
+                            } else if (e.target.value === "Completed") {
+                              updateCompleteMutation.mutate({
+                                orderId: order._id,
+                                status: 'Completed',
+                              });
+                            }
+                          }}
+                        >
+                          <option
+                            value="Completed"
+                            disabled={order.orderStatus === "Dispatch"}
+                          >
+                            Completed
+                          </option>
+                          <option
+                            value="InTransit"
+                            disabled={order.orderStatus === "InTransit"}
+                          >
+                            In Transit
+                          </option>
+                          <option
+                            value="Dispatch"
+                            disabled={
+                              order.orderStatus === "InTransit" ||
+                              order.orderStatus === "Dispatch"
+                            }
+                          >
+                            Dispatch
+                          </option>
+                        </select>
+                      )}
                     </td>
-                    <td>
+                    {/* <td>
                       <button>📄</button>
-                    </td>
+                    </td> */}
                   </tr>
                 ))
               : !error &&
