@@ -10,7 +10,7 @@ import "aos/dist/aos.css";
 import Aos from "aos";
 import { Link } from "react-router-dom";
 import { IoNotifications } from "react-icons/io5";
-import { getUserNotifications } from "../api/user";
+import { getUserNotifications, salesOverviewSave,clearNotificationsUser } from "../api/user";
 
 const HeroSection = (props) => {
   const [activeItem, setActiveItem] = useState("Home");
@@ -35,6 +35,8 @@ const HeroSection = (props) => {
     // Initialize AOS animation library
     Aos.init({ duration: 1000 });
 
+    salesOverview()
+
     // Add event listener for outside clicks
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -50,6 +52,10 @@ const HeroSection = (props) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const salesOverview = async () => {
+    const res = await salesOverviewSave('google')
+  }
 
   const handleNavClick = (item) => {
     setActiveItem(item);
@@ -68,6 +74,19 @@ const HeroSection = (props) => {
       console.error("Error fetching notifications:", error);
     }
   };
+
+  const clearNotifications = async ()=>{
+    try {
+      const res = await clearNotificationsUser();
+      if (res.status === 200) {
+        setNotifications([]);
+      } else {
+        console.log(res);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  }
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -158,6 +177,12 @@ const HeroSection = (props) => {
                       <h4 className="font-bold text-sm sm:text-lg mb-2">
                         Notifications
                       </h4>
+                      {notifications.length > 0 && <button
+                        onClick={clearNotifications}
+                        className="mb-4 text-sm text-blue-500 hover:underline"
+                      >
+                        Clear Notifications
+                      </button>}
                       <ul className="h-full overflow-y-auto">
                         {notifications.length > 0 ? (
                           notifications.map((notification, index) => (
@@ -201,9 +226,8 @@ const HeroSection = (props) => {
                   handleNavClick("Home");
                   handleScroll("home");
                 }}
-                className={`py-2 text-lg border-b border-gray-700 ${
-                  activeItem === "Home" ? "text-green-200" : "text-white"
-                } hover:text-gray-400`}
+                className={`py-2 text-lg border-b border-gray-700 ${activeItem === "Home" ? "text-green-200" : "text-white"
+                  } hover:text-gray-400`}
               >
                 Home
               </a>
@@ -211,9 +235,8 @@ const HeroSection = (props) => {
               <a
                 href="#new-arrivals"
                 onClick={() => handleNavClick("All New")}
-                className={`py-2 text-lg border-b border-gray-700 ${
-                  activeItem === "All New" ? "text-green-200" : "text-white"
-                } hover:text-gray-400`}
+                className={`py-2 text-lg border-b border-gray-700 ${activeItem === "All New" ? "text-green-200" : "text-white"
+                  } hover:text-gray-400`}
               >
                 All New
               </a>
@@ -221,9 +244,8 @@ const HeroSection = (props) => {
               <a
                 href="#trending"
                 onClick={() => handleNavClick("Categories")}
-                className={`py-2 text-lg border-b border-gray-700 ${
-                  activeItem === "Categories" ? "text-green-200" : "text-white"
-                } hover:text-gray-400`}
+                className={`py-2 text-lg border-b border-gray-700 ${activeItem === "Categories" ? "text-green-200" : "text-white"
+                  } hover:text-gray-400`}
               >
                 Categories
               </a>
@@ -234,9 +256,8 @@ const HeroSection = (props) => {
                   handleNavClick("Featured");
                   handleScroll("banner");
                 }}
-                className={`py-2 text-lg border-b border-gray-700 ${
-                  activeItem === "Featured" ? "text-green-200" : "text-white"
-                } hover:text-gray-400`}
+                className={`py-2 text-lg border-b border-gray-700 ${activeItem === "Featured" ? "text-green-200" : "text-white"
+                  } hover:text-gray-400`}
               >
                 Featured
               </a>
@@ -244,11 +265,10 @@ const HeroSection = (props) => {
               <a
                 href="#features"
                 onClick={() => handleNavClick("Testimonials")}
-                className={`py-2 text-lg border-b border-gray-700 ${
-                  activeItem === "Testimonials"
+                className={`py-2 text-lg border-b border-gray-700 ${activeItem === "Testimonials"
                     ? "text-green-200"
                     : "text-white"
-                } hover:text-gray-400`}
+                  } hover:text-gray-400`}
               >
                 Testimonials
               </a>
@@ -256,9 +276,8 @@ const HeroSection = (props) => {
               <a
                 href="#footer"
                 onClick={() => handleNavClick("Footer")}
-                className={`py-2 text-lg border-b border-gray-700 ${
-                  activeItem === "Footer" ? "text-green-200" : "text-white"
-                } hover:text-gray-400`}
+                className={`py-2 text-lg border-b border-gray-700 ${activeItem === "Footer" ? "text-green-200" : "text-white"
+                  } hover:text-gray-400`}
               >
                 Footer
               </a>

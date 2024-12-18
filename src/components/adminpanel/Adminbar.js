@@ -5,7 +5,7 @@ import { IoNotifications } from "react-icons/io5";
 import { MdAccountCircle } from "react-icons/md";
 import { FaUserCog } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { getNotifications } from "../../api/admin";
+import { getNotifications,clearNotificationsAdmin } from "../../api/admin";
 
 const Adminbar = ({ toggleSidebar, onLogout }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -34,9 +34,20 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
     setIsNotificationOpen((prev) => !prev);
   };
 
-  const clearNotifications = () => {
-    setRecentOrders([]);
-    setClickedOrderIds([]);
+  const clearNotifications = async () => {
+    try {
+      const res = await clearNotificationsAdmin();
+      if (res.status === 200) {
+        console.log("Success", res.data);
+        setRecentOrders([]);
+        setClickedOrderIds([]);
+      } else {
+        console.log(res);
+      }
+    } catch (error) {
+      console.error("Error fetching order stats:", error);
+    }
+  
   };
 
   const toggleAccountDropdown = () => {
@@ -75,7 +86,7 @@ const Adminbar = ({ toggleSidebar, onLogout }) => {
   };
 
   return (
-    <div className="w-[screen] xl:w-[1440px] fixed h-[60px] bg-gray-100 flex items-center justify-between p-2 sm:p-4">
+    <div className="w-[screen] w-100 bg-gray-100 flex items-center justify-between p-2 sm:p-4">
       <div className="flex items-center">
         <GiHamburgerMenu
           onClick={toggleSidebar}

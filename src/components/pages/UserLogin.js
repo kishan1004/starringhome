@@ -30,8 +30,10 @@ if(localStorage.getItem('userToken')){
   const onLogin = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     setError(""); // Clear any existing errors
-
-    //Email validation
+  
+    let formattedUserName = userName; // Variable to hold the final userName value
+  
+    // Email validation
     if (isNaN(userName)) {
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       if (!emailPattern.test(userName)) {
@@ -45,23 +47,26 @@ if(localStorage.getItem('userToken')){
         setError("Invalid phone number");
         return;
       }
+      // Prepend "+91" to the phone number
+      formattedUserName = `+91${userName.replace(/^(0|91)/, "")}`;
     }
-
+  
     // API call for login
     try {
-      const res = await userLogin(userName, password);
+      const res = await userLogin(formattedUserName, password);
       if (res.status === 200) {
         localStorage.setItem("userToken", res?.data?.detail?.token);
-        //Navigate to home
+        // Navigate to home
         navigate("/user-account", { replace: true });
       } else {
         setError("Login failed. Please check your credentials.");
-     }
+      }
     } catch (error) {
       console.error("Error during login:", error);
       setError("An error occurred during login. Please try again.");
     }
   };
+  
 
   const handleForgotPassword = async () => {
     navigate("/otp-login/forgot-password");

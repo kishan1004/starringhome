@@ -9,6 +9,7 @@ import {
 } from "../../api/user";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import Loader2 from "../common/Loader2";
 
 const OTPLogin = () => {
   const { type } = useParams();
@@ -20,6 +21,9 @@ const OTPLogin = () => {
   const [emailErr, SetEmailErr] = useState(false);
   const [PasswordStatus, setPasswordStatus] = useState(false);
   const [isOtpVerified, setisOtpVerified] = useState(true);
+  const [ValidationMsg, SetValidationMsg] = useState(true);
+  const [isLoading, SetisLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleNext = (e) => {
@@ -35,16 +39,19 @@ const OTPLogin = () => {
     };
 
 
-
+    SetisLoading(true);
     getOtp(data).then((res) => {
+      SetisLoading(false);
+
       if (res.status === 200) {
         setOtp(res.data?.detail.otp);
       }
 
-      if (res.status != 422) {
+      if (res.status != 404 && res.status != 422) {
         setStep(2);
       } else {
         console.log(res.response.data.detail);
+        SetValidationMsg(res.response.data.detail[0].msg)
       }
     });
   };
@@ -55,6 +62,7 @@ const OTPLogin = () => {
 
     const isAllNumbers = /^\d+$/.test(inputValue);
     const hasPrefix = inputValue.startsWith("+91");
+    SetisLoading(true);
 
     const res = await otpVerification({
       userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
@@ -63,6 +71,7 @@ const OTPLogin = () => {
       verificationType: t,
     });
 
+    SetisLoading(false);
 
     if (res.status === 200) {
       Swal.fire({
@@ -88,14 +97,18 @@ const OTPLogin = () => {
 
     const isAllNumbers = /^\d+$/.test(inputValue);
     const hasPrefix = inputValue.startsWith("+91");
+    SetisLoading(true);
 
     if (type === "new") {
+      SetisLoading(true);
+
       userSignup({
         userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
         password,
       })
         .then((res) => {
           console.log(res);
+
           if (res?.status === 201) {
             Swal.fire({
               icon: "success",
@@ -122,23 +135,43 @@ const OTPLogin = () => {
             text: "Signup failed. Please try again.",
           });
         });
+        SetisLoading(false);
     } else {
+      SetisLoading(true);
+
       forgotPassword({
         userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
+        newPassword: password,
+
       })
         .then((res) => {
           console.log(res);
-          Swal.fire({
-            icon: "success",
-            title: "Password Reset Successful",
-            text: "Your password has been reset successfully.",
-            timer: 5000,
-            timerProgressBar: true,
-          }).then(() => {
-            navigate("/user-login");
-          });
+        SetisLoading(false);
+          if (res.status == 200) {
+            Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: res.data.detail[0].msg,
+              timer: 5000,
+              timerProgressBar: true,
+            }).then(() => {
+              navigate("/user-login");
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: res.data.detail[0].msg,
+              timer: 5000,
+              timerProgressBar: true,
+            }).then(() => {
+              navigate("/user-login");
+            });
+          }
+
         })
         .catch((error) => {
+        SetisLoading(false);
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -175,6 +208,7 @@ const OTPLogin = () => {
 
   return (
     <section className="font-beatrice bg-gray-100 h-screen">
+      {isLoading && <Loader2/>}
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
       </div>
@@ -185,9 +219,8 @@ const OTPLogin = () => {
           </h2>
           <p className="text-center text-gray-500 mt-2">
             {step === 1
-              ? `Enter your ${
-                  loginType === "phone" ? "Phone Number" : "Email ID"
-                }`
+              ? `Enter your ${loginType === "phone" ? "Phone Number" : "Email ID"
+              }`
               : "Enter the 4-digit OTP sent to you."}
           </p>
 
@@ -219,6 +252,7 @@ const OTPLogin = () => {
                     {emailErr ? "Invalid Email" : ""}
                   </p>
                 )}
+                <p className="text-red-500 mt-2">{ValidationMsg}</p>
               </div>
 
               <button

@@ -196,6 +196,16 @@ export const getNotifications = () => {
   });
 };
 
+export const clearNotificationsAdmin = () =>{
+  const token = localStorage.getItem("authToken");
+
+  return axiosInstance.delete("/dashboard/admin/notificaions/clear", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 export const getOrderStats = (day_filter) => {
   const token = localStorage.getItem("authToken");
   const d = day_filter.toLowerCase();

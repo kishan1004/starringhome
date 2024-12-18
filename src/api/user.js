@@ -165,6 +165,16 @@ export const getUserNotifications =async ()=>{
     return axiosInstance.get('/users/profiles/notifications');
 }
 
+export const clearNotificationsUser = () =>{
+    const token = localStorage.getItem("authToken");
+  
+    return axiosInstance.delete("/users/profiles/notificaions/clear", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+}
+
 export const getOtp =async(data)=>{
     return axiosInstance.put('/users/profiles/otp/verification',data,{
         headers:{
@@ -172,6 +182,10 @@ export const getOtp =async(data)=>{
             'Authorization': `Bearer ${localStorage.getItem("userToken")}`
         }
     });
+}
+
+export const salesOverviewSave = async (platform)=>{
+    return axiosInstance.patch('/dashboard/user/traffic/overview/sales',{platform});
 }
 
 

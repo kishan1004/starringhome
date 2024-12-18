@@ -197,7 +197,6 @@ const ProductList = () => {
 
       {/* Product Table */}
       <div className="overflow-x-auto shadow-lg">
-        <Loader loading={isLoading}>
           <table className="min-w-full bg-white">
             <thead className="bg-gray-200">
               <tr>
@@ -267,7 +266,6 @@ const ProductList = () => {
               ))}
             </tbody>
           </table>
-        </Loader>
       </div>
 
       {/* Pagination Controls */}

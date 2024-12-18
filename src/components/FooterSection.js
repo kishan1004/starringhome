@@ -8,6 +8,8 @@ import Fbimg from "../images/facebook.png";
 import Twitterimg from "../images/twitter.png";
 import { Link } from "react-router-dom";
 import ContactDrawer from "./ContactUsDrawer";
+import { salesOverviewSave } from "../api/user";
+
 const FooterSection = (props) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -17,6 +19,11 @@ const FooterSection = (props) => {
   const handleNavClick = (item) => {
     setActiveItem(item);
   };
+
+  async function socialClick(platform){
+    const res = await salesOverviewSave(platform)
+
+  }
 
   return (
     <>
@@ -127,9 +134,11 @@ const FooterSection = (props) => {
         <div className="flex justify-center space-x-14 mb-8">
           <a
             href="https://www.instagram.com/starringindia/?igsh=ZGUzMzM3NWJiOQ%3D%3D"
+            target="_blank"
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
             data-aos-duration="1000"
+            onClick={()=>socialClick('instagram')}
           >
             <img src={Insta} alt="instagram" className="h-10 w-10" />
           </a>
@@ -143,9 +152,11 @@ const FooterSection = (props) => {
           </a>
           <a
             href="/"
+            target="_blank"
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
             data-aos-duration="1000"
+            onClick={()=>socialClick('facebook')}
           >
             <img src={Fbimg} alt="facebook" className="h-10 w-10" />
           </a>

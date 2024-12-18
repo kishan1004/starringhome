@@ -58,18 +58,19 @@ axiosInstance.interceptors.response.use(
       const isAdmin = urlParts.includes("admin");
       const isNotAuthenticated = error?.response?.data?.detail?.[0]?.msg === "Not authenticated";
     
-      if (isAdmin || isNotAuthenticated) {
-        // Avoid reloading if already on /admin/login
-        if (!weburl.endsWith("/admin/login")) {
+      if (isAdmin) {
+        // Redirect only if not authenticated and not already on /admin/login
+        if (isNotAuthenticated && !weburl.endsWith("/admin/login")) {
           window.location.href = "/admin/login";
         }
       } else {
-        // Avoid reloading if already on /user-login
-        if (!weburl.endsWith("/user-login")) {
+        // Redirect to /user-login only if not authenticated and not already on /user-login
+        if (isNotAuthenticated && !weburl.endsWith("/user-login")) {
           window.location.href = "/user-login";
         }
       }
     }
+    
     
     return error;
   }
