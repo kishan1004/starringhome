@@ -85,6 +85,10 @@ export const getProductById = (id) => {
    return axiosInstance.get(`/users/orders/products/${id}/view`);
 }
 
+export const getUserDetails = ()=>{
+   return axiosInstance.get(`/users/profiles/details`);
+
+}
 
 export const getMyOrdersProducts = () => {
     return userAuthInstance.get('/users/orders/details');

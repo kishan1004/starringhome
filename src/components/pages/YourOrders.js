@@ -7,6 +7,7 @@ import { useQuery } from "react-query";
 import { Spin } from "antd";
 import moment from "moment";
 import UserProtectLayout from "../common/UserProtectLayout";
+import MetaTags from "../common/MetaTags";
 
 const YourOrders = () => {
   const {
@@ -19,8 +20,15 @@ const YourOrders = () => {
     queryFn: () => getMyOrdersProducts(),
   });
 
+
+  const metaData = {
+    title: "Your Orders", desc: ""
+  }
+
   return (
     <UserProtectLayout>
+      <MetaTags data={metaData} />
+
       <section className="font-beatrice bg-gray-100 min-h-screen">
         <div className="m-4 overflow-hidden md:hidden">
           <img
