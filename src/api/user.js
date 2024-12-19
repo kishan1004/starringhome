@@ -23,12 +23,7 @@ export const checkUserName = (userName) => {
 
 export const otpVerification = (data) => {
     const { verificationType, actionType, userName, otpCode } = data;
-    return axiosInstance.put('/users/profiles/otp/verification', {
-        verificationType,
-        actionType,
-        userName,
-        otpCode
-    });
+    return axiosInstance.put('/users/profiles/otp/verification', data);
 }
 
 export const userSignup = (data) => {
@@ -38,6 +33,11 @@ export const userSignup = (data) => {
         password
     });
 }
+
+export const updateUsername = (userName)=>{
+    return axiosInstance.post('/users/profiles/change/username', {userName});
+}
+
 //get category
 export const getCategoryApi = () =>{
     return axiosInstance.get('/admin/category/names')

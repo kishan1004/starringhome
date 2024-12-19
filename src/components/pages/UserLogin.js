@@ -55,6 +55,7 @@ if(localStorage.getItem('userToken')){
     try {
       const res = await userLogin(formattedUserName, password);
       if (res.status === 200) {
+        localStorage.setItem("uid", res?.data?.detail?._id);
         localStorage.setItem("userToken", res?.data?.detail?.token);
         // Navigate to home
         navigate("/user-account", { replace: true });

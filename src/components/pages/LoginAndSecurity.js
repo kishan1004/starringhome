@@ -12,11 +12,12 @@ const LoginAndSecurity = () => {
   const navigate = useNavigate();
 
   const handleSave = () => {
-    if (isEditing) {
+    // if (isEditing) {
       // Redirect to another route upon saving new username
-      navigate("/otp-login/forgot-password");
-    }
-    setIsEditing(!isEditing);
+      // localStorage.setItem('new_email',username)
+      navigate("/otp-login/update-username");
+    // }
+    // setIsEditing(!isEditing);
   };
 
   useEffect(() => {

@@ -6,6 +6,8 @@ import {
   getOtp,
   otpVerification,
   userSignup,
+  updateUsername,
+  userLogout
 } from "../../api/user";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -26,9 +28,23 @@ const OTPLogin = () => {
 
   const navigate = useNavigate();
 
+  const getLabel = (type) => {
+    if (type === "new") {
+      return "PROFILE";
+    } else if (type === "update-username") {
+      return "SETTINGS";
+    } else {
+      return "PASSWORD";
+    }
+  };
+
   const handleNext = (e) => {
     e.preventDefault();
-    const t = type === "new" ? "PROFILE" : "PASSWORD";
+
+  
+    // const t = (type === "new" || type==="update-username") ? "PROFILE" : "PASSWORD";
+    const t = getLabel(type);
+
     const isAllNumbers = /^\d+$/.test(inputValue);
     const hasPrefix = inputValue.startsWith("+91");
 
@@ -38,6 +54,11 @@ const OTPLogin = () => {
       userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
     };
 
+    if(t === "SETTINGS"){
+      data.userId = localStorage.getItem('uid')
+    }
+
+    console.log(data)
 
     SetisLoading(true);
     getOtp(data).then((res) => {
@@ -56,33 +77,72 @@ const OTPLogin = () => {
     });
   };
 
+
+  
   const verifyOtp = async (e) => {
     e.preventDefault();
-    const t = type === "new" ? "PROFILE" : "PASSWORD";
+    console.log(type)
+     const t = getLabel(type);
 
     const isAllNumbers = /^\d+$/.test(inputValue);
     const hasPrefix = inputValue.startsWith("+91");
     SetisLoading(true);
 
-    const res = await otpVerification({
+    let userName = isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue;
+
+    let payloadData = {
       userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
       otpCode: otp,
       actionType: "VERIFY",
       verificationType: t,
-    });
+    }
+
+
+    if(t === "SETTINGS"){
+      payloadData.userId = localStorage.getItem('uid')
+    }
+
+    console.log(payloadData)
+
+    const res = await otpVerification(payloadData);
 
     SetisLoading(false);
 
     if (res.status === 200) {
-      Swal.fire({
-        icon: "success",
-        title: "Verification Successful",
-        text: res.data.detail[0].msg,
-        timer: 5000,
-        timerProgressBar: true,
-      }).then(() => {
-        setisOtpVerified(false);
-      });
+      if(type == "update-username"){
+        const res = await updateUsername(userName);
+        if(res.status==200){
+          await userLogout();
+          localStorage.clear();
+          navigate('/user-login')
+          Swal.fire({
+            icon: "success",
+            title: "Verification Successful",
+            text: res.data.detail[0].msg,
+            timer: 5000,
+            timerProgressBar: true,
+          }).then(() => {
+            setisOtpVerified(false);
+          });
+        }else{
+          Swal.fire({
+            icon: "error",
+            title: "Verification Failed",
+            text: res.data.detail[0].msg,
+          });
+        }
+      }else{
+        Swal.fire({
+          icon: "success",
+          title: "Verification Failed",
+          text: res.data.detail[0].msg,
+          timer: 5000,
+          timerProgressBar: true,
+        }).then(() => {
+          setisOtpVerified(false);
+        });
+      }
+      
     } else {
       Swal.fire({
         icon: "error",
@@ -215,7 +275,8 @@ const OTPLogin = () => {
       <div className="md:flex md:min-h-screen">
         <div className="flex flex-col justify-center items-center md:w-1/2 md:p-8 p-4">
           <h2 className="text-2xl font-semibold text-center text-gray-800">
-            {type === "new" ? "Sign Up" : "Reset Password"}
+            {/* {type === "new" ? "Sign Up" : "Reset Password"} */}
+            {type === "update-username" ? 'Update Username' : type === "new" ? "Sign Up" : "Reset Password"}
           </h2>
           <p className="text-center text-gray-500 mt-2">
             {step === 1
@@ -284,7 +345,7 @@ const OTPLogin = () => {
                 </button>
               </div>
 
-              {step === 2 && (
+              {step === 2 && type != "update-username" && (
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">
                     Password
@@ -306,13 +367,13 @@ const OTPLogin = () => {
                 </div>
               )}
 
-              <button
+              {type != "update-username" && <button
                 type="submit"
                 disabled={isOtpVerified}
                 className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
                 {type === "new" ? "Sign Up" : "Reset Password"}
-              </button>
+              </button>}
             </form>
           )}
 
