@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { getReturnExchangeApi, updateReturnStatusApi } from "../../api/admin";
 import { useMutation, useQuery } from "react-query";
-import { Pagination, Dropdown} from "antd";
+import { Pagination, Dropdown } from "antd";
 import Swal from "sweetalert2";
 import Loader2 from "../common/Loader2";
+import MetaTags from "../common/MetaTags";
 
 const ReturnExchangePage = () => {
   const navigate = useNavigate();
@@ -52,11 +53,17 @@ const ReturnExchangePage = () => {
     }
   };
 
+  const metaData = {
+    title: "Return or Exchange Requests", desc: ""
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-[60px]">
       <div>
         <h1 className="text-2xl font-bold mb-6">Return or Exchange Requests</h1>
-        {isLoading && <Loader2/> }
+        {isLoading && <Loader2 />}
+        <MetaTags data={metaData} />
+
         {/* Date Filters */}
         <div className="mb-6 flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0">
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2">

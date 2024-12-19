@@ -6,6 +6,7 @@ import {
 } from "../../api/admin";
 import Swal from "sweetalert2";
 import Loader2 from "../common/Loader2";
+import MetaTags from "../common/MetaTags";
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -123,12 +124,17 @@ const Testimonials = () => {
     currentIndex * itemsPerPage,
     currentIndex * itemsPerPage + itemsPerPage
   );
+  
+  const metaData = {
+    title: "Customer Testimonials", desc: ""
+  }
 
   return (
 
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
 
       {loaderState && <Loader2 />}
+      <MetaTags data={metaData} />
 
       <h1 className="text-2xl font-bold mb-6">Customer Testimonials</h1>
 

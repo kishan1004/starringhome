@@ -4,6 +4,7 @@ import { getCartDetails, addToCart } from "../../api/user";
 import { useQuery } from "react-query";
 import { Spin } from "antd";
 import UserProtectLayout from "../common/UserProtectLayout";
+import MetaTags from "../common/MetaTags";
 
 const ShoppingCart = () => {
   const navigate = useNavigate();
@@ -32,10 +33,14 @@ const ShoppingCart = () => {
       refetch();
     });
   };
-
+  const metaData = {
+    title:"Shopping Cart",desc:"Review your selections in the Starring Shopping Cart."
+  }
 
   return (
     <UserProtectLayout>
+            <MetaTags data={metaData}/>
+      
     <section className="bg-gray-100 font-sans min-h-screen">
       {/* Top Navigation */}
       <div className="w-full px-4 pb-5">

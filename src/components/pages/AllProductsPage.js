@@ -4,6 +4,7 @@ import { userProductsList } from "../../api/user";
 import { useQuery } from "react-query";
 import { Pagination } from "antd";
 import { getCategoryApi } from "../../api/user";
+import MetaTags from "../common/MetaTags";
 
 const sizes = ["XS", "S", "M", "L", "XL", "2X"];
 const tags = ["Top Rated", "BestSeller", "NewTrend", "Classic"];
@@ -93,8 +94,13 @@ const AllProductsPage = () => {
     setSearchText(e.target.value);
   };
 
+  const metaData = {
+    title:"All Products",desc:"Explore our All Products collection at Starring: a curated selection of stylish, durable, and comfortable clothing designed to elevate your everyday wardrobe. Shop now for timeless fashion made to live with you."
+  }
+
   return (
     <section className="bg-gray-100 font-beatrice min-h-screen">
+      <MetaTags data={metaData}/>
       <div className="w-full  px-4 pb-5">
         <Link to="/">
           <svg

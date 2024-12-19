@@ -5,8 +5,9 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
 import { Button, Select, ConfigProvider } from "antd";
 import { useQuery } from "react-query";
-import { createComboApi, getcomboProductsApi  } from "../../api/admin";
+import { createComboApi, getcomboProductsApi } from "../../api/admin";
 import { useMutation } from "react-query";
+import MetaTags from "../common/MetaTags";
 
 const { Option } = Select;
 
@@ -16,7 +17,7 @@ const AddComboPage = () => {
   const { data: products } = useQuery({
     queryFn: () => getcomboProductsApi(),
   });
-  
+
   const {
     register,
     handleSubmit,
@@ -32,8 +33,8 @@ const AddComboPage = () => {
       navigate("/admin/comboproducts");
     },
     onError: (error) => {
-      if(error[0].field === 'API'){
-         Swal.fire("Error",  error[0].msg, "error");
+      if (error[0].field === 'API') {
+        Swal.fire("Error", error[0].msg, "error");
         return
       }
       setError(error[0].field, { type: "custom", message: error[0].msg });
@@ -41,9 +42,9 @@ const AddComboPage = () => {
   });
 
   const onSubmit = (value) => {
-    if(value.products.length !== 2){
-      setError('products',{type:"custom",message:"Select Aleast Two products"})
-       return
+    if (value.products.length !== 2) {
+      setError('products', { type: "custom", message: "Select Aleast Two products" })
+      return
     }
     createComboMutation.mutate({
       comboName: value.comboName,
@@ -52,11 +53,15 @@ const AddComboPage = () => {
       comboPrice: value.comboPrice,
     });
   };
-
+  const metaData = {
+    title: "Add Combo", desc: ""
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
       {/* Back Button */}
+      <MetaTags data={metaData} />
+
       <div className="flex items-center mb-6">
         <button
           onClick={() => navigate("/admin/comboproducts")}
@@ -85,9 +90,8 @@ const AddComboPage = () => {
                 message: "Minimum 3 Characters is required",
               },
             })}
-            className={`w-full border ${
-              errors.comboName ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`w-full border ${errors.comboName ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           {errors.comboName && (
             <p className="text-red-500 text-sm mt-1">
@@ -143,9 +147,8 @@ const AddComboPage = () => {
               {...register("actualPrice", {
                 required: "actualPrice is required",
               })}
-              className={`w-full border ${
-                errors.actualPrice ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full border ${errors.actualPrice ? "border-red-500" : "border-gray-300"
+                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
             {errors.actualPrice && (
               <p className="text-red-500 text-sm mt-1">
@@ -161,9 +164,8 @@ const AddComboPage = () => {
               {...register("comboPrice", {
                 required: "comboPrice is required",
               })}
-              className={`w-full border ${
-                errors.comboPrice ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full border ${errors.comboPrice ? "border-red-500" : "border-gray-300"
+                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
             {errors.comboPrice && (
               <p className="text-red-500 text-sm mt-1">

@@ -3,6 +3,7 @@ import Blacklogo from "../../images/starringblack.png";
 import { userLogin } from "../../api/admin";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import MetaTags from "../common/MetaTags";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,14 +42,19 @@ const Login = () => {
 
   useEffect(() => {
     setErrorMessage("");
-    if(localStorage.getItem('authToken')){
+    if (localStorage.getItem('authToken')) {
       navigate('/admin/dashboard')
     }
   }, [username, password]);
 
+  const metaData = {
+    title: "Admin Login", desc: ""
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+      <MetaTags data={metaData} />
+
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         {/* Logo */}
         <div className="flex justify-center mb-6">
@@ -100,7 +106,7 @@ const Login = () => {
               className="absolute right-3 top-10 text-gray-600 hover:text-gray-800 focus:outline-none"
               onClick={togglePasswordVisibility}
             >
-              {showPassword ? <FaEye /> :  <FaEyeSlash />}
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
             </button>
           </div>
 

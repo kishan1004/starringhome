@@ -4,6 +4,7 @@ import LoginImgsm from "../../images/loginimagesmall.jpeg";
 import { getOtp, otpVerification, userSignup } from "../../api/user";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import MetaTags from "../common/MetaTags";
 
 const OTPLogin = () => {
   const [step, setStep] = useState(1);
@@ -71,8 +72,14 @@ const OTPLogin = () => {
       });
   };
 
+  const metaData = {
+    title: "Orders", desc: ""
+  }
+
   return (
     <section className="font-beatrice bg-gray-100 h-screen">
+      <MetaTags data={metaData} />
+
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
       </div>
@@ -83,9 +90,8 @@ const OTPLogin = () => {
           </h2>
           <p className="text-center text-gray-500 mt-2">
             {step === 1
-              ? `Enter your ${
-                  loginType === "phone" ? "Phone Number" : "Email ID"
-                }`
+              ? `Enter your ${loginType === "phone" ? "Phone Number" : "Email ID"
+              }`
               : "Enter the 4-digit OTP sent to you."}
           </p>
 

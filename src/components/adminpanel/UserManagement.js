@@ -6,6 +6,7 @@ import { deleteProfile, getProfiles, saveProfile } from "../../api/admin";
 import Swal from "sweetalert2";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import MetaTags from "../common/MetaTags";
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ const UserManagement = () => {
         ...values,
         username: generateUsername(values.firstName, values.lastName),
       };
-    
+
       if (editingUser) {
         // Edit existing user
         setUsers(
@@ -121,8 +122,15 @@ const UserManagement = () => {
     });
   };
 
+  const metaData = {
+    title: "User Management", desc: ""
+  }
+
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
+      <MetaTags data={metaData} />
+
       <button
         onClick={() => navigate("/admin/dashboard")}
         className="mb-4 flex items-center text-black"

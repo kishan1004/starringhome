@@ -2,24 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOrder, statusToShipping } from "../../api/admin";
 import { Button, Card, Select } from "antd";
+import MetaTags from "../common/MetaTags";
 
 const OrderDetail = () => {
   const { orderId } = useParams();
 
-  useEffect(()=>{
-    const fetchOrder = async()=>{
+  useEffect(() => {
+    const fetchOrder = async () => {
       const resp = await getOrder(orderId);
-      if(resp.status===200)
-      {
+      if (resp.status === 200) {
         setOrderDetails(resp.data.detail.data);
       }
-      else
-      {
+      else {
         console.log(resp);
       }
     }
     fetchOrder();
-  },[])
+  }, [])
 
   const [orderDetails, setOrderDetails] = useState({
     addressDetails: {
@@ -44,7 +43,7 @@ const OrderDetail = () => {
     updatedTime: "",
   });
 
-  const statusOptions = ["Dispatched", "Shipped", "Delivered"]; 
+  const statusOptions = ["Dispatched", "Shipped", "Delivered"];
 
   const handleStatusChange = (value) => {
     setOrderDetails((prevDetails) => ({
@@ -53,24 +52,27 @@ const OrderDetail = () => {
     }));
   };
 
-  const handleStatus = async()=>{
-    const status = orderDetails.orderStatus==="Shipped"?"Shipping":"Delivered";
-    const res = await statusToShipping(orderId,status);
-    if(res.status===200)
-    {
+  const handleStatus = async () => {
+    const status = orderDetails.orderStatus === "Shipped" ? "Shipping" : "Delivered";
+    const res = await statusToShipping(orderId, status);
+    if (res.status === 200) {
       console.log(res.data);
     }
-    else
-    {
+    else {
       console.log(res);
     }
+  }
+
+  const metaData = {
+    title: "Order Details", desc: ""
   }
 
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
       <h1 className="text-2xl font-bold mb-4">Order Details</h1>
-  
+      <MetaTags data={metaData} />
+
       <Card title="Order Information" className="mb-4">
         <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
         <p><strong>Order Status:</strong> {orderDetails.orderStatus}</p>

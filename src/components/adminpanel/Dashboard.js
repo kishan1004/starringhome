@@ -25,6 +25,7 @@ import {
 } from "chart.js";
 import { axiosInstance } from "../../utils/axios";
 import { getOrderStats, getSalesDetails } from "../../api/admin";
+import MetaTags from "../common/MetaTags";
 
 // Register chart components
 ChartJS.register(
@@ -208,9 +209,14 @@ const Dashboard = () => {
     earnings: orderStats.totalEarnings,
   };
 
+  const metaData = {
+    title:"Dashboard",desc:""
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
       {loaderState && <Loader2/>}
+      <MetaTags data={metaData} />
       <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
       {/* Time Range Selector */}
       <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">

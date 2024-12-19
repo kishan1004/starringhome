@@ -7,6 +7,7 @@ import { Pagination } from "antd";
 import { FaTrash } from "react-icons/fa";
 import { useMutation } from "react-query";
 import Loader2 from "../common/Loader2";
+import MetaTags from "../common/MetaTags";
 
 const AdminComboProductsPage = () => {
   const navigate = useNavigate();
@@ -34,9 +35,15 @@ const AdminComboProductsPage = () => {
     },
   });
 
+  const metaData = {
+    title: "Combo Products", desc: ""
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
-      {isLoading && <Loader2/>}
+      {isLoading && <Loader2 />}
+      <MetaTags data={metaData} />
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Combo Products</h2>
         <button

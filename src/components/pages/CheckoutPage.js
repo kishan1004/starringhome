@@ -19,6 +19,7 @@ import { Button, Spin } from "antd";
 import { BiSolidCoupon } from "react-icons/bi";
 import Swal from "sweetalert2";
 import UserProtectLayout from "../common/UserProtectLayout";
+import MetaTags from "../common/MetaTags";
 
 const CheckoutPage = () => {
   const [orders, setOrders] = useState([]);
@@ -343,8 +344,13 @@ const CheckoutPage = () => {
     }
   };
 
+  const metaData = {
+    title:"Checkout",desc:"Complete your purchase securely at Starring Checkout."
+  }
+
   return (
     <UserProtectLayout>
+      <MetaTags data={metaData} />
     <section className=" w-full bg-gray-100 min-h-screen">
       <div className=" md:px-10 md:py-14 px-4 py-10">
         <Link to="/all-products">

@@ -1,9 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import MetaTags from "../common/MetaTags";
 
 const RefundPolicyPage = () => {
+  const metaData = {
+    title:"Refund Policy",desc:"Learn about Starring's Refund Policy: Hassle-free returns and refunds for your purchases."
+  }
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      <MetaTags data={metaData} />
       <div className="max-w-4xl mx-auto bg-white p-8 rounded shadow">
         <div className="w-full pb-5">
           <Link to="/your-orders">

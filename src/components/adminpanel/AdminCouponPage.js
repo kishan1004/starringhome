@@ -6,6 +6,7 @@ import { Pagination } from "antd";
 import { FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import Loader2 from "../common/Loader2";
+import MetaTags from "../common/MetaTags";
 
 const AdminCouponTablePage = () => {
   const navigate = useNavigate();
@@ -27,9 +28,13 @@ const AdminCouponTablePage = () => {
     }
   })
 
+  const metaData = {
+    title: "Uploaded Coupons", desc: ""
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
+      <MetaTags data={metaData}/>
       {isLoading && <Loader2/>}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Uploaded Coupons</h2>

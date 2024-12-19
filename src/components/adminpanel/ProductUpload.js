@@ -12,6 +12,7 @@ import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 
 import Loader2 from "../common/Loader2";
+import MetaTags from "../common/MetaTags";
 
 
 const ProductUpload = () => {
@@ -248,8 +249,13 @@ const ProductUpload = () => {
 
   const navigate = useNavigate();
 
+  const metaData = {
+    title: `${productId === "new" ? "Upload " : "Edit "}Product`, desc: ""
+  }
+
   return (
     <div className="min-h-screen w-full bg-gray-100 mt-14 p-8">
+      <MetaTags data={metaData} />
       {LoaderState && <Loader2 />}
       <button
         onClick={() => navigate("/admin/products")}
@@ -384,8 +390,8 @@ const ProductUpload = () => {
                 }
                 onChange={(e) => handleStockChange(e, size)}
                 className={`w-full border ${errors[`stockCount-${size}`]
-                    ? "border-red-500"
-                    : "border-gray-300"
+                  ? "border-red-500"
+                  : "border-gray-300"
                   } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder={`Enter stock count for ${size}`}
               />

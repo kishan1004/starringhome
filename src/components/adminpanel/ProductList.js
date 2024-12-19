@@ -16,6 +16,7 @@ import {
 } from "../../api/admin";
 import Loader from "../common/Loader";
 import Loader2 from "../common/Loader2";
+import MetaTags from "../common/MetaTags";
 
 const productImages = [
   Product1img,
@@ -105,7 +106,7 @@ const ProductList = () => {
   };
 
   const handleDelete = (productId) => {
-    
+
     if (window.confirm("Are you sure you want to delete this product?")) {
       setIsLoading(true);
       deleteProduct(productId).then((res) => {
@@ -142,11 +143,18 @@ const ProductList = () => {
     });
   }, []);
 
+  const metaData = {
+    title:"Product List",desc:""
+  }
+
   const navigate = useNavigate();
+  
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
-      {isLoading && <Loader2/>}
+      {isLoading && <Loader2 />}
+      <MetaTags data={metaData} />
+
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Product List</h1>
         <button
@@ -197,75 +205,75 @@ const ProductList = () => {
 
       {/* Product Table */}
       <div className="overflow-x-auto shadow-lg">
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="py-3 px-4 border">ID</th>
-                <th className="py-3 px-4 border">Product</th>
-                <th className="py-3 px-4 border">Category</th>
-                <th className="py-3 px-4 border">Brand</th>
-                <th className="py-3 px-4 border">Price</th>
-                <th className="py-3 px-4 border">Rating</th>
-                <th className="py-3 px-4 border">Action</th>
+        <table className="min-w-full bg-white">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="py-3 px-4 border">ID</th>
+              <th className="py-3 px-4 border">Product</th>
+              <th className="py-3 px-4 border">Category</th>
+              <th className="py-3 px-4 border">Brand</th>
+              <th className="py-3 px-4 border">Price</th>
+              <th className="py-3 px-4 border">Rating</th>
+              <th className="py-3 px-4 border">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentItems.map((product) => (
+              <tr key={product._id} className="text-center">
+                <td className="py-3 px-4 border">
+                  <button
+                    onClick={() => navigate(`/admin/product/${product._id}`)}
+                    className="text-blue-500 hover:underline"
+                  >
+                    {product.productId}
+                  </button>
+                </td>
+                <td className="py-3 px-4 border flex items-center justify-center gap-2">
+                  {isEditing === product._id ? (
+                    <input
+                      type="text"
+                      name="name"
+                      value={editFormData.name}
+                      onChange={handleInputChange}
+                      className="border px-2 py-1 rounded"
+                    />
+                  ) : (
+                    <span>{product.name}</span>
+                  )}
+                </td>
+                <td className="border">{product.category}</td>
+                <td className="border">{product.brand}</td>
+                <td className="border">Rs.{product.price}</td>
+                <td className="border">{product.rating}</td>
+                <td className="py-3 px-4 flex justify-center gap-3 bg-gray-100">
+                  {isEditing === product._id ? (
+                    <button
+                      onClick={handleSaveClick}
+                      className="text-green-500 hover:text-green-700"
+                    >
+                      <FaSave />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        navigate(`/admin/product/${product._id}`)
+                      }
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      <FaEdit />
+                    </button>
+                  )}
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => handleDelete(product._id)}
+                  >
+                    <FaTrash />
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {currentItems.map((product) => (
-                <tr key={product._id} className="text-center">
-                  <td className="py-3 px-4 border">
-                    <button
-                      onClick={() => navigate(`/admin/product/${product._id}`)}
-                      className="text-blue-500 hover:underline"
-                    >
-                      {product.productId}
-                    </button>
-                  </td>
-                  <td className="py-3 px-4 border flex items-center justify-center gap-2">
-                    {isEditing === product._id ? (
-                      <input
-                        type="text"
-                        name="name"
-                        value={editFormData.name}
-                        onChange={handleInputChange}
-                        className="border px-2 py-1 rounded"
-                      />
-                    ) : (
-                      <span>{product.name}</span>
-                    )}
-                  </td>
-                  <td className="border">{product.category}</td>
-                  <td className="border">{product.brand}</td>
-                  <td className="border">Rs.{product.price}</td>
-                  <td className="border">{product.rating}</td>
-                  <td className="py-3 px-4 flex justify-center gap-3 bg-gray-100">
-                    {isEditing === product._id ? (
-                      <button
-                        onClick={handleSaveClick}
-                        className="text-green-500 hover:text-green-700"
-                      >
-                        <FaSave />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() =>
-                          navigate(`/admin/product/${product._id}`)
-                        }
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        <FaEdit />
-                      </button>
-                    )}
-                    <button
-                      className="text-red-500 hover:text-red-700"
-                      onClick={() => handleDelete(product._id)}
-                    >
-                      <FaTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Pagination Controls */}
@@ -281,11 +289,10 @@ const ProductList = () => {
           <button
             key={i}
             onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 mx-1 rounded-md ${
-              currentPage === i + 1
+            className={`px-3 py-1 mx-1 rounded-md ${currentPage === i + 1
                 ? "bg-black text-white"
                 : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-            }`}
+              }`}
           >
             {i + 1}
           </button>

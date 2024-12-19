@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import moment from "moment";
 import { Pagination } from "antd";
 import Loader2 from "../common/Loader2";
+import MetaTags from "../common/MetaTags";
 
 const Inventory = () => {
   const [dateRange, setDateRange] = useState({ startDate: "", endDate: "" });
@@ -12,7 +13,7 @@ const Inventory = () => {
     useState(false);
   const pageSize = 10;
 
-  const { data: inventory,isLoading,isError } = useQuery({
+  const { data: inventory, isLoading, isError } = useQuery({
     queryKey: ["getAllinventory", { dateRange }],
     queryFn: () =>
       getInventoryDetailsandExport(
@@ -22,13 +23,13 @@ const Inventory = () => {
       ),
   });
 
-   const currentData = inventory?.data.detail.data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const currentData = inventory?.data.detail.data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // Export inventory to Excel
   const excelExportInventory = async () => {
     setIsExcelExportingInProgress(true);
     try {
-      const res = await getInventoryDetailsandExport(dateRange , true, "excel");
+      const res = await getInventoryDetailsandExport(dateRange, true, "excel");
       if (res.status === 200) {
         const blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
         const link = document.createElement("a");
@@ -55,9 +56,15 @@ const Inventory = () => {
     }));
   };
 
+  const metaData = {
+    title: "Inventory Management", desc: ""
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full mt-[60px]">
-      {isLoading && <Loader2/>}
+      {isLoading && <Loader2 />}
+      <MetaTags data={metaData} />
+
       <h1 className="text-2xl font-bold mb-6">Inventory Management</h1>
       {/* Date Filters */}
       <div className="mb-6 flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0">
@@ -117,30 +124,30 @@ const Inventory = () => {
               <td className="px-6 py-4 border">Loading...</td>
             </tr>
           )}
-          {!isError && !isLoading 
+          {!isError && !isLoading
             ? currentData.map((item) => (
-                <tr key={item.productId} className="text-center">
-                  <td className="py-3 px-4 border">{item.productId}</td>
-                  <td className="py-3 px-4 border">{item.productName}</td>
-                  <td className="py-3 px-4 border">{item.stockUpdatedDate}</td>
-                   <td className="py-3 px-4 border">{item.purchasedStock}</td>
-                  <td className="py-3 px-4 border">{item.openingStock}</td>
-                  <td className="py-3 px-4 border">
-                    {item.closingStock}
-                  </td>
-                  <td className="py-3 px-4 border">{item.orderedStock}</td>
-                  <td className="py-3 px-4 border">{item.shippedStock}</td>
-                </tr>
-              ))
+              <tr key={item.productId} className="text-center">
+                <td className="py-3 px-4 border">{item.productId}</td>
+                <td className="py-3 px-4 border">{item.productName}</td>
+                <td className="py-3 px-4 border">{item.stockUpdatedDate}</td>
+                <td className="py-3 px-4 border">{item.purchasedStock}</td>
+                <td className="py-3 px-4 border">{item.openingStock}</td>
+                <td className="py-3 px-4 border">
+                  {item.closingStock}
+                </td>
+                <td className="py-3 px-4 border">{item.orderedStock}</td>
+                <td className="py-3 px-4 border">{item.shippedStock}</td>
+              </tr>
+            ))
             : !isError &&
-              !isLoading &&
-             inventory?.data.detail.total === 0 && (
-                <tr>
-                  <td colSpan="7" className="py-3 px-4 border text-center">
-                    No inventory data found for the selected date range.
-                  </td>
-                </tr>
-              )}
+            !isLoading &&
+            inventory?.data.detail.total === 0 && (
+              <tr>
+                <td colSpan="7" className="py-3 px-4 border text-center">
+                  No inventory data found for the selected date range.
+                </td>
+              </tr>
+            )}
         </tbody>
       </table>
       <div className=" flex justify-center pt-10 pb-5 px-5">

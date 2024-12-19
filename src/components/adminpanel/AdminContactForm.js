@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
 import { getContactUs, deleteContactUs } from "../../api/admin";
 import Loader2 from "../common/Loader2";
+import MetaTags from "../common/MetaTags";
 
 const AdminContactForm = () => {
   const [page, setPage] = useState(1);
@@ -35,10 +36,15 @@ const AdminContactForm = () => {
     }
   };
 
+  const metaData = {
+    title: "User Queries", desc: ""
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 p-8 mt-[60px]">
       <h1 className="text-3xl font-bold mb-6">User Queries</h1>
       {loading && <Loader2/>}
+      <MetaTags data={metaData} />
       <div className="overflow-x-auto bg-white shadow-lg">
         <table className="min-w-full bg-white border text-left">
           <thead className="bg-gray-200">

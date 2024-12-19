@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "react-query";
 import { getTestimonialApi, userProductsList } from "../../api/user";
 import { Spin, Pagination } from "antd";
 import Swal from "sweetalert2";
+import MetaTags from "../common/MetaTags";
 
 const ProductPage = () => {
   const [params] = useSearchParams();
@@ -98,10 +99,13 @@ const ProductPage = () => {
 
   const allSizes = ["XS", "S", "M", "L", "XL", "2X"];
 
-  const handleBuyAll = () => {};
+  const handleBuyAll = () => { };
 
   return (
     <section className="bg-gray-100 font-beatrice max-w-[1440px] mx-auto w-full">
+      {product && <MetaTags data={{
+        title : product.name
+      }} />}
       <div className="w-full md:px-10 px-4">
         <Link to="/all-products">
           <svg
@@ -139,9 +143,8 @@ const ProductPage = () => {
                   key={index}
                   src={image}
                   alt={`Thumbnail ${index + 1}`}
-                  className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${
-                    selectedImage === index ? "opacity-100" : "opacity-50"
-                  }`}
+                  className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${selectedImage === index ? "opacity-100" : "opacity-50"
+                    }`}
                   onClick={() => setSelectedImage(index)}
                 />
               ))}
@@ -217,10 +220,9 @@ const ProductPage = () => {
                   <button
                     key={size}
                     disabled={!product.sizes.includes(size)}
-                    className={`py-2 border border-black cursor-default ${
-                      !product.sizes.includes(size) &&
+                    className={`py-2 border border-black cursor-default ${!product.sizes.includes(size) &&
                       "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
-                    }`}
+                      }`}
                   >
                     {size}
                   </button>

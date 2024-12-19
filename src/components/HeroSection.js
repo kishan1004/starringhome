@@ -11,6 +11,7 @@ import Aos from "aos";
 import { Link } from "react-router-dom";
 import { IoNotifications } from "react-icons/io5";
 import { getUserNotifications, salesOverviewSave,clearNotificationsUser } from "../api/user";
+import MetaTags from "./common/MetaTags";
 
 const HeroSection = (props) => {
   const [activeItem, setActiveItem] = useState("Home");
@@ -113,8 +114,13 @@ const HeroSection = (props) => {
     };
   }, []);
 
+  const metaData = {
+    title:"Home",desc:"Discover Starring: Clothing designed to live with you, blending comfort, style, and durability for every moment of your life."
+  }
+
   return (
     <>
+    <MetaTags data={metaData}/>
       <div
         className="relative h-screen w-full mx-auto bg-cover bg-center"
         id={props.id}
@@ -191,11 +197,11 @@ const HeroSection = (props) => {
                               className="px-4 py-6 cursor-pointer border-b border-gray-300 hover:bg-gray-100"
                             >
                               <p>{notification.message}</p>
-                              <p className="text-sm text-gray-500">
+                              {/* <p className="text-sm text-gray-500">
                                 {new Date(
                                   notification.createdTime.$date
                                 ).toLocaleString()}
-                              </p>
+                              </p> */}
                             </li>
                           ))
                         ) : (

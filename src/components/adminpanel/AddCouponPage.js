@@ -7,6 +7,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Button } from "antd";
+import MetaTags from "../common/MetaTags";
 
 const AddCouponPage = () => {
   const navigate = useNavigate();
@@ -39,8 +40,15 @@ const AddCouponPage = () => {
     });
   };
 
+  const metaData = {
+    title: "Add New Coupon", desc: ""
+  }
+
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen mt-14">
+      <MetaTags data={metaData} />
+
       <div className="mb-5">
         <button
           onClick={() => navigate("/admin/coupons")}
@@ -72,9 +80,8 @@ const AddCouponPage = () => {
               })}
               placeholder="Enter coupon code (max 15 characters)"
               maxLength="15"
-              className={`w-full border ${
-                errors.code ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full border ${errors.code ? "border-red-500" : "border-gray-300"
+                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
             {errors.code && (
               <p className="text-red-500 text-sm mt-1">{errors.code.message}</p>
@@ -91,9 +98,8 @@ const AddCouponPage = () => {
                 required: "Discount is required",
               })}
               placeholder="Enter discount amount"
-              className={`w-full border ${
-                errors.discoutAmount ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full border ${errors.discoutAmount ? "border-red-500" : "border-gray-300"
+                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
             {errors.discoutAmount && (
               <p className="text-red-500 text-sm mt-1">
@@ -119,9 +125,8 @@ const AddCouponPage = () => {
                 },
               })}
               placeholder="Enter description (max 50 characters)"
-              className={`w-[60%] border ${
-                errors.description ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-[60%] border ${errors.description ? "border-red-500" : "border-gray-300"
+                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
               rows="2"
               maxLength="50"
             />
@@ -139,9 +144,8 @@ const AddCouponPage = () => {
               type="date"
               id="startDate"
               {...register("startDate", { required: "startDate is required" })}
-              className={`w-full border ${
-                errors.startDate ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full border ${errors.startDate ? "border-red-500" : "border-gray-300"
+                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
             {errors.startDate && (
               <p className="text-red-500 text-sm mt-1">
@@ -157,9 +161,8 @@ const AddCouponPage = () => {
               type="date"
               id="endDate"
               {...register("endDate", { required: "EndDate is required" })}
-              className={`w-full border ${
-                errors.endDate ? "border-red-500" : "border-gray-300"
-              } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full border ${errors.endDate ? "border-red-500" : "border-gray-300"
+                } rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
             {errors.endDate && (
               <p className="text-red-500 text-sm mt-1">

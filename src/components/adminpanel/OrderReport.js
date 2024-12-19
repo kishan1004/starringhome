@@ -1,5 +1,6 @@
 import React from "react";
 import jsPDF from "jspdf";
+import MetaTags from "../common/MetaTags";
 
 const OrderReport = ({ orderId }) => {
   const dummyData = {
@@ -103,8 +104,14 @@ const OrderReport = ({ orderId }) => {
     return <div>Loading...</div>;
   }
 
+  const metaData = {
+    title: `Order Report - ${orderData.orderNumber}`, desc: ""
+  }
+
   return (
     <div className="order-report p-6 mt-14">
+      <MetaTags data={metaData} />
+
       <h2 className="text-2xl font-bold mb-6">
         Order Report - {orderData.orderNumber}
       </h2>
