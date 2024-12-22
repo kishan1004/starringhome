@@ -51,6 +51,7 @@ import YourOrders from "./components/pages/YourOrders";
 import UserOrderDetail from "./components/pages/UserOrderDetail";
 import AdminCouponPage from "./components/adminpanel/AdminCouponPage";
 import RefundPolicyPage from "./components/pages/RefundPolicyPage";
+import TermsAndConditions from "./components/pages/TermsAndConditions";
 import ReturnExchangePage from "./components/adminpanel/ReturnExchangePage";
 import AddCouponPage from "./components/adminpanel/AddCouponPage";
 import AdminComboProductsPage from "./components/adminpanel/AdminComboProductsPage";
@@ -174,6 +175,7 @@ function App() {
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/your-orders" element={<YourOrders />} />
           <Route path="/refund-policy" element={<RefundPolicyPage />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/userorderdetail" element={<UserOrderDetail />} />
 
           <Route

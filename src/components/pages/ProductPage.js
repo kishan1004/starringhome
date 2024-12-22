@@ -63,8 +63,9 @@ const ProductPage = () => {
   const addtoFavMutation = useMutation({
     mutationFn: addFavouriteProduct,
     onSuccess: (res) => {
+      console.log(res)
       refetchProduct();
-      Swal.fire("Success", "Product Added to Favourite", "success");
+      Swal.fire("Success", res.data.detail[0].msg, "success");
     },
     onError: (error) => {
       Swal.fire("Error", error[0].msg, "error");
@@ -80,6 +81,18 @@ const ProductPage = () => {
     const data = {
       productId: [product._id],
       action: "ADD",
+    };
+    addtoFavMutation.mutate({ data });
+  };
+
+  const handleRemFav = (id) => {
+    if (!localStorage.getItem("userToken")) {
+      navigate("/user-login");
+      return;
+    }
+    const data = {
+      productId: [product._id],
+      action: "REMOVE",
     };
     addtoFavMutation.mutate({ data });
   };
@@ -104,7 +117,7 @@ const ProductPage = () => {
   return (
     <section className="bg-gray-100 font-beatrice max-w-[1440px] mx-auto w-full">
       {product && <MetaTags data={{
-        title : product.name
+        title: product.name
       }} />}
       <div className="w-full md:px-10 px-4">
         <Link to="/all-products">
@@ -154,7 +167,7 @@ const ProductPage = () => {
           <div className="lg:max-w-[380px] md:w-1/2 px-10 border-2 relative">
             <button
               className="absolute top-0 right-0"
-              onClick={() => handleAddFav()}
+              onClick={() => product.isFavo ? handleRemFav() : handleAddFav()}
               style={{
                 border: "none",
                 padding: "10px",
@@ -186,17 +199,7 @@ const ProductPage = () => {
               <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
                 {product.offerPercentage}% OFF
               </p>
-              <div className="flex">
-                {product.rating}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5 text-yellow-500"
-                >
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                </svg>
-              </div>
+
             </div>
 
             {product.stockCount < 9 && (
@@ -206,6 +209,19 @@ const ProductPage = () => {
             )}
 
             <p className="text-sm text-gray-500">MRP incl. of all taxes</p>
+
+            <div className="flex">
+              {Array(5).fill(0).map((_, i) =>
+                <svg key={i}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className={`w-5 h-5 ${product.rating >= i + 1 ? "text-yellow-500" : "text-gray-300"}`}
+                >
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
+              )}
+            </div>
 
             <p className="text-xs font-medium text-gray-600 py-5">
               {product.description}
@@ -300,6 +316,8 @@ const ProductPage = () => {
                       </React.Fragment>
                     );
                   })}
+
+
                 </div>
 
                 <div>
@@ -310,6 +328,16 @@ const ProductPage = () => {
                       BUY ALL
                     </button>
                   </Link>
+                  <div className="relative border p-4 rounded-lg">
+                  <div className="flex items-center space-x-2 mt-2">
+                    <p className="text-xs line-through text-gray-500">
+                      Rs. {product && product.actualPrice}
+                    </p>
+                    <p className="md:text-lg text-sm font-medium">
+                      Rs. {product && product.comboPrice}
+                    </p>
+                  </div>
+                </div>
                 </div>
               </div>
             </div>
@@ -336,6 +364,17 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
+      <div class="flex flex-wrap p-3">
+        <div class="lg:w-1/2 w-full">
+          <div class="shadow-md p-3">
+
+            <div className="md:flex items-start md:space-x-5 max-sm:space-y-2">
+             
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       {/* products you may like */}
       <div>

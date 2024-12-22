@@ -31,10 +31,10 @@ const Inventory = () => {
     try {
       const res = await getInventoryDetailsandExport(dateRange, true, "excel");
       if (res.status === 200) {
-        const blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
+        const blob = new Blob([res.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "inventory.xlsx";
+        link.download = `starring_inventory_${new Date().toDateString()}.xlsx`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

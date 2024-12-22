@@ -98,7 +98,7 @@ const ShoppingCart = () => {
               <div className="px-2">
                 {/* Product Details */}
                 <div className="md:flex justify-between md:space-x-5">
-                  <Link to="/one-product">
+                  <Link to={`/one-product?id=${product._id}`}>
                     <h2 className="text-md font-medium">{product.name}</h2>
                   </Link>
                   <p className="text-gray-800 font-bold">₹{product.offerPrice}</p>

@@ -226,7 +226,7 @@ const HeroSection = (props) => {
               ref={menuRef}
               className="absolute top-14 left-0 w-full bg-[#263238] text-white p-4 z-20 flex flex-col"
             >
-              <a
+              {/* <a
                 href="#home"
                 onClick={() => {
                   handleNavClick("Home");
@@ -236,7 +236,7 @@ const HeroSection = (props) => {
                   } hover:text-gray-400`}
               >
                 Home
-              </a>
+              </a> */}
 
               <a
                 href="#new-arrivals"
@@ -285,7 +285,7 @@ const HeroSection = (props) => {
                 className={`py-2 text-lg border-b border-gray-700 ${activeItem === "Footer" ? "text-green-200" : "text-white"
                   } hover:text-gray-400`}
               >
-                Footer
+                Endcap
               </a>
             </nav>
           )}

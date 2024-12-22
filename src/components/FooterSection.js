@@ -46,7 +46,7 @@ const FooterSection = (props) => {
           <input
             type="email"
             placeholder="     Enter your email here"
-            className="w-full text-gray-600 placeholder-gray-500 focus:outline-none bg-[#FAFAFA]"
+            className="w-full text-gray-600 placeholder-gray-500 focus:outline-none bg-[#FAFAFA] ms-1 ps-4"
           />
           <button className="px-4 py-2 text-white rounded-full bg-black font-bold hover:text-gray-700">
             SUBSCRIBE

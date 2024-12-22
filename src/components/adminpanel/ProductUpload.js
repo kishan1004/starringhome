@@ -237,6 +237,7 @@ const ProductUpload = () => {
     } else {
       editProduct(productId, productData).then((res) => {
         if (res.status === 200) {
+          navigate('/admin/products')
           Swal.fire({
             icon: "success",
             title: "Product Updated",

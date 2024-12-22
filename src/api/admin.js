@@ -304,12 +304,19 @@ export const getOrders = async (args) => {
     url += `&order_status=${encodeURIComponent(order_status)}`;
   }
 
-  // Make the API call
-  return axiosInstance.get(url, {
+  // Configure the response type for file export
+  const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  });
+  };
+
+  if (isExport) {
+    config.responseType = "blob";
+  }
+
+  // Make the API call
+  return axiosInstance.get(url, config);
 };
 
 export const updateOrderShippingApi = (data)=>{
@@ -432,11 +439,19 @@ export const getInventoryDetailsandExport = (date,isexport,export_type) => {
     url += `&start_date=${date.startDate}&end_date=${date.endDate}`;
   }
 
-  return adminAuthInstance.get(url, {
+   // Configure the response type for file export
+   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  });
+  };
+
+  if (isexport) {
+    config.responseType = "blob";
+  }
+
+  // Make the API call
+  return axiosInstance.get(url, config);
 };
 
 //combo api

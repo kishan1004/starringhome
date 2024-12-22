@@ -5,6 +5,7 @@ import { useQuery } from "react-query";
 import { Pagination } from "antd";
 import { getCategoryApi } from "../../api/user";
 import MetaTags from "../common/MetaTags";
+import ReactPaginate from "react-paginate";
 
 const sizes = ["XS", "S", "M", "L", "XL", "2X"];
 const tags = ["Top Rated", "BestSeller", "NewTrend", "Classic"];
@@ -44,16 +45,31 @@ const AllProductsPage = () => {
   let [searchParams] = useSearchParams();
   const searchKey = searchParams.get("category");
 
-  const {
-    data: products,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ["allproducts", { currentPage, searchText }],
-    queryFn: () => userProductsList(currentPage, searchText, filterData),
-    enabled: false,
-  });
+  const [products,SetProducts] = useState([]);
+  const [isLoading,SetisLoading] = useState(null);
+  const [isError,SetisError] = useState(null);
+
+  // const {
+  //   data: products,
+  //   isLoading,
+  //   isError,
+  //   refetch,
+  // } = useQuery({
+  //   queryKey: ["allproducts", { currentPage, searchText }],
+  //   queryFn: () => userProductsList(currentPage, searchText, filterData),
+  //   enabled: false,
+  // });
+
+  async function refetch(){
+    SetisLoading(true);
+    const res = await userProductsList(currentPage, searchText, filterData);
+    SetisLoading(false);
+    if(res.status==200){
+      SetProducts(res)
+    }else{
+      SetisError(true)
+    }
+  }
 
   const { data: category } = useQuery({
     queryKey: ["category"],
@@ -77,10 +93,8 @@ const AllProductsPage = () => {
         });
       }
     }
-    setTimeout(() => {
       refetch();
-    }, 200);
-  }, [category, searchParams]);
+  }, [category, searchParams,currentPage, searchText]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -90,17 +104,22 @@ const AllProductsPage = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = async (e) => {
     setSearchText(e.target.value);
   };
 
+  const handlePageChange = (value) => {
+    setCurrentPage(value);  // Update current page
+  };
+
+ 
   const metaData = {
-    title:"All Products",desc:"Explore our All Products collection at Starring: a curated selection of stylish, durable, and comfortable clothing designed to elevate your everyday wardrobe. Shop now for timeless fashion made to live with you."
+    title: "All Products", desc: "Explore our All Products collection at Starring: a curated selection of stylish, durable, and comfortable clothing designed to elevate your everyday wardrobe. Shop now for timeless fashion made to live with you."
   }
 
   return (
     <section className="bg-gray-100 font-beatrice min-h-screen">
-      <MetaTags data={metaData}/>
+      <MetaTags data={metaData} />
       <div className="w-full  px-4 pb-5">
         <Link to="/">
           <svg
@@ -124,10 +143,10 @@ const AllProductsPage = () => {
       <div className="lg:flex">
         <div className="pb-5">
           <div
-            className="lg:hidden flex justify-between items-center p-4  bg-gray-100"
+            className=" flex justify-between items-center p-4  bg-gray-100"
             onClick={() => setIsSidebarVisible(!isSidebarVisible)}
           >
-            <h3 className="text-xl font-bold">Filters</h3>
+            <h3 className="text-xl lg:hidden  font-bold">Filters</h3>
             <button onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
               <svg
                 width="28"
@@ -158,10 +177,14 @@ const AllProductsPage = () => {
             </button>
           </div>
 
-          <aside
+          {/* <aside
             className={`${
               isSidebarVisible ? "block" : "hidden"
             } lg:block pt-4 px-5  bg-gray-100 z-50 absolute top-0 left-0 min-h-full lg:relative`}
+          > */}
+          <aside
+            className={`${isSidebarVisible ? "block" : "hidden"
+              }  pt-4 px-5  bg-gray-100 z-50 absolute top-0 left-0 min-h-full lg:relative`}
           >
             <h3 className="text-xl font-bold mb-4">Filters</h3>
 
@@ -174,11 +197,10 @@ const AllProductsPage = () => {
                     onClick={() =>
                       setFilterData({ ...filterData, sizes: size })
                     }
-                    className={`border w-10 h-10 font-medium text-sm ${
-                      filterData.sizes === size
+                    className={`border w-10 h-10 font-medium text-sm ${filterData.sizes === size
                         ? "border-gray-900 text-gray-900 bg-gray-300"
                         : "border-gray-500 text-gray-600 hover:bg-gray-300"
-                    }`}
+                      }`}
                   >
                     {size}
                   </button>
@@ -207,9 +229,8 @@ const AllProductsPage = () => {
                   viewBox="0 0 7 11"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${
-                    isCategoryDropdownOpen ? "rotate-90" : ""
-                  }`}
+                  className={`transform transition-transform ${isCategoryDropdownOpen ? "rotate-90" : ""
+                    }`}
                 >
                   <path
                     d="M1 10L6 5.5L1 1"
@@ -235,19 +256,18 @@ const AllProductsPage = () => {
                             ...filterData,
                             categories: filterData.categories.includes(category)
                               ? filterData.categories.filter(
-                                  (item) => item !== category
-                                )
+                                (item) => item !== category
+                              )
                               : [...filterData.categories, category],
                           });
                         }}
                         className="form-checkbox text-blue-500"
                       />
                       <span
-                        className={`text-sm font-bold ${
-                          filterData.categories.includes(category)
+                        className={`text-sm font-bold ${filterData.categories.includes(category)
                             ? "font-bold"
                             : "text-black"
-                        }`}
+                          }`}
                       >
                         {category}
                       </span>
@@ -272,9 +292,8 @@ const AllProductsPage = () => {
                   viewBox="0 0 7 11"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${
-                    isOpen ? "rotate-90" : ""
-                  }`}
+                  className={`transform transition-transform ${isOpen ? "rotate-90" : ""
+                    }`}
                 >
                   <path
                     d="M1 10L6 5.5L1 1"
@@ -367,9 +386,8 @@ const AllProductsPage = () => {
                   viewBox="0 0 7 11"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${
-                    isCollectionDropdownOpen ? "rotate-90" : ""
-                  }`}
+                  className={`transform transition-transform ${isCollectionDropdownOpen ? "rotate-90" : ""
+                    }`}
                 >
                   <path
                     d="M1 10L6 5.5L1 1"
@@ -397,19 +415,18 @@ const AllProductsPage = () => {
                               collection
                             )
                               ? filterData.collections.filter(
-                                  (item) => item !== collection
-                                )
+                                (item) => item !== collection
+                              )
                               : [...filterData.collections, collection],
                           });
                         }}
                         className="form-checkbox text-blue-500"
                       />
                       <span
-                        className={`text-sm font-bold ${
-                          filterData.collections.includes(collection)
+                        className={`text-sm font-bold ${filterData.collections.includes(collection)
                             ? "font-bold"
                             : "text-black"
-                        }`}
+                          }`}
                       >
                         {collection}
                       </span>
@@ -433,9 +450,8 @@ const AllProductsPage = () => {
                   viewBox="0 0 7 11"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${
-                    isTagDropdownOpen ? "rotate-90" : ""
-                  }`}
+                  className={`transform transition-transform ${isTagDropdownOpen ? "rotate-90" : ""
+                    }`}
                 >
                   <path
                     d="M1 10L6 5.5L1 1"
@@ -464,11 +480,10 @@ const AllProductsPage = () => {
                         className="form-checkbox text-blue-500"
                       />
                       <span
-                        className={`text-sm font-bold ${
-                          filterData.tags.includes(tag)
+                        className={`text-sm font-bold ${filterData.tags.includes(tag)
                             ? "font-bold"
                             : "text-black"
-                        }`}
+                          }`}
                       >
                         {tag}
                       </span>
@@ -492,9 +507,8 @@ const AllProductsPage = () => {
                   viewBox="0 0 7 11"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${
-                    isDropdownOpen ? "rotate-90" : "rotate-0"
-                  }`}
+                  className={`transform transition-transform ${isDropdownOpen ? "rotate-90" : "rotate-0"
+                    }`}
                 >
                   <path
                     d="M1 10L6 5.5L1 1"
@@ -520,19 +534,18 @@ const AllProductsPage = () => {
                             ...filterData,
                             ratings: filterData.ratings.includes(rating)
                               ? filterData.ratings.filter(
-                                  (item) => item !== rating
-                                )
+                                (item) => item !== rating
+                              )
                               : [...filterData.ratings, rating],
                           });
                         }}
                         className="form-checkbox h-4 w-4 text-yellow-400 border-gray-300 rounded"
                       />
                       <div
-                        className={`flex items-center ml-2 ${
-                          filterData.ratings.includes(rating)
+                        className={`flex items-center ml-2 ${filterData.ratings.includes(rating)
                             ? "text-yellow-400"
                             : "text-gray-400"
-                        }`}
+                          }`}
                       >
                         {[...Array(rating)].map((_, index) => (
                           <svg
@@ -625,7 +638,7 @@ const AllProductsPage = () => {
                 className="w-full pl-10 pr-8 bg-[#D9D9D9] rounded-sm p-2 text-sm text-gray-700 focus:outline-none"
                 placeholder="Search"
                 value={searchText}
-                onChange={handleSearchChange}
+                onInput={handleSearchChange}
               />
 
               {/* Clear (X) button */}
@@ -658,70 +671,54 @@ const AllProductsPage = () => {
           </div>
 
           {/* Display Filtered Products */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-6 pt-10">
-            {products ? (
-              products?.data.detail.total === 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-10">
+            {isLoading ? (
+              <p className="text-gray-500">Loading products...</p>
+            ) : isError ? (
+              <p className="text-red-500">Failed to load products. Please try again.</p>
+            ) : products && products.data && products.data.detail ? (
+              products.data.detail.total === 0 ? (
                 <p className="text-gray-500">No items found for this filter.</p>
               ) : (
-                products.data.detail.data.map(
-                  ({ _id, name, photos, price, offerPrice }) => {
-                    // Find the item to calculate max rating and offer percentage
-                    // const maxRating = Math.max(...item.ratings);
-                    const offerPercentage = Math.round(
-                      ((price - offerPrice) / price) * 100
-                    );
-                    return (
-                      <div key={_id}>
-                        {" "}
-                        <Link to={`/one-product?id=${_id}`}>
-                          <div className="border rounded-md p-4">
-                            <img
-                              src={photos[0]}
-                              alt={name}
-                              className="h-80 w-full object-contain"
-                            />
-                            <div className="flex items-center space-x-3 pt-2">
-                              <p className="font-medium text-xs text-gray-600">
-                                {name}
-                              </p>
-                              <p className="font-medium text-xs text-gray-600">
-                                {/* ({maxRating} ratings) */}
-                              </p>
-                            </div>
-                            <div className="flex items-center justify-between pt-2">
-                              <h2 className="font-medium text-sm">{name}</h2>
-                              <p className="text-gray-600 line-through">
-                                Rs.{price}
-                              </p>
-                              <p className="text-lg font-bold">
-                                Rs.{offerPrice}
-                              </p>
-                              <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
-                                {offerPercentage}% OFF
-                              </p>
-                            </div>
+                products.data.detail.data.map(({ _id, name, photos, price, offerPrice }) => {
+                  const offerPercentage = Math.round(((price - offerPrice) / price) * 100);
+                  return (
+                    <div key={_id}>
+                      <Link to={`/one-product?id=${_id}`}>
+                        <div className="border rounded-md p-4">
+                          <img
+                            src={photos[0]}
+                            alt={name}
+                            className="h-80 w-full object-contain"
+                          />
+                          <div className="flex items-center space-x-3 pt-2">
+                            <p className="font-medium text-xs text-gray-600">{name}</p>
                           </div>
-                        </Link>
-                      </div>
-                    );
-                  }
-                )
+                          <div className="flex items-center justify-between pt-2">
+                            <h2 className="font-medium text-sm">{name}</h2>
+                            <p className="text-gray-600 line-through">Rs.{price}</p>
+                            <p className="text-lg font-bold">Rs.{offerPrice}</p>
+                            <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
+                              {offerPercentage}% OFF
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  );
+                })
               )
             ) : (
-              isError && (
-                <p className="text-gray-500">
-                  Products not found Something went wrong
-                </p>
-              )
+              <p className="text-gray-500">No products available.</p>
             )}
           </div>
+
           <div className=" flex justify-center pt-10 pb-5 px-5">
             <Pagination
               value={currentPage}
-              onChange={(value) => {
-                setCurrentPage(value);
-              }}
+              onChange={handlePageChange}
               total={products?.data?.detail.total}
+              pageSize={10}
               hideOnSinglePage
             />
           </div>

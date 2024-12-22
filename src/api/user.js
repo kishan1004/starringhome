@@ -48,7 +48,7 @@ export const newarrivalProducts = ()=>{
     return axiosInstance.get(`/users/orders/products?page=1&limit=4`)
 }
 export const userProductsList = (currentPage,searchText,filterData) => {
-    let url = `/users/orders/products?page=${currentPage}&limit=20&price_gt=${filterData.pricegt}&price_lt=${filterData.pricelt}`
+    let url = `/users/orders/products?page=${currentPage}&limit=10&price_gt=${filterData.pricegt}&price_lt=${filterData.pricelt}`
     if(searchText !== ''){
         url = url + `&name=${searchText}`
     }

@@ -66,16 +66,17 @@ const Orders = () => {
     }
   };
 
-  // Export orders to Excel
   const excelExportOrders = async () => {
     setIsExcelExportingInProgress(true);
     try {
       const res = await getOrders({ export: true, export_type: "excel" });
       if (res.status === 200) {
-        const blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
+        const blob = new Blob([res.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "orders.xlsx";
+        link.download = `starring_order_${new Date().toDateString()}.xlsx`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -88,6 +89,7 @@ const Orders = () => {
       setIsExcelExportingInProgress(false);
     }
   };
+  
 
   const handlePageChange = (page) => {
     if (page >= 1) setCurrentPage(page);

@@ -66,8 +66,8 @@ const Favourites = () => {
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 md:grid-cols-3">
             {similarProducts.map((product) => {
               const offerPercentage = Math.round(
-                ((product.originalPrice - product.offerPrice) /
-                  product.originalPrice) *
+                ((product.price - product.offerPrice) /
+                  product.price) *
                   100
               );
               return (
@@ -81,7 +81,7 @@ const Favourites = () => {
                   >
                     x
                   </button>
-                  <Link to={`/one-product?id=${product.id}`}>
+                  <Link to={`/one-product?id=${product._id}`}>
                     <img
                       src={product.photos[0]}
                       alt={product.name}
@@ -97,7 +97,7 @@ const Favourites = () => {
                         Rs.{product.offerPrice}
                       </p>
                       <p className="text-yellow-600 text-xs md:font-medium font-light">
-                        {offerPercentage}% OFF
+                        {product.offerPercentage}% OFF
                       </p>
                     </div>
                   </Link>

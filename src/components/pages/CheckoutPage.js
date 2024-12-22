@@ -20,6 +20,7 @@ import { BiSolidCoupon } from "react-icons/bi";
 import Swal from "sweetalert2";
 import UserProtectLayout from "../common/UserProtectLayout";
 import MetaTags from "../common/MetaTags";
+import CountryCodes from '../../services/CountryCodes.json';
 
 const CheckoutPage = () => {
   const [orders, setOrders] = useState([]);
@@ -76,6 +77,10 @@ const CheckoutPage = () => {
     queryKey: ["allcoupons"],
     queryFn: () => viewCouponsApi(),
   });
+
+  function comboRemoveProduc(id){
+    setOrders((orders)=>orders.filter((el)=>el.productId!=id))
+  }
 
   useEffect(() => {
     if (getCartProducts && checkoutType === "cart") {
@@ -138,6 +143,7 @@ const CheckoutPage = () => {
       lastName: "",
       email: "",
       mobileNumber: "",
+      countryCode: "+91",
       postalCode: "",
       address: "",
       landmark: "",
@@ -161,7 +167,7 @@ const CheckoutPage = () => {
             " " +
             filterUserAddress[0].lastName,
           email: filterUserAddress[0].email,
-          contact: filterUserAddress[0].mobileNumber,
+          contact: filterUserAddress[0].countryCode+""+filterUserAddress[0].mobileNumber,
           address: filterUserAddress[0].address,
         });
       }
@@ -345,114 +351,83 @@ const CheckoutPage = () => {
   };
 
   const metaData = {
-    title:"Checkout",desc:"Complete your purchase securely at Starring Checkout."
+    title: "Checkout", desc: "Complete your purchase securely at Starring Checkout."
   }
 
   return (
     <UserProtectLayout>
       <MetaTags data={metaData} />
-    <section className=" w-full bg-gray-100 min-h-screen">
-      <div className=" md:px-10 md:py-14 px-4 py-10">
-        <Link to="/all-products">
-          <svg
-            width="62"
-            height="14"
-            viewBox="0 0 62 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M60.5 7H1M1 7L7 1M1 7L7 13"
-              stroke="black"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Link>
-      </div>
-
-      <div className="md:px-10 px-3">
-        <h1 className="font-beatrice font-extrabold text-4xl pb-7">CHECKOUT</h1>
-        <div className="flex md:space-x-8 space-x-4">
-          <h3 className="font-medium text-base">INFORMATION</h3>
-          <h3 className="font-normal text-base text-[#8A8A8A]">SHIPPING</h3>
-          <h3 className="font-normal text-base text-[#8A8A8A]">PAYMENT</h3>
+      <section className=" w-full bg-gray-100 min-h-screen">
+        <div className=" md:px-10 md:py-14 px-4 py-10">
+          <Link to="/all-products">
+            <svg
+              width="62"
+              height="14"
+              viewBox="0 0 62 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M60.5 7H1M1 7L7 1M1 7L7 13"
+                stroke="black"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
         </div>
-      </div>
 
-      <div className="md:flex">
-        <div className="md:p-10 md:w-1/2 p-4 pb-10">
-          <div className="text-sm font-semibold pt-4 pb-4">
-            SHIPPING ADDRESS
+        <div className="md:px-10 px-3">
+          <h1 className="font-beatrice font-extrabold text-4xl pb-7">CHECKOUT</h1>
+          <div className="flex md:space-x-8 space-x-4">
+            <h3 className="font-medium text-base">INFORMATION</h3>
+            <h3 className="font-normal text-base text-[#8A8A8A]">SHIPPING</h3>
+            <h3 className="font-normal text-base text-[#8A8A8A]">PAYMENT</h3>
           </div>
-          {/* addresses */}
-          {getAlladdress?.data.detail.total !== 0 && (
-            <div className="space-y-6 pb-2">
-              <h3
-                className="text-sm font-semibold cursor-pointer flex items-center"
-                onClick={toggleAddressVisibility}
-              >
-                SAVED ADDRESS <RiArrowDropDownLine />
-              </h3>
-              {isAddressVisible &&
-                getAlladdress?.data.detail.data.map((savedAddress) => (
-                  <div key={savedAddress._id} className="space-y-4">
-                    <div className="p-3 border border-gray-300 bg-gray-50">
-                      {savedAddress.isDefault && (
-                        <div className="px-2 py-1 text-xs bg-yellow-400 w-fit rounded-full mb-3">
-                          Default Address
-                        </div>
-                      )}
-                      <p className="text-sm font-medium">
-                        {savedAddress.firstName} {savedAddress.lastName}
-                      </p>
-                      <p className="text-sm">{savedAddress.address}</p>
-                      <p className="text-sm">
-                        {savedAddress.city}, {savedAddress.state}{" "}
-                        {savedAddress.postalCode}
-                      </p>
-                      <p className="text-sm">{savedAddress.country}</p>
-                      <p className="text-sm">{savedAddress.phone}</p>
-                      <p className="text-sm">{savedAddress.email}</p>
-                      <button
-                        className={`text-sm ${
-                          currentAddressId === savedAddress._id
+        </div>
+
+        <div className="md:flex">
+          <div className="md:p-10 md:w-1/2 p-4 pb-10">
+            <div className="text-sm font-semibold pt-4 pb-4">
+              SHIPPING ADDRESS
+            </div>
+            {/* addresses */}
+            {getAlladdress?.data.detail.total !== 0 && (
+              <div className="space-y-6 pb-2">
+                <h3
+                  className="text-sm font-semibold cursor-pointer flex items-center"
+                  onClick={toggleAddressVisibility}
+                >
+                  SAVED ADDRESS <RiArrowDropDownLine />
+                </h3>
+                {isAddressVisible &&
+                  getAlladdress?.data.detail.data.map((savedAddress) => (
+                    <div key={savedAddress._id} className="space-y-4">
+                      <div className="p-3 border border-gray-300 bg-gray-50">
+                        {savedAddress.isDefault && (
+                          <div className="px-2 py-1 text-xs bg-yellow-400 w-fit rounded-full mb-3">
+                            Default Address
+                          </div>
+                        )}
+                        <p className="text-sm font-medium">
+                          {savedAddress.firstName} {savedAddress.lastName}
+                        </p>
+                        <p className="text-sm">{savedAddress.address}</p>
+                        <p className="text-sm">
+                          {savedAddress.city}, {savedAddress.state}{" "}
+                          {savedAddress.postalCode}
+                        </p>
+                        <p className="text-sm">{savedAddress.country}</p>
+                        <p className="text-sm">{savedAddress.phone}</p>
+                        <p className="text-sm">{savedAddress.email}</p>
+                        <button
+                          className={`text-sm ${currentAddressId === savedAddress._id
                             ? "text-green-500"
                             : "text-blue-500"
-                        }  mt-2`}
-                        onClick={() => {
-                          setCurrentAddressId(savedAddress._id);
-                          clearErrors();
-                          setOrderData({
-                            ...orderData,
-                            name:
-                              savedAddress.firstName +
-                              " " +
-                              savedAddress.lastName,
-                            email: savedAddress.email,
-                            contact: savedAddress.mobileNumber,
-                            address: savedAddress.address,
-                          });
-                          setValue("firstName", "");
-                          setValue("lastName", "");
-                          setValue("mobileNumber", "");
-                          setValue("email", "");
-                          setValue("postalCode", "");
-                          setValue("state", "");
-                          setValue("city", "");
-                          setValue("landmark", "");
-                          setValue("address", "");
-                        }}
-                      >
-                        {currentAddressId === savedAddress._id
-                          ? "Selected"
-                          : "Use this address"}
-                      </button>
-                      {currentAddressId === savedAddress._id && (
-                        <button
+                            }  mt-2`}
                           onClick={() => {
-                            setCurrentAddressId("");
+                            setCurrentAddressId(savedAddress._id);
                             clearErrors();
                             setOrderData({
                               ...orderData,
@@ -474,414 +449,497 @@ const CheckoutPage = () => {
                             setValue("landmark", "");
                             setValue("address", "");
                           }}
-                          className="ml-5 text-sm text-blue-500"
                         >
-                          Add New
+                          {currentAddressId === savedAddress._id
+                            ? "Selected"
+                            : "Use this address"}
                         </button>
+                        {currentAddressId === savedAddress._id && (
+                          <button
+                            onClick={() => {
+                              setCurrentAddressId("");
+                              clearErrors();
+                              setOrderData({
+                                ...orderData,
+                                name:
+                                  savedAddress.firstName +
+                                  " " +
+                                  savedAddress.lastName,
+                                email: savedAddress.email,
+                                contact: savedAddress.mobileNumber,
+                                address: savedAddress.address,
+                              });
+                              setValue("firstName", "");
+                              setValue("lastName", "");
+                              setValue("mobileNumber", "");
+                              setValue("email", "");
+                              setValue("postalCode", "");
+                              setValue("state", "");
+                              setValue("city", "");
+                              setValue("landmark", "");
+                              setValue("address", "");
+                            }}
+                            className="ml-5 text-sm text-blue-500"
+                          >
+                            Add New
+                          </button>
+                        )}
+
+                        <Link to={'/add-address/'+savedAddress._id} className="ml-5 text-sm text-red-500">
+                          Edit
+                        </Link>
+
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {/* form */}
+            <form onSubmit={handleSubmit(onAddressSubmit)} className="pt-5">
+              {currentAddressId === "" && (
+                <div className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <input
+                        type="text"
+                        name="firstName"
+                        {...register("firstName", {
+                          required: "First name is required",
+                          minLength: {
+                            value: 3,
+                            message: "Minimum 3 Characters is required",
+                          },
+                        })}
+                        placeholder="First Name"
+                        className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                      />
+                      {errors.firstName && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.firstName.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        name="lastName"
+                        {...register("lastName", {
+                          required: "Last name is required",
+                        })}
+                        placeholder="Last Name"
+                        className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                      />
+                      {errors.lastName && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.lastName.message}
+                        </p>
                       )}
                     </div>
                   </div>
-                ))}
-            </div>
-          )}
-
-          {/* form */}
-          <form onSubmit={handleSubmit(onAddressSubmit)} className="pt-5">
-            {currentAddressId === "" && (
-              <div className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <input
-                      type="text"
-                      name="firstName"
-                      {...register("firstName", {
-                        required: "First name is required",
-                        minLength: {
-                          value: 3,
-                          message: "Minimum 3 Characters is required",
-                        },
-                      })}
-                      placeholder="First Name"
-                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                    />
-                    {errors.firstName && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.firstName.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      name="lastName"
-                      {...register("lastName", {
-                        required: "Last name is required",
-                      })}
-                      placeholder="Last Name"
-                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                    />
-                    {errors.lastName && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.lastName.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    name="email"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Invalid email address",
-                      },
-                    })}
-                    placeholder="Email"
-                    className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="tel"
-                    name="mobileNumber"
-                    {...register("mobileNumber", {
-                      required: "Mobile number is required",
-                      pattern: {
-                        value: /^[6-9]\d{9}$/,
-                        message: "Invalid Mobile number",
-                      },
-                    })}
-                    placeholder="Mobile Number"
-                    className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                  />
-                  {errors.mobileNumber && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.mobileNumber.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    name="state"
-                    {...register("state", {
-                      required: "State is required",
-                    })}
-                    placeholder="State / Region"
-                    className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                  />
-                  {errors.state && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.state.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    name="address"
-                    placeholder="Flat, House no., Building, Company, Apartment"
-                    {...register("address", {
-                      required: "Address is required",
-                      minLength: {
-                        value: 10,
-                        message: "Minimum 10 Characters is required",
-                      },
-                    })}
-                    className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                  />
-                  {errors.address && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.address.message}
-                    </p>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <input
-                      type="text"
-                      name="city"
-                      {...register("city", {
-                        required: "City is required",
-                      })}
-                      placeholder="City"
-                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                    />
-                    {errors.city && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.city.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      name="landmark"
-                      {...register("landmark", {
-                        required: "Landmark is required",
-                      })}
-                      placeholder="Landmark"
-                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
-                    />
-                    {errors.landmark && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.landmark.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      name="postalCode"
-                      {...register("postalCode", {
-                        required: "Pincode is required",
+                      type="email"
+                      name="email"
+                      {...register("email", {
+                        required: "Email is required",
                         pattern: {
-                          value: /^[1-9][0-9]{5}$/,
-                          message: "Invalid pincode",
+                          value:
+                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                          message: "Invalid email address",
                         },
                       })}
-                      placeholder="Postal Code"
+                      placeholder="Email"
                       className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
                     />
-                    {errors.postalCode && (
+                    {errors.email && (
                       <p className="text-red-500 text-sm mt-1">
-                        {errors.postalCode.message}
+                        {errors.email.message}
                       </p>
                     )}
                   </div>
-                </div>
-              </div>
-            )}
-            <div className="flex gap-3 mt-2">
-              <input
-                type="checkbox"
-                checked={readyForPayment}
-                onChange={(e) => setReadyForPayment(e.target.checked)}
-              />
-              <div>I agree to the Tearms and Conditions</div>
-            </div>
-            <Button
-              htmlType={currentAddressId === "" ? "submit" : "button"}
-              type="primary"
-              size="large"
-              loading={
-                buyOrderMutation.isLoading || proceedtopayMutation.isLoading
-              }
-              className="w-full bg-blue-500 text-white py-3 font-semibold text-base font-beatrice mt-4"
-              onClick={onSubmitWithSavedAddress}
-            >
-              Continue
-            </Button>
-          </form>
-        </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <select
+                        name="countryCode"
+                        {...register("countryCode", {
+                          required: "",
+                        })}
+                        defaultValue="+91"
+                        style={{
+                          padding: "0.75rem",
+                          backgroundColor: "#f3f4f6",
+                          fontSize: "0.875rem",
+                          border: "1px solid #d1d5db",
+                          borderRadius: "4px",
+                          width: "100px",
+                        }}
+                      >
+                        {CountryCodes.map((code, i) => (
+                          <option key={i} value={code.dial_code}>
+                            {code.dial_code} ({code.name})
+                          </option>
+                        ))}
+                      </select>
 
-        {/* orders */}
-        <div className="p-4 md:pr-10 lg:mx-20 mt-10 font-beatrice">
-          <div className="px-4 py-10 border-2 md:px-6 relative">
-            <h3 className="text-base font-medium">YOUR ORDER</h3>
-            <div className="space-y-6 mt-6">
-              {orders.length !== 0 &&
-                orders.map((product, productIndex) => (
-                  <div key={productIndex} className="flex items-center">
-                    <Link to="/one-product">
-                      <img
-                        src={product.photos}
-                        alt={product.name}
-                        className="w-28 h-36 object-cover border-2"
+
+                      <input
+                        type="tel"
+                        name="mobileNumber"
+                        {...register("mobileNumber", {
+                          required: "Mobile number is required",
+                          pattern: {
+                            value: /^[6-9]\d{9}$/,
+                            message: "Invalid Mobile number",
+                          },
+                        })}
+                        placeholder="Mobile Number"
+                        style={{
+                          padding: "0.75rem",
+                          backgroundColor: "#f3f4f6",
+                          fontSize: "0.875rem",
+                          border: "1px solid #d1d5db",
+                          borderRadius: "4px",
+                          flex: 1,
+                        }}
                       />
-                    </Link>
-                    <div className="grid grid-cols-2 md:gap-10 gap-5 place-content-between ml-4">
-                      <div className="flex flex-col">
-                        <Link to="/one-product">
-                          <p className="font-medium text-base xl:w-52">
-                            {product.name}
-                          </p>
-                        </Link>
-                        <div className="flex space-x-2">
-                          {product.availableSizes.map((size, sizeIndex) => (
-                            <button
-                              key={sizeIndex}
-                              className={`px-2 py-1 border ${
-                                size === product.size
+                    </div>
+
+                    {errors.mobileNumber && (
+                      <p style={{ color: "#ef4444", fontSize: "0.875rem", marginTop: "5px" }}>
+                        {errors.mobileNumber.message}
+                      </p>
+                    )}
+                    {errors.countryCode && (
+                      <p style={{ color: "#ef4444", fontSize: "0.875rem", marginTop: "5px" }}>
+                        {errors.countryCode.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <input
+                      type="text"
+                      name="state"
+                      {...register("state", {
+                        required: "State is required",
+                      })}
+                      placeholder="State / Region"
+                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                    />
+                    {errors.state && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.state.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="address"
+                      placeholder="Flat, House no., Building, Company, Apartment"
+                      {...register("address", {
+                        required: "Address is required",
+                        minLength: {
+                          value: 10,
+                          message: "Minimum 10 Characters is required",
+                        },
+                      })}
+                      className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                    />
+                    {errors.address && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.address.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <input
+                        type="text"
+                        name="city"
+                        {...register("city", {
+                          required: "City is required",
+                        })}
+                        placeholder="City"
+                        className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                      />
+                      {errors.city && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.city.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        name="landmark"
+                        {...register("landmark", {
+                          required: "Landmark is required",
+                        })}
+                        placeholder="Landmark"
+                        className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                      />
+                      {errors.landmark && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.landmark.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        name="postalCode"
+                        {...register("postalCode", {
+                          required: "Pincode is required",
+                          pattern: {
+                            value: /^[1-9][0-9]{5}$/,
+                            message: "Invalid pincode",
+                          },
+                        })}
+                        placeholder="Postal Code"
+                        className="w-full p-3 bg-gray-100 text-sm border border-gray-300"
+                      />
+                      {errors.postalCode && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.postalCode.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="flex gap-3 mt-2">
+                <input
+                  type="checkbox"
+                  checked={readyForPayment}
+                  onChange={(e) => setReadyForPayment(e.target.checked)}
+                />
+                <div>I agree to the <Link className="underline text-blue-600" to={"/terms-and-conditions"}>Terms and Conditions</Link></div>
+              </div>
+              <Button
+                htmlType={currentAddressId === "" ? "submit" : "button"}
+                type="primary"
+                size="large"
+                loading={
+                  buyOrderMutation.isLoading || proceedtopayMutation.isLoading
+                }
+                className="w-full bg-blue-500 text-white py-3 font-semibold text-base font-beatrice mt-4"
+                onClick={onSubmitWithSavedAddress}
+              >
+                Continue
+              </Button>
+            </form>
+          </div>
+
+          {/* orders */}
+          <div className="p-4 md:pr-10 lg:mx-20 mt-10 font-beatrice">
+            <div className="px-4 py-10 border-2 md:px-6 relative">
+              <h3 className="text-base font-medium">YOUR ORDER</h3>
+              <div className="space-y-6 mt-6">
+                {orders.length !== 0 &&
+                  orders.map((product, productIndex) => (
+                    <div key={productIndex} className="flex items-center">
+                      <Link to={"/one-product?id="+product.productId}>
+                        <img
+                          src={product.photos}
+                          alt={product.name}
+                          className="w-28 h-36 object-cover border-2"
+                        />
+                      </Link>
+                      <div className="grid grid-cols-2 md:gap-10 gap-5 place-content-between ml-4">
+                        <div className="flex flex-col">
+                          <Link to={"/one-product?id="+product.productId}>
+                            <p className="font-medium text-base xl:w-52">
+                              {product.name}
+                            </p>
+                          </Link>
+                          <div className="flex space-x-2">
+                            {product.availableSizes.map((size, sizeIndex) => (
+                              <button
+                                key={sizeIndex}
+                                className={`px-2 py-1 border ${size === product.size
                                   ? "bg-blue-500 text-white"
                                   : "bg-gray-200"
-                              }`}
+                                  }`}
+                                onClick={() => {
+                                  setOrders((prevItems) =>
+                                    prevItems.map((item) =>
+                                      item.productId === product.productId
+                                        ? { ...item, size: size }
+                                        : item
+                                    )
+                                  );
+                                }}
+                              >
+                                {size}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        {checkoutType === "combo" && (
+                          <div>
+                            <button
+                              className="text-red-500 text-lg"
+                              onClick={() => comboRemoveProduc(product.productId)}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        )}
+                        {checkoutType === "cart" && (
+                          <div>
+                            <button
+                              className="text-red-500 text-lg"
+                              onClick={() => handleDelete(product.productId)}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        )}
+
+                        <div className="text-[#000E8A]">
+                          <div className="text-[#000E8A] flex items-center space-x-2">
+                            <button
+                              className="px-2 py-1 bg-gray-200"
                               onClick={() => {
                                 setOrders((prevItems) =>
                                   prevItems.map((item) =>
                                     item.productId === product.productId
-                                      ? { ...item, size: size }
-                                      : item
-                                  )
-                                );
-                              }}
-                            >
-                              {size}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      {checkoutType === "cart" && (
-                        <div>
-                          <button
-                            className="text-red-500 text-lg"
-                            onClick={() => handleDelete(product.productId)}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      )}
-
-                      <div className="text-[#000E8A]">
-                        <div className="text-[#000E8A] flex items-center space-x-2">
-                          <button
-                            className="px-2 py-1 bg-gray-200"
-                            onClick={() => {
-                              setOrders((prevItems) =>
-                                prevItems.map((item) =>
-                                  item.productId === product.productId
-                                    ? {
+                                      ? {
                                         ...item,
                                         count:
                                           item.count === 1
                                             ? item.count
                                             : item.count - 1,
                                       }
-                                    : item
-                                )
-                              );
-                            }}
-                          >
-                            -
-                          </button>
-                          <p>{product.count}</p>
-                          <button
-                            className="px-2 py-1 bg-gray-200"
-                            onClick={() => {
-                              setOrders((prevItems) =>
-                                prevItems.map((item) =>
-                                  item.productId === product.productId
-                                    ? {
+                                      : item
+                                  )
+                                );
+                              }}
+                            >
+                              -
+                            </button>
+                            <p>{product.count}</p>
+                            <button
+                              className="px-2 py-1 bg-gray-200"
+                              onClick={() => {
+                                setOrders((prevItems) =>
+                                  prevItems.map((item) =>
+                                    item.productId === product.productId
+                                      ? {
                                         ...item,
                                         count:
                                           item.count === 5
                                             ? item.count
                                             : item.count + 1,
                                       }
-                                    : item
-                                )
-                              );
-                            }}
-                          >
-                            +
-                          </button>
+                                      : item
+                                  )
+                                );
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <p className="font-medium">Rs.{product.price}</p>
+                        <div>
+                          <p className="font-medium">Rs.{product.price}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-            </div>
+                  ))}
+              </div>
 
-            <div className="border-t-2 space-y-4 mt-6 pt-4">
-              {/* coupon */}
-              {isLoading ? (
-                <div>
-                  <Spin spinning={true} />
+              <div className="border-t-2 space-y-4 mt-6 pt-4">
+                {/* coupon */}
+                {isLoading ? (
+                  <div>
+                    <Spin spinning={true} />
+                  </div>
+                ) : (
+                  coupons?.data.detail.total > 0 && (
+                    <div className="space-y-3">
+                      <div>Coupons</div>
+                      {coupons?.data.detail.data.map((coupon) => (
+                        <div
+                          key={coupon._id}
+                          className="text-white bg-violet-500 rounded-2xl flex justify-between"
+                        >
+                          <div className="flex justify-between gap-3 p-3 items-center">
+                            <div className="bg-white rounded-full h-10 w-10 flex justify-center items-center flex-none text-violet-500">
+                              <BiSolidCoupon className=" rotate-45 text-xl" />
+                            </div>
+
+                            <div>
+                              <div>{coupon.description}</div>
+                              <div className=" font-semibold">{coupon.code}</div>
+                              <div className="text-sm">
+                                Rs.{coupon.discoutAmount}
+                              </div>
+                              <div className="text-xs">
+                                use before : {coupon.endDate}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className=" w-[30%] border-dashed border-l-2 border-white px-4 flex justify-center items-center">
+                            <div
+                              className="cursor-pointer"
+                              onClick={() => {
+                                if (coupon._id === selectedCoupon.id) {
+                                  setSelectedCoupon({
+                                    id: "",
+                                    amount: 0,
+                                  });
+                                } else {
+                                  Swal.fire(
+                                    "Success",
+                                    "Coupon Applied Successfully",
+                                    "success"
+                                  );
+                                  setSelectedCoupon({
+                                    id: coupon._id,
+                                    amount: coupon.discoutAmount,
+                                  });
+                                }
+                              }}
+                            >
+                              {selectedCoupon.id === coupon._id
+                                ? "Applied"
+                                : "Apply"}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                )}
+
+                <div className="flex justify-between">
+                  <p className="font-medium">Total Products</p>
+                  <p className="font-medium text-base">{totalProducts}</p>
                 </div>
-              ) : (
-                coupons?.data.detail.total > 0 && (
-                  <div className="space-y-3">
-                    <div>Coupons</div>
-                    {coupons?.data.detail.data.map((coupon) => (
-                      <div
-                        key={coupon._id}
-                        className="text-white bg-violet-500 rounded-2xl flex justify-between"
-                      >
-                        <div className="flex justify-between gap-3 p-3 items-center">
-                          <div className="bg-white rounded-full h-10 w-10 flex justify-center items-center flex-none text-violet-500">
-                            <BiSolidCoupon className=" rotate-45 text-xl" />
-                          </div>
-
-                          <div>
-                            <div>{coupon.description}</div>
-                            <div className=" font-semibold">{coupon.code}</div>
-                            <div className="text-sm">
-                              Rs.{coupon.discoutAmount}
-                            </div>
-                            <div className="text-xs">
-                              use before : {coupon.endDate}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className=" w-[30%] border-dashed border-l-2 border-white px-4 flex justify-center items-center">
-                          <div
-                            className="cursor-pointer"
-                            onClick={() => {
-                              if (coupon._id === selectedCoupon.id) {
-                                setSelectedCoupon({
-                                  id: "",
-                                  amount: 0,
-                                });
-                              } else {
-                                Swal.fire(
-                                  "Success",
-                                  "Coupon Applied Successfully",
-                                  "success"
-                                );
-                                setSelectedCoupon({
-                                  id: coupon._id,
-                                  amount: coupon.discoutAmount,
-                                });
-                              }
-                            }}
-                          >
-                            {selectedCoupon.id === coupon._id
-                              ? "Applied"
-                              : "Apply"}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-              )}
-
-              <div className="flex justify-between">
-                <p className="font-medium">Total Products</p>
-                <p className="font-medium text-base">{totalProducts}</p>
-              </div>
-              <div className="flex justify-between">
-                <p className="font-medium">Subtotal</p>
-                <p className="font-medium text-base">{amount}</p>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="font-medium">Shipping</p>
-                <p className="font-medium text-xs text-[#8A8A8A]">{shipping}</p>
-              </div>
-              <div className="flex justify-between mt-6 border-t-2 pt-4">
-                <p className="text-base font-medium">Total</p>
-                <p className="text-base font-medium">
-                  Rs.
-                  {total}
-                </p>
+                <div className="flex justify-between">
+                  <p className="font-medium">Subtotal</p>
+                  <p className="font-medium text-base">{amount}</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="font-medium">Shipping</p>
+                  <p className="font-medium text-xs text-[#8A8A8A]">{shipping}</p>
+                </div>
+                <div className="flex justify-between mt-6 border-t-2 pt-4">
+                  <p className="text-base font-medium">Total</p>
+                  <p className="text-base font-medium">
+                    Rs.
+                    {total}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
     </UserProtectLayout>
   );
 };
