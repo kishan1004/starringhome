@@ -12,6 +12,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import Loader2 from "../common/Loader2";
+import CountryCodes from '../../services/CountryCodes.json';
 
 const OTPLogin = () => {
   const { type } = useParams();
@@ -25,6 +26,8 @@ const OTPLogin = () => {
   const [isOtpVerified, setisOtpVerified] = useState(true);
   const [ValidationMsg, SetValidationMsg] = useState(true);
   const [isLoading, SetisLoading] = useState(false);
+
+  const [countryCode, SetCountryCode] = useState('+91');
 
   const navigate = useNavigate();
 
@@ -41,20 +44,20 @@ const OTPLogin = () => {
   const handleNext = (e) => {
     e.preventDefault();
 
-  
+
     // const t = (type === "new" || type==="update-username") ? "PROFILE" : "PASSWORD";
     const t = getLabel(type);
 
     const isAllNumbers = /^\d+$/.test(inputValue);
-    const hasPrefix = inputValue.startsWith("+91");
+    const hasPrefix = inputValue.startsWith(countryCode);
 
     const data = {
       verificationType: t,
       actionType: "SEND",
-      userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
+      userName: isAllNumbers && !hasPrefix ? `${countryCode}${inputValue}` : inputValue,
     };
 
-    if(t === "SETTINGS"){
+    if (t === "SETTINGS") {
       data.userId = localStorage.getItem('uid')
     }
 
@@ -78,40 +81,38 @@ const OTPLogin = () => {
   };
 
 
-  
+
   const verifyOtp = async (e) => {
     e.preventDefault();
     console.log(type)
-     const t = getLabel(type);
+    const t = getLabel(type);
 
     const isAllNumbers = /^\d+$/.test(inputValue);
-    const hasPrefix = inputValue.startsWith("+91");
+    const hasPrefix = inputValue.startsWith(countryCode);
     SetisLoading(true);
 
-    let userName = isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue;
+    let userName = isAllNumbers && !hasPrefix ? `${countryCode}${inputValue}` : inputValue;
 
     let payloadData = {
-      userName: isAllNumbers && !hasPrefix ? `+91${inputValue}` : inputValue,
+      userName: isAllNumbers && !hasPrefix ? `${countryCode}${inputValue}` : inputValue,
       otpCode: otp,
       actionType: "VERIFY",
       verificationType: t,
     }
 
 
-    if(t === "SETTINGS"){
+    if (t === "SETTINGS") {
       payloadData.userId = localStorage.getItem('uid')
     }
-
-    console.log(payloadData)
 
     const res = await otpVerification(payloadData);
 
     SetisLoading(false);
 
     if (res.status === 200) {
-      if(type == "update-username"){
+      if (type == "update-username") {
         const res = await updateUsername(userName);
-        if(res.status==200){
+        if (res.status == 200) {
           await userLogout();
           localStorage.clear();
           navigate('/user-login')
@@ -124,17 +125,17 @@ const OTPLogin = () => {
           }).then(() => {
             setisOtpVerified(false);
           });
-        }else{
+        } else {
           Swal.fire({
             icon: "error",
             title: "Verification Failed",
             text: res.data.detail[0].msg,
           });
         }
-      }else{
+      } else {
         Swal.fire({
           icon: "success",
-          title: "Verification Failed",
+          title: "Verification Successful",
           text: res.data.detail[0].msg,
           timer: 5000,
           timerProgressBar: true,
@@ -142,7 +143,7 @@ const OTPLogin = () => {
           setisOtpVerified(false);
         });
       }
-      
+
     } else {
       Swal.fire({
         icon: "error",
@@ -195,7 +196,7 @@ const OTPLogin = () => {
             text: "Signup failed. Please try again.",
           });
         });
-        SetisLoading(false);
+      SetisLoading(false);
     } else {
       SetisLoading(true);
 
@@ -206,7 +207,7 @@ const OTPLogin = () => {
       })
         .then((res) => {
           console.log(res);
-        SetisLoading(false);
+          SetisLoading(false);
           if (res.status == 200) {
             Swal.fire({
               icon: "success",
@@ -231,7 +232,7 @@ const OTPLogin = () => {
 
         })
         .catch((error) => {
-        SetisLoading(false);
+          SetisLoading(false);
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -268,7 +269,7 @@ const OTPLogin = () => {
 
   return (
     <section className="font-beatrice bg-gray-100 h-screen">
-      {isLoading && <Loader2/>}
+      {isLoading && <Loader2 />}
       <div className="m-4 overflow-hidden md:hidden">
         <img src={LoginImgsm} alt="logo" className="rounded-lg object-cover" />
       </div>
@@ -292,22 +293,46 @@ const OTPLogin = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   {loginType === "phone" ? "Phone Number" : "Email Address"}
                 </label>
-                <input
-                  onInput={(e) =>
-                    loginType === "phone"
-                      ? validateMobile(e)
-                      : allowOnlyEmail(e)
-                  }
-                  type={loginType === "phone" ? "tel" : "email"}
-                  maxLength={loginType === "phone" ? "10" : ""}
-                  placeholder={
-                    loginType === "phone" ? "+91" : "Enter email address"
-                  }
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <select
+                      name="countryCode"
+                      defaultValue="+91"
+                      onChange={(e)=>SetCountryCode(e.target.value)}
+                      style={{
+                        padding: "0.75rem",
+                        backgroundColor: "#f3f4f6",
+                        fontSize: "0.875rem",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        width: "100px",
+                      }}
+                    >
+                      {CountryCodes.map((code, i) => (
+                        <option key={i} value={code.dial_code}>
+                          {code.dial_code} ({code.name})
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      onInput={(e) =>
+                        loginType === "phone"
+                          ? validateMobile(e)
+                          : allowOnlyEmail(e)
+                      }
+                      type={loginType === "phone" ? "tel" : "email"}
+                      maxLength={loginType === "phone" ? "10" : ""}
+                      placeholder={
+                        loginType === "phone" ? "Enter Mobile Number" : "Enter email address"
+                      }
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                </div>
+
                 {loginType != "phone" && (
                   <p style={{ color: "red" }}>
                     {emailErr ? "Invalid Email" : ""}
@@ -340,9 +365,9 @@ const OTPLogin = () => {
                   maxLength={4}
                   required
                 />
-                <button type="submit" onClick={verifyOtp}>
+                {!isOtpVerified && <button type="submit" onClick={verifyOtp}>
                   Verify OTP
-                </button>
+                </button>}
               </div>
 
               {step === 2 && type != "update-username" && (

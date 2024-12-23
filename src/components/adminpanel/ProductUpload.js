@@ -254,6 +254,10 @@ const ProductUpload = () => {
     title: `${productId === "new" ? "Upload " : "Edit "}Product`, desc: ""
   }
 
+  function validateMobile(e) {
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+  }
+
   return (
     <div className="min-h-screen w-full bg-gray-100 mt-14 p-8">
       <MetaTags data={metaData} />
@@ -382,13 +386,14 @@ const ProductUpload = () => {
             <div key={size}>
               <label className="font-semibold">Stock Count for {size} *</label>
               <input
-                type="number"
                 name="stockCount"
                 value={
                   productData.stockCount[size] !== undefined
                     ? productData.stockCount[size]
                     : ""
                 }
+                type="text"
+                onInput={(e)=>validateMobile(e)}
                 onChange={(e) => handleStockChange(e, size)}
                 className={`w-full border ${errors[`stockCount-${size}`]
                   ? "border-red-500"
@@ -407,7 +412,8 @@ const ProductUpload = () => {
         <div>
           <label className="font-semibold">Product Price *</label>
           <input
-            type="number"
+           type="text"
+           onInput={(e)=>validateMobile(e)}
             name="price"
             value={productData.price}
             onChange={handleChange}
@@ -422,7 +428,8 @@ const ProductUpload = () => {
         <div>
           <label className="font-semibold">Offer Percentage *</label>
           <input
-            type="number"
+          type="text"
+          onInput={(e)=>validateMobile(e)}
             name="offerPercentage"
             value={productData.offerPercentage}
             onChange={handleChange}
@@ -437,7 +444,8 @@ const ProductUpload = () => {
         <div>
           <label className="font-semibold">Offer Price *</label>
           <input
-            type="number"
+          type="text"
+          onInput={(e)=>validateMobile(e)}
             name="offerPrice"
             value={productData.offerPrice}
             onChange={handleChange}
