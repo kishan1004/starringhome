@@ -41,25 +41,7 @@ const Favourites = () => {
   return (
     <UserProtectLayout>
     <div className="min-h-screen bg-gray-100 font-beatrice">
-      <section className="max-w-full md:px-10 px-4">
-        <Link to="/all-products">
-          <svg
-            width="62"
-            height="14"
-            viewBox="0 0 62 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M60.5 7H1M1 7L7 1M1 7L7 13"
-              stroke="black"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Link>
-      </section>
+     
       <div>
         <div className="md:p-10 p-3 pb-10">
           <h3 className="text-2xl font-semibold mb-4">Favourites</h3>

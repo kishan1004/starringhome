@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
 html {
   margin: auto;
   width: 100%;
@@ -10,6 +12,11 @@ html {
 
 html {
   scroll-behavior: smooth;
+}
+
+*{
+  font-family: "Beatrice Deck", sans-serif;
+  
 }
 
 body {
@@ -27,4 +34,62 @@ input[type="password"]::-webkit-password-toggle {
 
 button:disabled {
   cursor: not-allowed;
+}
+
+.active-selected{
+  background-color: black;
+  color: white;
+}
+
+.home-logo{
+  margin-right: -170px;
+}
+
+.dancingFontStyle{
+  font-family: "Dancing Script", serif;
+}
+
+
+.ourstory-bg{
+  transition-duration: 0.4s;
+
+}
+
+.our-story-content{
+  background-color: rgb(233, 233, 233);
+
+  padding: 20px;
+}
+
+.our-story-content::before,
+.our-story-content::after {
+  content: '';
+  position: absolute;
+  width: 80px; /* Adjust width based on image */
+  height: 80px; /* Adjust height based on image */
+  background-image: url('./images/tape-x.png'); /* Your custom corner design */
+  background-size: cover;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .our-story-content::before,
+  .our-story-content::after {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+/* Top-right corner */
+.our-story-content::before {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+/* Bottom-left corner */
+.our-story-content::after {
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, 50%);
 }

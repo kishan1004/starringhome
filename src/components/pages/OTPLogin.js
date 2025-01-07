@@ -365,9 +365,9 @@ const OTPLogin = () => {
                   maxLength={4}
                   required
                 />
-                {!isOtpVerified && <button type="submit" onClick={verifyOtp}>
+                 <button type="submit" onClick={verifyOtp}>
                   Verify OTP
-                </button>}
+                </button>
               </div>
 
               {step === 2 && type != "update-username" && (

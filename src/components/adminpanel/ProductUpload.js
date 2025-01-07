@@ -223,7 +223,7 @@ const ProductUpload = () => {
             text: "Product added successfully!",
             timer: 5000,
             timerProgressBar: true,
-          }).then(() => navigate("../admin/products"));
+          }).then(() => navigate("/admin/products"));
         } else {
           Swal.fire({
             icon: "error",

@@ -63,7 +63,7 @@ const NewArrivalsSection = (props) => {
 
   return (
     <section
-      className="md:flex gap-8 lg:p-8 lg:mt-72 mt-96 md:mx-10"
+      className="md:flex gap-8 lg:p-8 md:mx-10"
       id={props.id}
     >
       {/* Left Text Section */}

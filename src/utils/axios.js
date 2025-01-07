@@ -4,7 +4,7 @@ import axios from "axios";
  * Base url for backend server is mapped here, functions using axios Instance will
  * make call to this baseUrl.
  */
-const baseURL = "https://3.14.249.42:9004/api/v1/";
+const baseURL = "https://13.233.14.134:8001/api/v1/";
 export const axiosInstance = axios.create({
   baseURL: baseURL,
 });

@@ -43,25 +43,7 @@ const ShoppingCart = () => {
       
     <section className="bg-gray-100 font-sans min-h-screen">
       {/* Top Navigation */}
-      <div className="w-full px-4 pb-5">
-        <Link to="/all-products">
-          <svg
-            width="62"
-            height="14"
-            viewBox="0 0 62 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M60.5 7H1M1 7L7 1M1 7L7 13"
-              stroke="black"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Link>
-      </div>
+      
 
       {/* Shopping Cart Header */}
       <div className="px-4 md:px-10">

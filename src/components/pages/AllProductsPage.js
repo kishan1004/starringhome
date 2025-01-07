@@ -120,25 +120,7 @@ const AllProductsPage = () => {
   return (
     <section className="bg-gray-100 font-beatrice min-h-screen">
       <MetaTags data={metaData} />
-      <div className="w-full  px-4 pb-5">
-        <Link to="/">
-          <svg
-            width="62"
-            height="14"
-            viewBox="0 0 62 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M60.5 7H1M1 7L7 1M1 7L7 13"
-              stroke="black"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </Link>
-      </div>
+      
 
       <div className="lg:flex">
         <div className="pb-5">
@@ -684,7 +666,7 @@ const AllProductsPage = () => {
                   const offerPercentage = Math.round(((price - offerPrice) / price) * 100);
                   return (
                     <div key={_id}>
-                      <Link to={`/one-product?id=${_id}`}>
+                      <a href={`/one-product?id=${_id}`} target="_blank">
                         <div className="border rounded-md p-4">
                           <img
                             src={photos[0]}
@@ -703,7 +685,7 @@ const AllProductsPage = () => {
                             </p>
                           </div>
                         </div>
-                      </Link>
+                      </a>
                     </div>
                   );
                 })

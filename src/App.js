@@ -57,6 +57,7 @@ import AddCouponPage from "./components/adminpanel/AddCouponPage";
 import AdminComboProductsPage from "./components/adminpanel/AdminComboProductsPage";
 import AddComboPage from "./components/adminpanel/AddComboPage";
 import AdminContactForm from "./components/adminpanel/AdminContactForm";
+import OurStory from "./components/OurStory";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -110,11 +111,6 @@ function App() {
             element={
               <>
                 <HeroSection id="hero" />
-                <NewArrivalsSection id="new-arrivals" />
-                <TrendingSection id="trending" />
-                <BannerSection id="banner" />
-                <FeatureSection id="features" />
-                <FooterSection id="footer" />
               </>
             }
           />

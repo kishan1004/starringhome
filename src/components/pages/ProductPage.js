@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { addToCart, getProductById, addFavouriteProduct } from "../../api/user";
 import { useMutation, useQuery } from "react-query";
@@ -10,7 +10,9 @@ import MetaTags from "../common/MetaTags";
 const ProductPage = () => {
   const [params] = useSearchParams();
   const productKey = params.get("id");
+  const [order, setOrder] = useState({ productId: params.get("id"), count: 1 });
   const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedSize, setSelectedSize] = useState("");
   const navigate = useNavigate();
   const [allProductCurrentPage, setAllProductCurrentPage] = useState(1);
   const initialFilter = {
@@ -63,15 +65,35 @@ const ProductPage = () => {
   const addtoFavMutation = useMutation({
     mutationFn: addFavouriteProduct,
     onSuccess: (res) => {
-      console.log(res)
+      console.log(res);
       refetchProduct();
-      Swal.fire("Success", res.data.detail[0].msg, "success");
     },
     onError: (error) => {
       Swal.fire("Error", error[0].msg, "error");
       console.log(error);
     },
   });
+
+  useEffect(() => {
+    const selectedSize = JSON.parse(localStorage.getItem("selectedSize_"+productKey));
+    const productCount = JSON.parse(localStorage.getItem("productCount_"+productKey));
+    console.log(selectedSize);
+    if(selectedSize){
+      if (selectedSize.productKey == productKey) {
+        setSelectedSize(selectedSize.selectedSize);
+      }
+    }
+    if (productCount) {
+      if (productCount.productKey === productKey) {
+        setOrder((prevState) => ({
+          ...prevState, // Spread previous state to retain other properties
+          count: productCount.count, // Update the count property
+        }));
+      }
+    }
+    
+    
+  }, []);
 
   const handleAddFav = (id) => {
     if (!localStorage.getItem("userToken")) {
@@ -109,35 +131,53 @@ const ProductPage = () => {
     addtoCartMutation.mutate({ data });
   };
 
+  const handleBuyNow = async () => {
+    const data = {
+      productId: [product._id],
+      action: "ADD",
+    };
+    try {
+      const res = await addToCart({ data });
+      navigate("/checkout?type=cart");
+    } catch (error) {
+      navigate("/checkout?type=cart");
+    }
+  };
 
+  const updateCount = (increment) => {
+    setOrder((prevOrder) => {
+      const updatedCount = Math.max(1, Math.min(5, prevOrder.count + increment));
+      console.log('Updated count:', updatedCount);  // Log the updated count
+      localStorage.setItem("productCount_"+productKey,JSON.stringify({ count : updatedCount, productKey }))
+      return {
+        ...prevOrder,
+        count: updatedCount,
+      };
+    });
+  };
+  
   const allSizes = ["XS", "S", "M", "L", "XL", "2X"];
 
-  const handleBuyAll = () => { };
+  const handleBuyAll = () => {};
+
+  const handleSelectSize = (selectedSize) => {
+    localStorage.setItem(
+      "selectedSize_"+productKey,
+      JSON.stringify({ selectedSize, productKey })
+    );
+    setSelectedSize(selectedSize);
+  };
 
   return (
     <section className="bg-gray-100 font-beatrice max-w-[1440px] mx-auto w-full">
-      {product && <MetaTags data={{
-        title: product.name
-      }} />}
-      <div className="w-full md:px-10 px-4">
-        <Link to="/all-products">
-          <svg
-            width="62"
-            height="14"
-            viewBox="0 0 62 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M60.5 7H1M1 7L7 1M1 7L7 13"
-              stroke="black"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Link>
-      </div>
+      {product && (
+        <MetaTags
+          data={{
+            title: product.name,
+          }}
+        />
+      )}
+
       {/* product view */}
       {product ? (
         <div className="md:flex items-center justify-center lg:px-32 p-4 pt-10">
@@ -156,8 +196,9 @@ const ProductPage = () => {
                   key={index}
                   src={image}
                   alt={`Thumbnail ${index + 1}`}
-                  className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${selectedImage === index ? "opacity-100" : "opacity-50"
-                    }`}
+                  className={`w-full h-[100px] object-cover border border-gray-200 cursor-pointer ${
+                    selectedImage === index ? "opacity-100" : "opacity-50"
+                  }`}
                   onClick={() => setSelectedImage(index)}
                 />
               ))}
@@ -167,7 +208,7 @@ const ProductPage = () => {
           <div className="lg:max-w-[380px] md:w-1/2 px-10 border-2 relative">
             <button
               className="absolute top-0 right-0"
-              onClick={() => product.isFavo ? handleRemFav() : handleAddFav()}
+              onClick={() => (product.isFavo ? handleRemFav() : handleAddFav())}
               style={{
                 border: "none",
                 padding: "10px",
@@ -199,7 +240,6 @@ const ProductPage = () => {
               <p className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 inline-block rounded-full">
                 {product.offerPercentage}% OFF
               </p>
-
             </div>
 
             {product.stockCount < 9 && (
@@ -211,16 +251,23 @@ const ProductPage = () => {
             <p className="text-sm text-gray-500">MRP incl. of all taxes</p>
 
             <div className="flex">
-              {Array(5).fill(0).map((_, i) =>
-                <svg key={i}
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className={`w-5 h-5 ${product.rating >= i + 1 ? "text-yellow-500" : "text-gray-300"}`}
-                >
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                </svg>
-              )}
+              {Array(5)
+                .fill(0)
+                .map((_, i) => (
+                  <svg
+                    key={i}
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className={`w-5 h-5 ${
+                      product.rating >= i + 1
+                        ? "text-yellow-500"
+                        : "text-gray-300"
+                    }`}
+                  >
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                ))}
             </div>
 
             <p className="text-xs font-medium text-gray-600 py-5">
@@ -236,24 +283,51 @@ const ProductPage = () => {
                   <button
                     key={size}
                     disabled={!product.sizes.includes(size)}
-                    className={`py-2 border border-black cursor-default ${!product.sizes.includes(size) &&
-                      "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
-                      }`}
+                    onClick={() => handleSelectSize(size)}
+                    className={`py-2 border cursor-pointer ${
+                      !product.sizes.includes(size)
+                        ? "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "border-black"
+                    } ${selectedSize === size ? "active-selected" : ""}`}
                   >
                     {size}
                   </button>
                 ))}
               </div>
             </div>
-            <p className="text-xs text-gray-500 pb-3 underline">
+            <div className="text-[#000E8A] flex items-center space-x-2">
+              <button
+                className="px-2 py-1 bg-gray-200"
+                onClick={() => updateCount(-1)}
+              >
+                -
+              </button>
+              <p>{order.count}</p>
+              <button
+                className="px-2 py-1 bg-gray-200"
+                onClick={() => updateCount(1)}
+              >
+                +
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-500 pb-3  mt-3 underline">
               <Link to="/size-chart">FIND YOUR SIZE | MEASUREMENT GUIDE</Link>
             </p>
-            <button
-              className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white"
-              onClick={handleAddToCart}
-            >
-              ADD
-            </button>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white"
+                onClick={handleAddToCart}
+              >
+                ADD
+              </button>
+              <button
+                className="bg-[#D9D9D9] text-black w-full py-3 mb-5 hover:bg-black hover:text-white"
+                onClick={handleBuyNow}
+              >
+                BUY NOW
+              </button>
+            </div>
           </div>
         </div>
       ) : isLoading ? (
@@ -284,7 +358,10 @@ const ProductPage = () => {
                     return (
                       <React.Fragment key={product._id}>
                         <div className="relative border p-4 rounded-lg shadow-md">
-                          <Link to={`/one-product?id=${product._id}`} className="block">
+                          <Link
+                            to={`/one-product?id=${product._id}`}
+                            className="block"
+                          >
                             <img
                               src={product.photos[0]}
                               alt={product.name}
@@ -316,28 +393,28 @@ const ProductPage = () => {
                       </React.Fragment>
                     );
                   })}
-
-
                 </div>
 
                 <div>
-                  <Link to={`/checkout?type=${'combo'}&productId=${productKey}`} className="md:col-span-1 col-span-2">
-                    <button
-                      className="bg-[#D9D9D9] text-black w-full py-3 px-3 mb-5 h-14 rounded place-self-center hover:bg-black hover:text-white"
-                    >
+                  <Link
+                    to={`/checkout?type=${"combo"}&productId=${productKey}`}
+                    className="md:col-span-1 col-span-2"
+                  >
+                    <button className="bg-[#D9D9D9] text-black w-full py-3 px-3 mb-5 h-14 rounded place-self-center hover:bg-black hover:text-white">
                       BUY ALL
                     </button>
                   </Link>
+
                   <div className="relative border p-4 rounded-lg">
-                  <div className="flex items-center space-x-2 mt-2">
-                    <p className="text-xs line-through text-gray-500">
-                      Rs. {product && product.actualPrice}
-                    </p>
-                    <p className="md:text-lg text-sm font-medium">
-                      Rs. {product && product.comboPrice}
-                    </p>
+                    <div className="flex items-center space-x-2 mt-2">
+                      <p className="text-xs line-through text-gray-500">
+                        Rs. {product && product.actualPrice}
+                      </p>
+                      <p className="md:text-lg text-sm font-medium">
+                        Rs. {product && product.comboPrice}
+                      </p>
+                    </div>
                   </div>
-                </div>
                 </div>
               </div>
             </div>
@@ -367,14 +444,10 @@ const ProductPage = () => {
       <div class="flex flex-wrap p-3">
         <div class="lg:w-1/2 w-full">
           <div class="shadow-md p-3">
-
-            <div className="md:flex items-start md:space-x-5 max-sm:space-y-2">
-             
-            </div>
+            <div className="md:flex items-start md:space-x-5 max-sm:space-y-2"></div>
           </div>
         </div>
       </div>
-
 
       {/* products you may like */}
       <div>

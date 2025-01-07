@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import Insta from "../images/instagram.png";
 import Fbimg from "../images/facebook.png";
 import Twitterimg from "../images/twitter.png";
+import youtube from "../images/youtube.png";
 import { Link } from "react-router-dom";
 import ContactDrawer from "./ContactUsDrawer";
 import { salesOverviewSave } from "../api/user";
@@ -159,6 +160,16 @@ const FooterSection = (props) => {
             onClick={()=>socialClick('facebook')}
           >
             <img src={Fbimg} alt="facebook" className="h-10 w-10" />
+          </a>
+          <a
+            href="/"
+            target="_blank"
+            className="text-gray-400 hover:text-gray-600"
+            data-aos="flip-left"
+            data-aos-duration="1000"
+            onClick={()=>socialClick('facebook')}
+          >
+            <img src={youtube} alt="facebook" className="h-10 w-10" />
           </a>
         </div>
       </div>

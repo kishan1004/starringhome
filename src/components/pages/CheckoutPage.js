@@ -20,7 +20,7 @@ import { BiSolidCoupon } from "react-icons/bi";
 import Swal from "sweetalert2";
 import UserProtectLayout from "../common/UserProtectLayout";
 import MetaTags from "../common/MetaTags";
-import CountryCodes from '../../services/CountryCodes.json';
+import CountryCodes from "../../services/CountryCodes.json";
 
 const CheckoutPage = () => {
   const [orders, setOrders] = useState([]);
@@ -78,8 +78,8 @@ const CheckoutPage = () => {
     queryFn: () => viewCouponsApi(),
   });
 
-  function comboRemoveProduc(id){
-    setOrders((orders)=>orders.filter((el)=>el.productId!=id))
+  function comboRemoveProduc(id) {
+    setOrders((orders) => orders.filter((el) => el.productId != id));
   }
 
   useEffect(() => {
@@ -92,11 +92,22 @@ const CheckoutPage = () => {
         const SameOrder = orders.filter(
           (order) => order.productId === list._id
         );
+        const productCounts = JSON.parse(
+          localStorage.getItem("productCount_" + list._id)
+        );
+        const productSize = JSON.parse(
+          localStorage.getItem("selectedSize_" + list._id)
+        );
+        console.log(productCounts);
         return {
           productId: list._id,
           name: list.name,
-          size: SameOrder.length !== 0 ? SameOrder[0].size : list.sizes[0],
-          count: SameOrder.length !== 0 ? SameOrder[0].count : 1,
+          size:
+            SameOrder.length !== 0
+              ? SameOrder[0].size
+              : productSize.selectedSize,
+          count:
+            SameOrder.length !== 0 ? SameOrder[0].count : productCounts.count,
           photos: list.photos[0],
           availableSizes: list.sizes,
           price: list.offerPrice,
@@ -167,7 +178,10 @@ const CheckoutPage = () => {
             " " +
             filterUserAddress[0].lastName,
           email: filterUserAddress[0].email,
-          contact: filterUserAddress[0].countryCode+""+filterUserAddress[0].mobileNumber,
+          contact:
+            filterUserAddress[0].countryCode +
+            "" +
+            filterUserAddress[0].mobileNumber,
           address: filterUserAddress[0].address,
         });
       }
@@ -206,7 +220,7 @@ const CheckoutPage = () => {
     },
     onError: (error) => {
       Swal.fire("Error", "verify payment Error", "error");
-      console.log(error)
+      console.log(error);
     },
   });
 
@@ -351,35 +365,18 @@ const CheckoutPage = () => {
   };
 
   const metaData = {
-    title: "Checkout", desc: "Complete your purchase securely at Starring Checkout."
-  }
+    title: "Checkout",
+    desc: "Complete your purchase securely at Starring Checkout.",
+  };
 
   return (
     <UserProtectLayout>
       <MetaTags data={metaData} />
       <section className=" w-full bg-gray-100 min-h-screen">
-        <div className=" md:px-10 md:py-14 px-4 py-10">
-          <Link to="/all-products">
-            <svg
-              width="62"
-              height="14"
-              viewBox="0 0 62 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M60.5 7H1M1 7L7 1M1 7L7 13"
-                stroke="black"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Link>
-        </div>
-
         <div className="md:px-10 px-3">
-          <h1 className="font-beatrice font-extrabold text-4xl pb-7">CHECKOUT</h1>
+          <h1 className="font-beatrice font-extrabold text-4xl pb-7">
+            CHECKOUT
+          </h1>
           <div className="flex md:space-x-8 space-x-4">
             <h3 className="font-medium text-base">INFORMATION</h3>
             <h3 className="font-normal text-base text-[#8A8A8A]">SHIPPING</h3>
@@ -422,10 +419,11 @@ const CheckoutPage = () => {
                         <p className="text-sm">{savedAddress.phone}</p>
                         <p className="text-sm">{savedAddress.email}</p>
                         <button
-                          className={`text-sm ${currentAddressId === savedAddress._id
-                            ? "text-green-500"
-                            : "text-blue-500"
-                            }  mt-2`}
+                          className={`text-sm ${
+                            currentAddressId === savedAddress._id
+                              ? "text-green-500"
+                              : "text-blue-500"
+                          }  mt-2`}
                           onClick={() => {
                             setCurrentAddressId(savedAddress._id);
                             clearErrors();
@@ -485,10 +483,12 @@ const CheckoutPage = () => {
                           </button>
                         )}
 
-                        <Link to={'/add-address/'+savedAddress._id} className="ml-5 text-sm text-red-500">
+                        <Link
+                          to={"/add-address/" + savedAddress._id}
+                          className="ml-5 text-sm text-red-500"
+                        >
                           Edit
                         </Link>
-
                       </div>
                     </div>
                   ))}
@@ -558,8 +558,20 @@ const CheckoutPage = () => {
                       </p>
                     )}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
+                    >
                       <select
                         name="countryCode"
                         {...register("countryCode", {
@@ -581,7 +593,6 @@ const CheckoutPage = () => {
                           </option>
                         ))}
                       </select>
-
 
                       <input
                         type="tel"
@@ -606,12 +617,24 @@ const CheckoutPage = () => {
                     </div>
 
                     {errors.mobileNumber && (
-                      <p style={{ color: "#ef4444", fontSize: "0.875rem", marginTop: "5px" }}>
+                      <p
+                        style={{
+                          color: "#ef4444",
+                          fontSize: "0.875rem",
+                          marginTop: "5px",
+                        }}
+                      >
                         {errors.mobileNumber.message}
                       </p>
                     )}
                     {errors.countryCode && (
-                      <p style={{ color: "#ef4444", fontSize: "0.875rem", marginTop: "5px" }}>
+                      <p
+                        style={{
+                          color: "#ef4444",
+                          fontSize: "0.875rem",
+                          marginTop: "5px",
+                        }}
+                      >
                         {errors.countryCode.message}
                       </p>
                     )}
@@ -715,7 +738,15 @@ const CheckoutPage = () => {
                   checked={readyForPayment}
                   onChange={(e) => setReadyForPayment(e.target.checked)}
                 />
-                <div>I agree to the <Link className="underline text-blue-600" to={"/terms-and-conditions"}>Terms and Conditions</Link></div>
+                <div>
+                  I agree to the{" "}
+                  <Link
+                    className="underline text-blue-600"
+                    to={"/terms-and-conditions"}
+                  >
+                    Terms and Conditions
+                  </Link>
+                </div>
               </div>
               <Button
                 htmlType={currentAddressId === "" ? "submit" : "button"}
@@ -740,7 +771,7 @@ const CheckoutPage = () => {
                 {orders.length !== 0 &&
                   orders.map((product, productIndex) => (
                     <div key={productIndex} className="flex items-center">
-                      <Link to={"/one-product?id="+product.productId}>
+                      <Link to={"/one-product?id=" + product.productId}>
                         <img
                           src={product.photos}
                           alt={product.name}
@@ -749,7 +780,7 @@ const CheckoutPage = () => {
                       </Link>
                       <div className="grid grid-cols-2 md:gap-10 gap-5 place-content-between ml-4">
                         <div className="flex flex-col">
-                          <Link to={"/one-product?id="+product.productId}>
+                          <Link to={"/one-product?id=" + product.productId}>
                             <p className="font-medium text-base xl:w-52">
                               {product.name}
                             </p>
@@ -758,18 +789,27 @@ const CheckoutPage = () => {
                             {product.availableSizes.map((size, sizeIndex) => (
                               <button
                                 key={sizeIndex}
-                                className={`px-2 py-1 border ${size === product.size
-                                  ? "bg-blue-500 text-white"
-                                  : "bg-gray-200"
-                                  }`}
+                                className={`px-2 py-1 border ${
+                                  size === product.size
+                                    ? "bg-blue-500 text-white"
+                                    : "bg-gray-200"
+                                }`}
                                 onClick={() => {
-                                  setOrders((prevItems) =>
-                                    prevItems.map((item) =>
+                                  console.log(size);
+                                  localStorage.setItem(
+                                    "selectedSize_" + product.productId,
+                                    JSON.stringify({
+                                      selectedSize: size,
+                                      productKey: product.productId,
+                                    })
+                                  );
+                                  setOrders((prevItems) => {
+                                    return prevItems.map((item) =>
                                       item.productId === product.productId
                                         ? { ...item, size: size }
                                         : item
-                                    )
-                                  );
+                                    );
+                                  });
                                 }}
                               >
                                 {size}
@@ -781,7 +821,9 @@ const CheckoutPage = () => {
                           <div>
                             <button
                               className="text-red-500 text-lg"
-                              onClick={() => comboRemoveProduc(product.productId)}
+                              onClick={() =>
+                                comboRemoveProduc(product.productId)
+                              }
                             >
                               Remove
                             </button>
@@ -803,19 +845,23 @@ const CheckoutPage = () => {
                             <button
                               className="px-2 py-1 bg-gray-200"
                               onClick={() => {
-                                setOrders((prevItems) =>
-                                  prevItems.map((item) =>
+                                setOrders((prevItems) => {
+                                  const updatedOrders = prevItems.map((item) =>
                                     item.productId === product.productId
                                       ? {
-                                        ...item,
-                                        count:
-                                          item.count === 1
-                                            ? item.count
-                                            : item.count - 1,
-                                      }
+                                          ...item,
+                                          count:
+                                            item.count === 1
+                                              ? item.count
+                                              : item.count - 1,
+                                        }
                                       : item
-                                  )
-                                );
+                                  );
+                                  localStorage.setItem("productCount_"+updatedOrders[0].productId,JSON.stringify({ count : updatedOrders[0].count, productKey:updatedOrders[0].productId }))
+
+                                  console.log(updatedOrders[0].count);
+                                  return updatedOrders; // Return the new state
+                                });
                               }}
                             >
                               -
@@ -824,19 +870,23 @@ const CheckoutPage = () => {
                             <button
                               className="px-2 py-1 bg-gray-200"
                               onClick={() => {
-                                setOrders((prevItems) =>
-                                  prevItems.map((item) =>
+                                setOrders((prevItems) => {
+                                  const updatedOrders = prevItems.map((item) =>
                                     item.productId === product.productId
                                       ? {
-                                        ...item,
-                                        count:
-                                          item.count === 5
-                                            ? item.count
-                                            : item.count + 1,
-                                      }
+                                          ...item,
+                                          count:
+                                            item.count === 5
+                                              ? item.count
+                                              : item.count + 1,
+                                        }
                                       : item
-                                  )
-                                );
+                                  );
+                                  localStorage.setItem("productCount_"+updatedOrders[0].productId,JSON.stringify({ count : updatedOrders[0].count, productKey:updatedOrders[0].productId }))
+
+                                  console.log(updatedOrders[0].count);
+                                  return updatedOrders; // Return the new state
+                                });
                               }}
                             >
                               +
@@ -873,7 +923,9 @@ const CheckoutPage = () => {
 
                             <div>
                               <div>{coupon.description}</div>
-                              <div className=" font-semibold">{coupon.code}</div>
+                              <div className=" font-semibold">
+                                {coupon.code}
+                              </div>
                               <div className="text-sm">
                                 Rs.{coupon.discoutAmount}
                               </div>
@@ -926,7 +978,9 @@ const CheckoutPage = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <p className="font-medium">Shipping</p>
-                  <p className="font-medium text-xs text-[#8A8A8A]">{shipping}</p>
+                  <p className="font-medium text-xs text-[#8A8A8A]">
+                    {shipping}
+                  </p>
                 </div>
                 <div className="flex justify-between mt-6 border-t-2 pt-4">
                   <p className="text-base font-medium">Total</p>
