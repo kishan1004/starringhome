@@ -156,7 +156,7 @@ const HeroSection = (props) => {
                 {menuOpen ? <FaTimes size={32} /> : <FaBars size={32} />}
               </button>
 
-              <img src={WhiteLogo} alt="Logo" className="w-[150px] mx-auto" />
+              <img src={WhiteLogo} alt="Logo" className="w-[150px] home-logo" />
 
               <div className="flex space-x-2 md:space-x-5 relative">
                 <div className="relative">
