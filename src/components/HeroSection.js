@@ -5,7 +5,7 @@ import SaleImage from "../images/homepagesalephoto.png";
 import { IoArrowBack } from "react-icons/io5";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
-import { FaRegUserCircle, FaShoppingCart, FaHeart } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
 import "aos/dist/aos.css";
 import Aos from "aos";
 import { Link } from "react-router-dom";
@@ -22,7 +22,7 @@ import BannerSection from "./BannerSection";
 import FeatureSection from "./FeatureSection";
 import FooterSection from "./FooterSection";
 import OurStory from "./OurStory";
-
+import {  FaShoppingCart, FaHeart } from "react-icons/fa";
 const HeroSection = (props) => {
   const [activeItem, setActiveItem] = useState("Home");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -235,7 +235,6 @@ const HeroSection = (props) => {
                 <Link to="/user-login">
                   <FaRegUserCircle className="text-white" size={32} />
                 </Link>
-                
               </div>
             </div>
 

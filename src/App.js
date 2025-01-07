@@ -9,11 +9,6 @@ import {
 } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import HeroSection from "./components/HeroSection";
-import NewArrivalsSection from "./components/NewArrivalsSection";
-import TrendingSection from "./components/TrendingSection";
-import BannerSection from "./components/BannerSection";
-import FeatureSection from "./components/FeatureSection";
-import FooterSection from "./components/FooterSection";
 import AllProductsPage from "./components/pages/AllProductsPage";
 import ScrollToTop from "./components/ScrollToTop";
 import CursorBlur from "./components/CursorBlur";
@@ -114,6 +109,7 @@ function App() {
               </>
             }
           />
+
 
           <Route
             path="/all-products"
