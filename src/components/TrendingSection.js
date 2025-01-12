@@ -13,8 +13,6 @@ const TrendingSection = (props) => {
     Aos.init({ duration: 1000 });
   }, []);
 
-  
-
   return (
     <>
       <div
@@ -24,11 +22,18 @@ const TrendingSection = (props) => {
         {/* Left Section */}
 
         <div
-          className="relative col-span-1 bg-cover cursor-pointer"
+          className="relative col-span-1 bg-cover cursor-pointer group overflow-hidden"
           style={{ backgroundImage: `url(${Product1})` }}
         >
           <Link to={"/all-products?category=Hoodie"}>
+            {/* Image overlay for hover zoom effect */}
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 transform group-hover:scale-110"
+              style={{ backgroundImage: `url(${Product1})` }}
+            ></div>
+            {/* Dark overlay */}
             <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
+            {/* Text content */}
             <div
               className="absolute bottom-14 left-8 text-white text-2xl font-semibold"
               data-aos="flip-left"
@@ -40,18 +45,25 @@ const TrendingSection = (props) => {
 
         {/* Center Section */}
         <div
-          className="relative lg:col-span-3 col-span-1 bg-cover bg-center cursor-pointer"
+          className="relative lg:col-span-3 col-span-1 bg-cover bg-center cursor-pointer group overflow-hidden"
           style={{ backgroundImage: `url(${Centerimage})` }}
         >
           <Link to={"/all-products?category=Shirt"}>
+            {/* Image overlay for hover zoom effect */}
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 transform group-hover:scale-110"
+              style={{ backgroundImage: `url(${Centerimage})` }}
+            ></div>
+            {/* Dark overlay */}
             <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
             <div className="flex justify-end mr-10">
+              {/* Text content */}
               <div
-                className="absolute flex flex-col justify-center items-end  text-white h-full"
+                className="absolute flex flex-col justify-center items-end text-white h-full"
                 data-aos="flip-left"
               >
                 <p className="text-3xl font-semibold text-end">All</p>
-                <p className="text-6xl font-bold mt-2 ">Products</p>
+                <p className="text-6xl font-bold mt-2">Products</p>
                 <hr className="w-36 border-t-2" />
               </div>
             </div>
@@ -60,11 +72,18 @@ const TrendingSection = (props) => {
 
         {/* Right Section */}
         <div
-          className="relative col-span-1 bg-cover cursor-pointer"
+          className="relative col-span-1 bg-cover cursor-pointer group overflow-hidden"
           style={{ backgroundImage: `url(${Product2})` }}
         >
           <Link to={"/all-products?category=T-Shirt"}>
+            {/* Image zoom effect */}
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 transform group-hover:scale-110"
+              style={{ backgroundImage: `url(${Product2})` }}
+            ></div>
+            {/* Dark overlay */}
             <div className="absolute inset-0 bg-black opacity-30 hover:opacity-10"></div>
+            {/* Text content */}
             <div
               className="absolute bottom-14 left-8 text-white text-2xl text-center font-semibold"
               data-aos="flip-left"
@@ -75,7 +94,10 @@ const TrendingSection = (props) => {
         </div>
       </div>
 
-      <div style={{minHeight:'100vh'}} className="relative 2xl:h-[700px]  max-w[1440px] w-full mx-auto bg-cover max-sm:bg-center">
+      <div
+        style={{ minHeight: "100vh" }}
+        className="relative 2xl:h-[700px]  max-w[1440px] w-full mx-auto bg-cover max-sm:bg-center"
+      >
         {/* Video Background */}
         <video
           autoPlay
@@ -90,7 +112,10 @@ const TrendingSection = (props) => {
         </video>
 
         {/* Overlay content */}
-        <div style={{minHeight:'100vh'}} className="relative flex flex-col items-center justify-center h-full text-center text-white pb-10">
+        <div
+          style={{ minHeight: "100vh" }}
+          className="relative flex flex-col items-center justify-center h-full text-center text-white pb-10"
+        >
           <h4 className="md:text-xl text-lg font-normal uppercase mb-4">
             Wear your story, every day
           </h4>

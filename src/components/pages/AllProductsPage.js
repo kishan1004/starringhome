@@ -129,7 +129,7 @@ const AllProductsPage = () => {
             onClick={() => setIsSidebarVisible(!isSidebarVisible)}
           >
             <h3 className="text-xl lg:hidden  font-bold">Filters</h3>
-            <button onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
+            <button tabIndex="-1" onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
               <svg
                 width="28"
                 height="18"

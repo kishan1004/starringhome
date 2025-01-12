@@ -98,16 +98,15 @@ const CheckoutPage = () => {
         const productSize = JSON.parse(
           localStorage.getItem("selectedSize_" + list._id)
         );
-        console.log(productCounts);
         return {
           productId: list._id,
           name: list.name,
           size:
             SameOrder.length !== 0
               ? SameOrder[0].size
-              : productSize.selectedSize,
+              : productSize?.selectedSize ? productSize.selectedSize : 'S',
           count:
-            SameOrder.length !== 0 ? SameOrder[0].count : productCounts.count,
+            SameOrder.length !== 0 ? SameOrder[0].count : productCounts?.count ? productCounts.count : 1,
           photos: list.photos[0],
           availableSizes: list.sizes,
           price: list.offerPrice,

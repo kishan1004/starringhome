@@ -53,8 +53,9 @@ const ProductList = () => {
   const [isEditing, setIsEditing] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [totalProducts,SetTotalProducts] = useState(0);
 
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
@@ -67,7 +68,7 @@ const ProductList = () => {
     return matchesCategory && matchesDate;
   });
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = filteredProducts.slice(
     startIndex,
@@ -123,9 +124,10 @@ const ProductList = () => {
   useEffect(() => {
     //API: fetched and updated product state , set page count and size based for paginations after line 119
     setIsLoading(true);
-    getProductList(currentPage, 50).then((res) => {
+    getProductList(currentPage, itemsPerPage).then((res) => {
       if (res.status === 200) {
         const data = res?.data?.detail?.data;
+        SetTotalProducts(res?.data?.detail?.total);
         setProducts(data);
         setIsLoading(false);
       }
@@ -218,7 +220,7 @@ const ProductList = () => {
             </tr>
           </thead>
           <tbody>
-            {currentItems.map((product) => (
+            {products.map((product) => (
               <tr key={product._id} className="text-center">
                 <td className="py-3 px-4 border">
                   <button
