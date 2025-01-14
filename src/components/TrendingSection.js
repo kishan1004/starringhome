@@ -48,7 +48,7 @@ const TrendingSection = (props) => {
           className="relative lg:col-span-3 col-span-1 bg-cover bg-center cursor-pointer group overflow-hidden"
           style={{ backgroundImage: `url(${Centerimage})` }}
         >
-          <Link to={"/all-products?category=Shirt"}>
+          <Link to={"/all-products"}>
             {/* Image overlay for hover zoom effect */}
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-500 transform group-hover:scale-110"

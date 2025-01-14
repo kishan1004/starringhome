@@ -5,6 +5,7 @@ import axios from "axios";
  * make call to this baseUrl.
  */
 const baseURL = "https://13.233.14.134:8001/api/v1/";
+
 export const axiosInstance = axios.create({
   baseURL: baseURL,
 });
@@ -16,6 +17,8 @@ export const adminAuthInstance = axios.create({
 export const userAuthInstance = axios.create({
   baseURL: baseURL,
 });
+
+export const getBaseUrl = baseURL;
 
 /**
  * A request interceptor adds additional property to out going request

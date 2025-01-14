@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
+import { getBaseUrl } from "../utils/axios";
+
 const ContactDrawer = ({ isOpen, closeDrawer }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -44,7 +46,7 @@ const ContactDrawer = ({ isOpen, closeDrawer }) => {
       try {
         // Replace with your actual API endpoint
         await axios
-          .post("https://3.14.249.42:9004/api/v1/users/profiles/contact/us", {
+          .post(`${getBaseUrl}users/profiles/contact/us`, {
             name: formData.name,
             email: formData.email,
             mobileNumber: "+91" + formData.phone,

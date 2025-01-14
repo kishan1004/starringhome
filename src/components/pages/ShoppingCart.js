@@ -21,7 +21,7 @@ const ShoppingCart = () => {
 
   const handleDelete = (id) => {
     const data = {
-      productId: [id],
+      productId: id,
       action: "REMOVE",
     };
 

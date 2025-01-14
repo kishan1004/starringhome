@@ -104,6 +104,8 @@ const ProductPage = () => {
     }
     const data = {
       productId: [product._id],
+      size : selectedSize,
+      count : order.count,
       action: "ADD",
     };
     addtoFavMutation.mutate({ data });
@@ -115,7 +117,7 @@ const ProductPage = () => {
       return;
     }
     const data = {
-      productId: [product._id],
+      productId:[ product._id],
       action: "REMOVE",
     };
     addtoFavMutation.mutate({ data });
@@ -127,7 +129,9 @@ const ProductPage = () => {
       return;
     }
     const data = {
-      productId: [product._id],
+      productId: product._id,
+      size : selectedSize,
+      count : order.count,
       action: "ADD",
     };
     addtoCartMutation.mutate({ data });
@@ -135,7 +139,9 @@ const ProductPage = () => {
 
   const handleBuyNow = async () => {
     const data = {
-      productId: [product._id],
+      productId: product._id,
+      size : selectedSize,
+      count : order.count,
       action: "ADD",
     };
     try {

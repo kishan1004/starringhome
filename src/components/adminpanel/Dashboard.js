@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Doughnut } from "react-chartjs-2";
 import Loader2 from "../common/Loader2";
-import { FaSearch, FaFacebook, FaInstagram } from "react-icons/fa";
+import { FaSearch, FaFacebook, FaInstagram, FaYoutube, FaTwitter } from "react-icons/fa";
+
 import {
   FaUsers,
   FaShoppingCart,
@@ -370,6 +371,26 @@ const Dashboard = () => {
                 <p className="text-gray-500">Instagram</p>
                 <h3 className="text-2xl font-semibold">
                   {salesDetails.instagram}
+                </h3>
+              </div>
+            </div>
+            {/* Twitter */}
+            <div className="flex items-center p-4 bg-gray-100 rounded-lg shadow">
+              <FaTwitter className="text-blue-500 text-3xl mr-4" />
+              <div>
+                <p className="text-gray-500">Twitter</p>
+                <h3 className="text-2xl font-semibold">
+                  {salesDetails.twitterx}
+                </h3>
+              </div>
+            </div>
+            {/* Youtube */}
+            <div className="flex items-center p-4 bg-gray-100 rounded-lg shadow">
+              <FaYoutube className="text-red-500 text-3xl mr-4" />
+              <div>
+                <p className="text-gray-500">Youtube</p>
+                <h3 className="text-2xl font-semibold">
+                  {salesDetails.youtube}
                 </h3>
               </div>
             </div>

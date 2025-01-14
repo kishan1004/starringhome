@@ -1,3 +1,4 @@
+import axios from "axios";
 import { axiosInstance, userAuthInstance } from "../utils/axios";
 
 export const userLogin = (userName, password) => {
@@ -142,6 +143,36 @@ export const forgotPassword = (userName) => {
     }
 )
 }
+
+export const emailSubscribe = async (email) => {
+    const formData = new FormData();
+    formData.append('email', email);
+    
+    const url = 'https://script.google.com/macros/s/AKfycbxtVKodwpmPEuaK8QS9w9x_nRjp_c6lxepcYa9ro2vsSpJB3Fmm3V2u7Lv-imHyOYhXtg/exec';
+  
+    try {
+      const response = await axios.post(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      // Consider any status 200 as a successful subscription
+      if (response.status === 200) {
+        return true;
+      } else {
+        throw new Error('Failed to subscribe, unexpected response status.');
+      }
+    } catch (error) {
+      // Even with CORS errors, return true since we assume storage is successful
+      if (error.response && error.response.status === 200) {
+        return true; // Assuming success based on status code
+      }
+      console.error('Subscription failed:', error.message);
+      return false;
+    }
+  };
+  
 
 
 export const getAddresses = ()=>{

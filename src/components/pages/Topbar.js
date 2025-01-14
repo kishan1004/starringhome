@@ -72,7 +72,7 @@ const Topbar = () => {
         <Link to="/favourites" className="flex">
           <FaRegHeart className="text-black" size={25} />
           &nbsp;&nbsp;
-          <span>Wishlist</span>
+          <span className="hidden md:block">Wishlist</span>
         </Link>
 
         <div className="flex gap-2">
@@ -109,13 +109,13 @@ const Topbar = () => {
                 strokeWidth="2"
               />
             </svg>  &nbsp;&nbsp;
-            <span>Cart</span>
+            <span className="hidden md:block">Cart</span>
           </Link>
         </div>
         <Link to="/user-account" className="flex">
           <FaRegUserCircle className="text-black" size={25} />
           &nbsp;&nbsp;
-          <span>Account</span>
+          <span className="hidden md:block">Account</span>
         </Link>
       </div>
 

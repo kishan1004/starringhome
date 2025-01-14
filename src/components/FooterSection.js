@@ -9,7 +9,8 @@ import Twitterimg from "../images/twitter.png";
 import youtube from "../images/youtube.png";
 import { Link } from "react-router-dom";
 import ContactDrawer from "./ContactUsDrawer";
-import { salesOverviewSave } from "../api/user";
+import { salesOverviewSave, emailSubscribe } from "../api/user";
+import Swal from "sweetalert2";
 
 const FooterSection = (props) => {
   useEffect(() => {
@@ -17,13 +18,29 @@ const FooterSection = (props) => {
   }, []);
   const [activeItem, setActiveItem] = useState("Home");
   const [showDrawer, setShowDrawer] = useState(false);
+  const [SubsBtnStatus, setSubsBtnStatus] = useState(false);
+  const [Email, SetEmail] = useState("");
   const handleNavClick = (item) => {
     setActiveItem(item);
   };
 
-  async function socialClick(platform){
-    const res = await salesOverviewSave(platform)
+  async function socialClick(platform) {
+    const res = await salesOverviewSave(platform);
+  }
 
+  async function submitNewsletter() {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // Simple email regex pattern
+
+    if (Email === "") {
+      alert("Please enter your Email Address");
+    } else if (!emailPattern.test(Email)) {
+      alert("Please enter a valid Email Address");
+    } else {
+      setSubsBtnStatus(true);
+      const res = await emailSubscribe(Email);
+      setSubsBtnStatus(false);
+      Swal.fire("Success", "You have subscribed to the email", "success");
+    }
   }
 
   return (
@@ -45,12 +62,16 @@ const FooterSection = (props) => {
         <h2 className="text-2xl font-bold mb-4">Newsletter</h2>
         <div className="flex items-center justify-between border border-gray-300 max-w-lg mx-auto rounded-full">
           <input
+            onChange={(e) => SetEmail(e.target.value)}
             type="email"
             placeholder="     Enter your email here"
             className="w-full text-gray-600 placeholder-gray-500 focus:outline-none bg-[#FAFAFA] ms-1 ps-4"
           />
-          <button className="px-4 py-2 text-white rounded-full bg-black font-bold hover:text-gray-700">
-            SUBSCRIBE
+          <button disabled={SubsBtnStatus}
+            onClick={() => submitNewsletter()}
+            className="px-4 py-2 text-white rounded-full bg-black font-bold hover:text-gray-700"
+          >
+             {SubsBtnStatus ? 'Please Wait...':'SUBSCRIBE'}
           </button>
         </div>
         <nav className="flex justify-center lg:space-x-16 md:space-x-7 mb-10 md:mt-20 mt-5 max-sm:flex-col max-sm:space-y-2">
@@ -139,15 +160,17 @@ const FooterSection = (props) => {
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
             data-aos-duration="1000"
-            onClick={()=>socialClick('instagram')}
+            onClick={() => socialClick("instagram")}
           >
             <img src={Insta} alt="instagram" className="h-10 w-10" />
           </a>
           <a
             href="/"
+            target="_blank"
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
             data-aos-duration="1000"
+            onClick={() => socialClick("twitterx")}
           >
             <img src={Twitterimg} alt="twitter" className="h-10 w-10" />
           </a>
@@ -157,7 +180,7 @@ const FooterSection = (props) => {
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
             data-aos-duration="1000"
-            onClick={()=>socialClick('facebook')}
+            onClick={() => socialClick("facebook")}
           >
             <img src={Fbimg} alt="facebook" className="h-10 w-10" />
           </a>
@@ -167,7 +190,7 @@ const FooterSection = (props) => {
             className="text-gray-400 hover:text-gray-600"
             data-aos="flip-left"
             data-aos-duration="1000"
-            onClick={()=>socialClick('facebook')}
+            onClick={() => socialClick("youtube")}
           >
             <img src={youtube} alt="facebook" className="h-10 w-10" />
           </a>

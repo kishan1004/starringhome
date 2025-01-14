@@ -104,9 +104,15 @@ const CheckoutPage = () => {
           size:
             SameOrder.length !== 0
               ? SameOrder[0].size
-              : productSize?.selectedSize ? productSize.selectedSize : 'S',
+              : productSize?.selectedSize
+              ? productSize.selectedSize
+              : "S",
           count:
-            SameOrder.length !== 0 ? SameOrder[0].count : productCounts?.count ? productCounts.count : 1,
+            SameOrder.length !== 0
+              ? SameOrder[0].count
+              : productCounts?.count
+              ? productCounts.count
+              : 1,
           photos: list.photos[0],
           availableSizes: list.sizes,
           price: list.offerPrice,
@@ -286,7 +292,7 @@ const CheckoutPage = () => {
 
   const handleDelete = (id) => {
     const data = {
-      productId: [id],
+      productId: id,
       action: "REMOVE",
     };
 
@@ -785,7 +791,7 @@ const CheckoutPage = () => {
                             </p>
                           </Link>
                           <div className="flex space-x-2">
-                            {product.availableSizes.map((size, sizeIndex) => (
+                            {/* {product.availableSizes.map((size, sizeIndex) => (
                               <button
                                 key={sizeIndex}
                                 className={`px-2 py-1 border ${
@@ -813,7 +819,12 @@ const CheckoutPage = () => {
                               >
                                 {size}
                               </button>
-                            ))}
+                            ))} */}
+                            <div className="mt-3">
+                              <b>Size - </b> &nbsp; {product.size}
+                              <br/>
+                              <b>Count - </b> &nbsp; {product.count}
+                            </div>
                           </div>
                         </div>
                         {checkoutType === "combo" && (
@@ -839,7 +850,7 @@ const CheckoutPage = () => {
                           </div>
                         )}
 
-                        <div className="text-[#000E8A]">
+                        <div className="text-[#000E8A] hidden">
                           <div className="text-[#000E8A] flex items-center space-x-2">
                             <button
                               className="px-2 py-1 bg-gray-200"
@@ -856,7 +867,14 @@ const CheckoutPage = () => {
                                         }
                                       : item
                                   );
-                                  localStorage.setItem("productCount_"+updatedOrders[0].productId,JSON.stringify({ count : updatedOrders[0].count, productKey:updatedOrders[0].productId }))
+                                  localStorage.setItem(
+                                    "productCount_" +
+                                      updatedOrders[0].productId,
+                                    JSON.stringify({
+                                      count: updatedOrders[0].count,
+                                      productKey: updatedOrders[0].productId,
+                                    })
+                                  );
 
                                   console.log(updatedOrders[0].count);
                                   return updatedOrders; // Return the new state
@@ -881,7 +899,14 @@ const CheckoutPage = () => {
                                         }
                                       : item
                                   );
-                                  localStorage.setItem("productCount_"+updatedOrders[0].productId,JSON.stringify({ count : updatedOrders[0].count, productKey:updatedOrders[0].productId }))
+                                  localStorage.setItem(
+                                    "productCount_" +
+                                      updatedOrders[0].productId,
+                                    JSON.stringify({
+                                      count: updatedOrders[0].count,
+                                      productKey: updatedOrders[0].productId,
+                                    })
+                                  );
 
                                   console.log(updatedOrders[0].count);
                                   return updatedOrders; // Return the new state

@@ -22,7 +22,7 @@ import BannerSection from "./BannerSection";
 import FeatureSection from "./FeatureSection";
 import FooterSection from "./FooterSection";
 import OurStory from "./OurStory";
-import {  FaShoppingCart, FaHeart } from "react-icons/fa";
+import { FaShoppingCart, FaHeart } from "react-icons/fa";
 const HeroSection = (props) => {
   const [activeItem, setActiveItem] = useState("Home");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -227,11 +227,15 @@ const HeroSection = (props) => {
                   )}
                 </div>
                 <Link to="/shopping-cart">
-                <FaShoppingCart className="text-white" size={32} />
-              </Link>
-              <Link to="/favourites">
-                <FaHeart  className="text-white" size={32} />
-              </Link>
+                  <FaShoppingCart
+                    className="hidden sm:block text-white"
+                    size={32}
+                  />
+                </Link>
+
+                <Link to="/favourites">
+                  <FaHeart className="hidden sm:block text-white" size={32} />
+                </Link>
                 <Link to="/user-login">
                   <FaRegUserCircle className="text-white" size={32} />
                 </Link>
@@ -323,11 +327,8 @@ const HeroSection = (props) => {
             <h1 className="md:text-6xl text-5xl font-bold mb-6 max-sm:mx-2">
               Step into style, step into confidence.
             </h1>
-
-            
           </div>
 
-         
           {isModalOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
@@ -354,7 +355,7 @@ const HeroSection = (props) => {
             </div>
           )}
           <div className=" bg-white">
-            <OurStory/>
+            <OurStory />
             <NewArrivalsSection id="new-arrivals" />
             <TrendingSection id="trending" />
             {/* <BannerSection id="banner" />
