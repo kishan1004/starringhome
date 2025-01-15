@@ -293,7 +293,7 @@ const Dashboard = () => {
               },
               title: {
                 display: true,
-                text: "Order Counts",
+                text: "",
               },
             },
             scales: {
@@ -312,6 +312,7 @@ const Dashboard = () => {
             Order Status Distribution
           </h2>
           <div className="xl:max-w-96">
+            <h3 className="text-center bold">Completed VS Pending Orders</h3>
             <Doughnut
               data={pieChartData}
               options={{
@@ -322,7 +323,7 @@ const Dashboard = () => {
                   },
                   title: {
                     display: true,
-                    text: "Completed vs Pending Orders",
+                    text: "",
                     font: {
                       size: 18,
                       weight: "bold",
