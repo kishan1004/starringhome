@@ -1,14 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Blacklogo from "../../images/starringblack.png";
 import { Link } from "react-router-dom";
 import { FaRegUserCircle, FaShoppingCart, FaRegHeart } from "react-icons/fa";
+import { getCartDetails } from "../../api/user";
+import { useDispatch, useSelector } from "react-redux";
+import { updateCartCount } from "../redux/CartSlice";
 
 const Topbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cartCount,SetCartCount] = useState(0);
+
+  const cartCounts = useSelector((select)=>select.cart);
+  const dispatch = useDispatch();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(()=>{
+    if(localStorage.getItem('userToken')){
+      getCartCount();
+    }
+  },[])
+
+    async function getCartCount(){
+      const res = await getCartDetails();
+      dispatch(updateCartCount(res.data.detail.total));
+      SetCartCount(res.data.detail.total);
+    }
 
   return (
     <header className="px-4 py-10 flex justify-between items-center font-beatrice bg-gray-100">
@@ -76,8 +95,7 @@ const Topbar = () => {
         </Link>
 
         <div className="flex gap-2">
-          <Link to="/shopping-cart" className="flex">
-            
+          <Link to="/shopping-cart" className="flex relative">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -108,8 +126,13 @@ const Topbar = () => {
                 stroke="currentColor"
                 strokeWidth="2"
               />
-            </svg>  &nbsp;&nbsp;
+            </svg>
+            &nbsp;&nbsp;
             <span className="hidden md:block">Cart</span>
+            {/* Cart Count Badge */}
+            <span className="absolute -top-1 -left-3 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              {cartCounts}
+            </span>
           </Link>
         </div>
         <Link to="/user-account" className="flex">

@@ -69,6 +69,7 @@ axiosInstance.interceptors.response.use(
       } else {
         // Redirect to /user-login only if not authenticated and not already on /user-login
         if (isNotAuthenticated && !weburl.endsWith("/user-login")) {
+          sessionStorage.setItem('redirectTo', window.location.pathname);
           window.location.href = "/user-login";
         }
       }
@@ -111,6 +112,7 @@ userAuthInstance.interceptors.response.use(
   },
   (error) => {
     if (error?.response?.status === 401 || error?.response?.status === 403 || error?.response?.data.detail[0].msg ==='Not authenticated') {
+      sessionStorage.setItem('redirectTo', window.location.pathname);
       window.location.href = "/user-login";
     }
     return Promise.reject(error.response.data.detail);

@@ -8,7 +8,7 @@ export default function OurStory() {
   </div>
   
   <div class="lg:w-1/2 flex flex-col justify-center our-story-content" data-aos="fade-up">
-    <h1 class="dancingFontStyle text-4xl md:text-5xl lg:text-5xl">
+    <h1 class=" text-4xl md:text-5xl lg:text-5xl">
       Our Story
     </h1>
     <div class="our-story-para mt-3">

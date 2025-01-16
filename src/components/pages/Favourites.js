@@ -30,6 +30,7 @@ const Favourites = () => {
   function getFavItems(){
     getAllFavourites().then(res=> {
       if(res.status === 401) {
+        sessionStorage.setItem('redirectTo', window.location.pathname);
         navigate('/user-login');
       } else if(res.status === 200) {
         const allProducts = res?.data?.detail?.data;

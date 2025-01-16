@@ -22,11 +22,16 @@ import UserProtectLayout from "../common/UserProtectLayout";
 import MetaTags from "../common/MetaTags";
 import CountryCodes from "../../services/CountryCodes.json";
 
+import { useDispatch } from "react-redux";
+import { updateCartCount } from "../redux/CartSlice";
+
 const CheckoutPage = () => {
   const [orders, setOrders] = useState([]);
   const [isAddressVisible, setIsAddressVisible] = useState(false);
   const [currentAddressId, setCurrentAddressId] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   let [searchParams] = useSearchParams();
   const checkoutType = searchParams.get("type");
   const paramProdcutId = searchParams.get("productId");
@@ -144,6 +149,7 @@ const CheckoutPage = () => {
       }
     }
   }, [getCartProducts, comboProduct]);
+
 
   const {
     register,
@@ -298,12 +304,21 @@ const CheckoutPage = () => {
 
     addToCart({ data: data }).then((res) => {
       if (res?.status === 401) {
+        sessionStorage.setItem("redirectTo", window.location.pathname);
         navigate("/user-login");
         return;
       }
+      getCartCount();
       refetch();
     });
   };
+
+  async function getCartCount() {
+    const res = await getCartDetails();
+    console.log(res)
+    dispatch(updateCartCount(res.data.detail.total));
+  }
+
 
   const onAddressSubmit = (value) => {
     if (!readyForPayment) {
@@ -822,7 +837,7 @@ const CheckoutPage = () => {
                             ))} */}
                             <div className="mt-3">
                               <b>Size - </b> &nbsp; {product.size}
-                              <br/>
+                              <br />
                               <b>Count - </b> &nbsp; {product.count}
                             </div>
                           </div>

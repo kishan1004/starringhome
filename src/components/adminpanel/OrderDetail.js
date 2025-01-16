@@ -43,17 +43,22 @@ const OrderDetail = () => {
     updatedTime: "",
   });
 
-  const statusOptions = ["Dispatched", "Shipped", "Delivered"];
+  const statusOptions = [{name : "Dispatched",value:'Shipping'}, {name :"Shipped",value:"Completed"}];
 
   const handleStatusChange = (value) => {
+    let selValue = value;
+    if (!isNaN(selValue.slice(-1))) {
+      selValue = selValue.slice(0, -1); 
+    }
+    console.log(selValue);
     setOrderDetails((prevDetails) => ({
       ...prevDetails,
-      orderStatus: value,
+      orderStatus: selValue,
     }));
   };
 
   const handleStatus = async () => {
-    const status = orderDetails.orderStatus === "Shipped" ? "Shipping" : "Delivered";
+    const status = orderDetails.orderStatus
     const res = await statusToShipping(orderId, status);
     if (res.status === 200) {
       console.log(res.data);
@@ -84,10 +89,10 @@ const OrderDetail = () => {
       </Card>
 
       <Card title="Customer Information" className="mb-4">
-        <p><strong>Name:</strong> {orderDetails.addressDetails.firstName} {orderDetails.addressDetails.lastName}</p>
-        <p><strong>Email:</strong> {orderDetails.addressDetails.email}</p>
-        <p><strong>Mobile Number:</strong> {orderDetails.addressDetails.mobileNumber}</p>
-        <p><strong>Address:</strong> {orderDetails.addressDetails.address}, {orderDetails.addressDetails.landmark}, {orderDetails.addressDetails.city}, {orderDetails.addressDetails.state}, {orderDetails.addressDetails.postalCode}, {orderDetails.addressDetails.country}</p>
+        <p><strong>Name:</strong> {orderDetails.firstName} {orderDetails.lastName}</p>
+        <p><strong>Email:</strong> {orderDetails.email}</p>
+        <p><strong>Mobile Number:</strong> {orderDetails.mobileNumber}</p>
+        <p><strong>Address:</strong> {orderDetails.address}, {orderDetails.landmark}, {orderDetails.city}, {orderDetails.state}, {orderDetails.postalCode}, {orderDetails.country}</p>
       </Card>
 
       <Card title="Product Details" className="mb-4">
@@ -104,15 +109,16 @@ const OrderDetail = () => {
       <div className="mb-4">
         <strong>Order Status:</strong>
         <Select
+        disabled={orderDetails.orderStatus=="Pending"}
           value={orderDetails.orderStatus}
           onChange={handleStatusChange}
           className="ml-2"
           style={{ width: 200 }}
         >
-          {statusOptions.map((status) => (
-            <Select.Option key={status} value={status}>
-              {status}
-            </Select.Option>
+          {statusOptions.map((status,i) => (
+            <option key={i} value={status.value}>
+              {status.name}
+            </option>
           ))}
         </Select>
       </div>

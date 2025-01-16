@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useSearchParams,
+  useLocation,
+} from "react-router-dom";
 import { addToCart, getProductById, addFavouriteProduct } from "../../api/user";
 import { useMutation, useQuery } from "react-query";
-import { getTestimonialApi, userProductsList } from "../../api/user";
+import {
+  getTestimonialApi,
+  userProductsList,
+  getCartDetails,
+} from "../../api/user";
 import { Spin, Pagination } from "antd";
 import Swal from "sweetalert2";
 import MetaTags from "../common/MetaTags";
-import ratingStar from '../../images/rating-star.png'
-import ratingStarGrey from '../../images/star-icon-grey.png'
+import ratingStar from "../../images/rating-star.png";
+import ratingStarGrey from "../../images/star-icon-grey.png";
+import { ToastContainer, toast } from "react-toastify";
+
+import { useDispatch } from "react-redux";
+import { updateCartCount } from "../redux/CartSlice";
 
 const ProductPage = () => {
   const [params] = useSearchParams();
@@ -16,6 +29,8 @@ const ProductPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
   const [allProductCurrentPage, setAllProductCurrentPage] = useState(1);
   const initialFilter = {
     sizes: "",
@@ -56,7 +71,10 @@ const ProductPage = () => {
   const addtoCartMutation = useMutation({
     mutationFn: addToCart,
     onSuccess: (res) => {
-      Swal.fire("Success", "Product Added to Cart", "success");
+      // Swal.fire("Success", "Product Added to Cart", "success");
+      getCartCount();
+      toast.success(res.data.detail[0].msg);
+
     },
     onError: (error) => {
       Swal.fire("Error", error[0].msg, "error");
@@ -69,6 +87,7 @@ const ProductPage = () => {
     onSuccess: (res) => {
       console.log(res);
       refetchProduct();
+      toast.success(res.data.detail[0].msg);
     },
     onError: (error) => {
       Swal.fire("Error", error[0].msg, "error");
@@ -77,10 +96,14 @@ const ProductPage = () => {
   });
 
   useEffect(() => {
-    const selectedSize = JSON.parse(localStorage.getItem("selectedSize_"+productKey));
-    const productCount = JSON.parse(localStorage.getItem("productCount_"+productKey));
+    const selectedSize = JSON.parse(
+      localStorage.getItem("selectedSize_" + productKey)
+    );
+    const productCount = JSON.parse(
+      localStorage.getItem("productCount_" + productKey)
+    );
     console.log(selectedSize);
-    if(selectedSize){
+    if (selectedSize) {
       if (selectedSize.productKey == productKey) {
         setSelectedSize(selectedSize.selectedSize);
       }
@@ -94,18 +117,24 @@ const ProductPage = () => {
       }
     }
     
-    
+
   }, []);
+
+  async function getCartCount() {
+    const res = await getCartDetails();
+    dispatch(updateCartCount(res.data.detail.total));
+  }
 
   const handleAddFav = (id) => {
     if (!localStorage.getItem("userToken")) {
+      sessionStorage.setItem("redirectTo", location.pathname + location.search);
       navigate("/user-login");
       return;
     }
     const data = {
       productId: [product._id],
-      size : selectedSize,
-      count : order.count,
+      size: selectedSize,
+      count: order.count,
       action: "ADD",
     };
     addtoFavMutation.mutate({ data });
@@ -113,11 +142,12 @@ const ProductPage = () => {
 
   const handleRemFav = (id) => {
     if (!localStorage.getItem("userToken")) {
+      sessionStorage.setItem("redirectTo", location.pathname + location.search);
       navigate("/user-login");
       return;
     }
     const data = {
-      productId:[ product._id],
+      productId: [product._id],
       action: "REMOVE",
     };
     addtoFavMutation.mutate({ data });
@@ -125,13 +155,15 @@ const ProductPage = () => {
 
   const handleAddToCart = () => {
     if (!localStorage.getItem("userToken")) {
+      sessionStorage.setItem("redirectTo", location.pathname + location.search);
+
       navigate("/user-login");
       return;
     }
     const data = {
       productId: product._id,
-      size : selectedSize,
-      count : order.count,
+      size: selectedSize,
+      count: order.count,
       action: "ADD",
     };
     addtoCartMutation.mutate({ data });
@@ -140,8 +172,8 @@ const ProductPage = () => {
   const handleBuyNow = async () => {
     const data = {
       productId: product._id,
-      size : selectedSize,
-      count : order.count,
+      size: selectedSize,
+      count: order.count,
       action: "ADD",
     };
     try {
@@ -154,23 +186,29 @@ const ProductPage = () => {
 
   const updateCount = (increment) => {
     setOrder((prevOrder) => {
-      const updatedCount = Math.max(1, Math.min(5, prevOrder.count + increment));
-      console.log('Updated count:', updatedCount);  // Log the updated count
-      localStorage.setItem("productCount_"+productKey,JSON.stringify({ count : updatedCount, productKey }))
+      const updatedCount = Math.max(
+        1,
+        Math.min(5, prevOrder.count + increment)
+      );
+      console.log("Updated count:", updatedCount); // Log the updated count
+      localStorage.setItem(
+        "productCount_" + productKey,
+        JSON.stringify({ count: updatedCount, productKey })
+      );
       return {
         ...prevOrder,
         count: updatedCount,
       };
     });
   };
-  
+
   const allSizes = ["XS", "S", "M", "L", "XL", "2X"];
 
   const handleBuyAll = () => {};
 
   const handleSelectSize = (selectedSize) => {
     localStorage.setItem(
-      "selectedSize_"+productKey,
+      "selectedSize_" + productKey,
       JSON.stringify({ selectedSize, productKey })
     );
     setSelectedSize(selectedSize);
@@ -178,6 +216,8 @@ const ProductPage = () => {
 
   return (
     <section className="bg-gray-100 font-beatrice max-w-[1440px] mx-auto w-full">
+      <ToastContainer />
+
       {product && (
         <MetaTags
           data={{
@@ -262,8 +302,10 @@ const ProductPage = () => {
               {Array(5)
                 .fill(0)
                 .map((_, i) => (
-                  <img src={product.rating >= i + 1 ?ratingStar : ratingStarGrey}  style={{width:'auto',height:'20px'}} />
-                  
+                  <img
+                    src={product.rating >= i + 1 ? ratingStar : ratingStarGrey}
+                    style={{ width: "auto", height: "20px" }}
+                  />
                 ))}
             </div>
 

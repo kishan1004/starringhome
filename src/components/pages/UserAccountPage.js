@@ -52,7 +52,7 @@ const UserLogin = () => {
           {/* Left Side - Form Section */}
           <div className="flex flex-col justify-center items-center md:w-1/2 md:p-8 p-4">
             <div className="w-full p-4">
-              <Link to="/">
+              <button className="btn" onClick={()=>navigate('/')}>
                 <svg
                   width="62"
                   height="14"
@@ -68,7 +68,7 @@ const UserLogin = () => {
                     strokeLinejoin="round"
                   />
                 </svg>
-              </Link>
+              </button>
             </div>
             <h1 className="text-3xl font-bold mb-4 text-center">User Account</h1>
             <p className="mb-8 text-gray-600 text-center">

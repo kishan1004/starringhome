@@ -14,7 +14,9 @@ import {
   getUserNotifications,
   salesOverviewSave,
   clearNotificationsUser,
+  getCartDetails
 } from "../api/user";
+
 import MetaTags from "./common/MetaTags";
 import NewArrivalsSection from "./NewArrivalsSection";
 import TrendingSection from "./TrendingSection";
@@ -31,7 +33,7 @@ const HeroSection = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef(null);
-
+  const [cartCount,SetCartCount] = useState(0);
   const handleScroll = (id) => {
     const section = document.getElementById(id);
     if (section) {
@@ -118,11 +120,19 @@ const HeroSection = (props) => {
   };
 
   useEffect(() => {
+    if(localStorage.getItem('userToken')){
+      getCartCount();
+    }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  async function getCartCount(){
+    const res = await getCartDetails();
+    SetCartCount(res.data.detail.total);
+  }
 
   const metaData = {
     title: "Home",
@@ -171,7 +181,7 @@ const HeroSection = (props) => {
                   ) : (
                     <FaSearch
                       className="text-white cursor-pointer"
-                      size={32}
+                      size={window.innerWidth <= 768 ? 25 : 32}
                       onClick={() => setSearchActive(true)}
                     />
                   )}
@@ -180,7 +190,7 @@ const HeroSection = (props) => {
                   <IoNotifications
                     onClick={toggleNotificationDropdown}
                     className="text-white cursor-pointer"
-                    size={32}
+                    size={window.innerWidth <= 768 ? 25 : 32}
                   />
                   {notifications.length > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-3 h-3 flex items-center justify-center text-xs">
@@ -226,18 +236,21 @@ const HeroSection = (props) => {
                     </div>
                   )}
                 </div>
-                <Link to="/shopping-cart">
-                  <FaShoppingCart
-                    className="hidden sm:block text-white"
-                    size={32}
-                  />
+                <Link to="/shopping-cart" className="hidden sm:block relative">
+                  <FaShoppingCart className="text-white" size={32} />
+                  <span className="absolute top-0 right-0 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartCount} {" "}
+                  </span>
                 </Link>
 
-                <Link to="/favourites">
-                  <FaHeart className="hidden sm:block text-white" size={32} />
+                <Link to="/favourites" className="hidden sm:block">
+                  <FaHeart className="text-white" size={32} />
                 </Link>
                 <Link to="/user-login">
-                  <FaRegUserCircle className="text-white" size={32} />
+                  <FaRegUserCircle
+                    className="text-white"
+                    size={window.innerWidth <= 768 ? 25 : 32}
+                  />
                 </Link>
               </div>
             </div>

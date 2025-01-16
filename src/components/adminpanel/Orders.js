@@ -212,7 +212,7 @@ const Orders = () => {
                   <tr key={order._id}>
                     <td className="border p-3">
                       <button
-                        onClick={() => navigate(`../orderdetail/${order.id}`)}
+                        onClick={() => navigate(`../orderdetail/${order._id}`)}
                         className="text-blue-500 hover:underline"
                       >
                         {order.orderId}

@@ -58,7 +58,11 @@ if(localStorage.getItem('userToken')){
         localStorage.setItem("uid", res?.data?.detail?._id);
         localStorage.setItem("userToken", res?.data?.detail?.token);
         // Navigate to home
-        navigate("/user-account", { replace: true });
+        const redirectTo = sessionStorage.getItem('redirectTo') || '/user-account';
+        sessionStorage.removeItem('redirectTo');  // Clear the stored route after redirecting
+  
+        navigate(redirectTo, { replace: true });
+        // navigate("/user-account", { replace: true });
       } else {
         setError("Login failed. Please check your credentials.");
       }
