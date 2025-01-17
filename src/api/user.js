@@ -148,7 +148,7 @@ export const emailSubscribe = async (email) => {
     const formData = new FormData();
     formData.append('email', email);
     
-    const url = 'https://script.google.com/macros/s/AKfycbxtVKodwpmPEuaK8QS9w9x_nRjp_c6lxepcYa9ro2vsSpJB3Fmm3V2u7Lv-imHyOYhXtg/exec';
+    const url = 'https://script.google.com/macros/s/AKfycbzSpPbdtYRpXKuzadQJayRiMcQRCpiFZHV3cmoxq7D1ZZ4ksDChMXlHoSynNX4a-8oX/exec';
   
     try {
       const response = await axios.post(url, formData, {

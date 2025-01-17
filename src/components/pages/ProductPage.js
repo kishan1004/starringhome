@@ -72,12 +72,10 @@ const ProductPage = () => {
     mutationFn: addToCart,
     onSuccess: (res) => {
       // Swal.fire("Success", "Product Added to Cart", "success");
-      getCartCount();
-      toast.success(res.data.detail[0].msg);
-
+      getCartCount(res);
     },
     onError: (error) => {
-      Swal.fire("Error", error[0].msg, "error");
+      toast.error(error[0].msg);
       console.log(error);
     },
   });
@@ -120,8 +118,9 @@ const ProductPage = () => {
 
   }, []);
 
-  async function getCartCount() {
+  async function getCartCount(resp) {
     const res = await getCartDetails();
+    toast.success(resp.data.detail[0].msg+" Count - "+res.data.detail.total);
     dispatch(updateCartCount(res.data.detail.total));
   }
 

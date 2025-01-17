@@ -106,11 +106,10 @@ const Inventory = () => {
             <th className="py-3 px-4 border">Product ID</th>
             <th className="py-3 px-4 border">Product Name</th>
             <th className="py-3 px-4 border">Stock Update Date</th>
-            <th className="py-3 px-4 border">Purchased Stock </th>
             <th className="py-3 px-4 border">Opening Stock</th>
-            <th className="py-3 px-4 border">Closing Stock</th>
-            <th className="py-3 px-4 border">Ordered Stock</th>
+            <th className="py-3 px-4 border">Purchased Stock </th>
             <th className="py-3 px-4 border">Shipped Stock</th>
+            <th className="py-3 px-4 border">Closing Stock</th>
           </tr>
         </thead>
         <tbody>
@@ -130,13 +129,10 @@ const Inventory = () => {
                 <td className="py-3 px-4 border">{item.productId}</td>
                 <td className="py-3 px-4 border">{item.productName}</td>
                 <td className="py-3 px-4 border">{item.stockUpdatedDate}</td>
-                <td className="py-3 px-4 border">{item.purchasedStock}</td>
                 <td className="py-3 px-4 border">{item.openingStock}</td>
-                <td className="py-3 px-4 border">
-                  {item.closingStock}
-                </td>
-                <td className="py-3 px-4 border">{item.orderedStock}</td>
+                <td className="py-3 px-4 border">{item.purchasedStock}</td>
                 <td className="py-3 px-4 border">{item.shippedStock}</td>
+                <td className="py-3 px-4 border">{item.closingStock}</td>
               </tr>
             ))
             : !isError &&

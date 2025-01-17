@@ -130,7 +130,7 @@ const Topbar = () => {
             &nbsp;&nbsp;
             <span className="hidden md:block">Cart</span>
             {/* Cart Count Badge */}
-            <span className="absolute -top-1 -left-3 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+            <span className={"absolute -top-1  -left-3 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center "+(cartCounts == 0 ? 'hidden':'')}>
               {cartCounts}
             </span>
           </Link>

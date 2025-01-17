@@ -238,7 +238,7 @@ const HeroSection = (props) => {
                 </div>
                 <Link to="/shopping-cart" className="hidden sm:block relative">
                   <FaShoppingCart className="text-white" size={32} />
-                  <span className="absolute top-0 right-0 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className={"absolute top-0 right-0 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center "+(cartCount == 0 ? 'hidden':'')}>
                     {cartCount} {" "}
                   </span>
                 </Link>
