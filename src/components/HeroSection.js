@@ -186,7 +186,7 @@ const HeroSection = (props) => {
                     />
                   )}
                 </div>
-                <div className="relative" ref={notificationRef}>
+                <div className="relative hidden sm:block" ref={notificationRef}>
                   <IoNotifications
                     onClick={toggleNotificationDropdown}
                     className="text-white cursor-pointer"
@@ -236,17 +236,17 @@ const HeroSection = (props) => {
                     </div>
                   )}
                 </div>
-                <Link to="/shopping-cart" className="hidden sm:block relative">
-                  <FaShoppingCart className="text-white" size={32} />
-                  <span className={"absolute top-0 right-0 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center "+(cartCount == 0 ? 'hidden':'')}>
+                <Link to="/shopping-cart" className=" relative">
+                  <FaShoppingCart className="text-white" size={window.innerWidth <= 768 ? 25 : 32} />
+                  <span className={"absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center "+(cartCount == 0 ? 'hidden':'')}>
                     {cartCount} {" "}
                   </span>
                 </Link>
 
-                <Link to="/favourites" className="hidden sm:block">
-                  <FaHeart className="text-white" size={32} />
+                <Link to="/favourites" className="">
+                  <FaHeart className="text-white" size={window.innerWidth <= 768 ? 25 : 32} />
                 </Link>
-                <Link to="/user-login">
+                <Link to="/user-login" className="hidden sm:block">
                   <FaRegUserCircle
                     className="text-white"
                     size={window.innerWidth <= 768 ? 25 : 32}
