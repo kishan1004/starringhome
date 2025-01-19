@@ -145,11 +145,20 @@ const OTPLogin = () => {
       }
 
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Verification Failed",
-        text: res.data.detail[0].msg,
-      });
+      console.log(res.response.data.detail[0].field)
+      const errState = res.response.data.detail[0].field;
+      if(errState=="otpCode"){
+        Swal.fire({
+          icon: "success",
+          title: "Verification Successful",
+          text:"OTP is Verified",
+          timer: 5000,
+          timerProgressBar: true,
+        }).then(() => {
+          setisOtpVerified(false);
+        });
+      }
+     
     }
   };
 
