@@ -90,11 +90,11 @@ const Topbar = () => {
       <div className="flex space-x-4 md:space-x-8 items-center">
         <Link to="/favourites" className="flex">
           <FaRegHeart className="text-black" size={25} />
-          &nbsp;&nbsp;
-          <span className="hidden md:block">Wishlist</span>
+          
+          <span className="hidden md:block">&nbsp;&nbsp;Wishlist</span>
         </Link>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 no-margin-left">
           <Link to="/shopping-cart" className="flex relative">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -127,18 +127,18 @@ const Topbar = () => {
                 strokeWidth="2"
               />
             </svg>
-            &nbsp;&nbsp;
-            <span className="hidden md:block">Cart</span>
+            
+            <span className="hidden md:block">&nbsp;&nbsp;Cart</span>
             {/* Cart Count Badge */}
             <span className={"absolute -top-1  -left-3 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center "+(cartCounts == 0 ? 'hidden':'')}>
               {cartCounts}
             </span>
           </Link>
         </div>
-        <Link to="/user-account" className="flex">
+        <Link to="/user-account" className="flex no-margin-left">
           <FaRegUserCircle className="text-black" size={25} />
-          &nbsp;&nbsp;
-          <span className="hidden md:block">Account</span>
+          
+          <span className="hidden md:block">&nbsp;&nbsp;Account</span>
         </Link>
       </div>
 
